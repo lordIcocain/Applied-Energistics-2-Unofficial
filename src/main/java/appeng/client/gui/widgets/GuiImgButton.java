@@ -835,6 +835,20 @@ public class GuiImgButton extends GuiButton implements ITooltip {
                     SuperWirelessToolGroupBy.Network,
                     ButtonToolTips.SuperWirelessToolGroupByNetworkName,
                     ButtonToolTips.SuperWirelessToolGroupByNetworkDesc);
+
+            this.registerApp(
+                    16 * 7 + 12,
+                    Settings.SUPER_WIRELESS_TOOL_HIDE_BOUNDED,
+                    YesNo.YES,
+                    ButtonToolTips.SuperWirelessToolHideBoundedYesName,
+                    ButtonToolTips.SuperWirelessToolHideBoundedYesDesc);
+
+            this.registerApp(
+                    16 * 7 + 11,
+                    Settings.SUPER_WIRELESS_TOOL_HIDE_BOUNDED,
+                    YesNo.NO,
+                    ButtonToolTips.SuperWirelessToolHideBoundedNoName,
+                    ButtonToolTips.SuperWirelessToolHideBoundedNoDesc);
         }
     }
 

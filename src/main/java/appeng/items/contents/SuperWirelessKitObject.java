@@ -5,8 +5,8 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
 
 import appeng.api.config.Settings;
-import appeng.api.config.SuperWirelessTool;
 import appeng.api.config.SuperWirelessToolGroupBy;
+import appeng.api.config.YesNo;
 import appeng.api.implementations.guiobjects.IGuiItemObject;
 import appeng.api.util.IConfigManager;
 import appeng.api.util.IConfigurableObject;
@@ -39,8 +39,8 @@ public class SuperWirelessKitObject implements IGuiItemObject, IConfigurableObje
             manager.writeToNBT(data);
         });
 
-        out.registerSetting(Settings.SUPER_WIRELESS_TOOL, SuperWirelessTool.Simple);
         out.registerSetting(Settings.SUPER_WIRELESS_TOOL_GROUP_BY, SuperWirelessToolGroupBy.Single);
+        out.registerSetting(Settings.SUPER_WIRELESS_TOOL_HIDE_BOUNDED, YesNo.NO);
 
         out.readFromNBT((NBTTagCompound) Platform.openNbtData(this.stack).copy());
         return out;

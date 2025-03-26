@@ -17,8 +17,8 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 
 import appeng.api.config.Settings;
-import appeng.api.config.SuperWirelessTool;
 import appeng.api.config.SuperWirelessToolGroupBy;
+import appeng.api.config.YesNo;
 import appeng.api.networking.IGridHost;
 import appeng.api.networking.IGridNode;
 import appeng.api.util.AEColor;
@@ -52,8 +52,8 @@ public class ContainerSuperWirelessKit extends AEBaseContainer implements IConfi
 
         this.clientCM = new ConfigManager(this);
 
-        this.clientCM.registerSetting(Settings.SUPER_WIRELESS_TOOL, SuperWirelessTool.Super);
         this.clientCM.registerSetting(Settings.SUPER_WIRELESS_TOOL_GROUP_BY, SuperWirelessToolGroupBy.Single);
+        this.clientCM.registerSetting(Settings.SUPER_WIRELESS_TOOL_HIDE_BOUNDED, YesNo.NO);
 
         if (Platform.isServer()) {
             this.serverCM = te.getConfigManager();

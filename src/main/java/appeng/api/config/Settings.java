@@ -94,6 +94,8 @@ public enum Settings {
 
     SUPER_WIRELESS_TOOL_GROUP_BY(EnumSet.allOf(SuperWirelessToolGroupBy.class)),
 
+    SUPER_WIRELESS_TOOL_HIDE_BOUNDED(EnumSet.of(YesNo.YES, YesNo.NO)),
+
     NETWORK_VISUALISER(EnumSet.allOf(VisualisationModes.class));
 
     private final EnumSet<? extends Enum<?>> values;

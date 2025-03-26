@@ -20,6 +20,7 @@ import org.lwjgl.opengl.GL11;
 
 import appeng.api.config.Settings;
 import appeng.api.config.SuperWirelessToolGroupBy;
+import appeng.api.config.YesNo;
 import appeng.api.events.GuiScrollEvent;
 import appeng.api.util.AEColor;
 import appeng.api.util.DimensionalCoord;
@@ -50,6 +51,7 @@ public class GuiSuperWirelessKit extends AEBaseGui implements IConfigManagerHost
     private final int SCROLLBAR_HEIGHT = 229;
 
     private GuiImgButton sortBy;
+    private GuiImgButton hideBoundedButton;
     private GuiAeButton bind;
     private GuiAeButton unbind;
     private final GuiColorButton[] colorButtons = new GuiColorButton[17];
@@ -65,6 +67,7 @@ public class GuiSuperWirelessKit extends AEBaseGui implements IConfigManagerHost
 
     private final IConfigManager configSrc;
     private SuperWirelessToolGroupBy mode;
+    private YesNo hideBounded;
 
     private final GuiScrollbar unselectedColumnScroll;
     private final GuiScrollbar toBindColumnScroll;
@@ -97,6 +100,7 @@ public class GuiSuperWirelessKit extends AEBaseGui implements IConfigManagerHost
         this.configSrc = ((IConfigurableObject) this.inventorySlots).getConfigManager();
         ((ContainerSuperWirelessKit) this.inventorySlots).setGui(this);
         this.mode = (SuperWirelessToolGroupBy) this.configSrc.getSetting(Settings.SUPER_WIRELESS_TOOL_GROUP_BY);
+        this.hideBounded = (YesNo) this.configSrc.getSetting(Settings.SUPER_WIRELESS_TOOL_HIDE_BOUNDED);
         this.xSize = 256;
         this.ySize = 256;
         this.unselectedColumnScroll = new GuiScrollbar();
@@ -295,9 +299,16 @@ public class GuiSuperWirelessKit extends AEBaseGui implements IConfigManagerHost
                 Settings.SUPER_WIRELESS_TOOL_GROUP_BY,
                 SuperWirelessToolGroupBy.Single);
 
+        this.hideBoundedButton = new GuiImgButton(
+                this.guiLeft + 24,
+                this.guiTop + 4,
+                Settings.SUPER_WIRELESS_TOOL_HIDE_BOUNDED,
+                YesNo.NO);
+
         this.buttonList.add(this.bind);
         this.buttonList.add(this.unbind);
         this.buttonList.add(this.sortBy);
+        this.buttonList.add(this.hideBoundedButton);
     }
 
     @Override
@@ -324,6 +335,10 @@ public class GuiSuperWirelessKit extends AEBaseGui implements IConfigManagerHost
         if (btn == this.sortBy) {
             final boolean backwards = Mouse.isButtonDown(1);
             NetworkHandler.instance.sendToServer(new PacketConfigButton(this.sortBy.getSetting(), backwards));
+        } else if (btn == this.hideBoundedButton) {
+            final boolean backwards = Mouse.isButtonDown(1);
+            NetworkHandler.instance
+                    .sendToServer(new PacketConfigButton(this.hideBoundedButton.getSetting(), backwards));
         } else if (btn == this.madChameleonButton) {
             reColorCommand(null);
         } else if (btn == this.bind) {
@@ -1039,6 +1054,8 @@ public class GuiSuperWirelessKit extends AEBaseGui implements IConfigManagerHost
         if (this.sortBy != null) {
             this.sortBy.set(this.configSrc.getSetting(Settings.SUPER_WIRELESS_TOOL_GROUP_BY));
             this.mode = (SuperWirelessToolGroupBy) this.configSrc.getSetting(Settings.SUPER_WIRELESS_TOOL_GROUP_BY);
+            this.hideBoundedButton.set(this.configSrc.getSetting(Settings.SUPER_WIRELESS_TOOL_HIDE_BOUNDED));
+            this.hideBounded = (YesNo) this.configSrc.getSetting(Settings.SUPER_WIRELESS_TOOL_HIDE_BOUNDED);
         }
         if (dataCache != null) {
             setData(dataCache);
@@ -1286,6 +1303,10 @@ public class GuiSuperWirelessKit extends AEBaseGui implements IConfigManagerHost
             boolean includeHubs = true;
             String networkName = "";
             String colorName = "";
+
+            if (hideBounded == YesNo.YES && wdo.isConnected && !(wdo.isHub && wdo.slots != 0)) {
+                continue;
+            }
 
             for (int i = 0; i < names.tagCount(); i++) {
                 if (wdo.network == namesNetworkCache[i]) {

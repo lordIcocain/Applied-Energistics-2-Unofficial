@@ -236,8 +236,10 @@ public enum ButtonToolTips {
     SuperWirelessToolGroupByNetworkDesc,
     SuperWirelessToolGroupByColorName,
     SuperWirelessToolGroupByColorDesc,
-
-    ;
+    SuperWirelessToolHideBoundedYesName,
+    SuperWirelessToolHideBoundedYesDesc,
+    SuperWirelessToolHideBoundedNoName,
+    SuperWirelessToolHideBoundedNoDesc;
 
     private final String root;
 

@@ -22,6 +22,7 @@ import appeng.api.config.Settings;
 import appeng.api.config.SuperWirelessTool;
 import appeng.api.config.SuperWirelessToolAdvanced;
 import appeng.api.config.SuperWirelessToolGroupBy;
+import appeng.api.config.YesNo;
 import appeng.api.implementations.guiobjects.IGuiItem;
 import appeng.api.implementations.guiobjects.IGuiItemObject;
 import appeng.api.networking.IGridHost;
@@ -330,6 +331,7 @@ public class ToolSuperWirelessKit extends AEBaseItem implements IGuiItem {
 
         out.registerSetting(Settings.SUPER_WIRELESS_TOOL, SuperWirelessTool.Simple);
         out.registerSetting(Settings.SUPER_WIRELESS_TOOL_GROUP_BY, SuperWirelessToolGroupBy.Single);
+        out.registerSetting(Settings.SUPER_WIRELESS_TOOL_HIDE_BOUNDED, YesNo.NO);
         out.registerSetting(Settings.SUPER_WIRELESS_TOOL_ADVANCED, SuperWirelessToolAdvanced.Queueing);
 
         out.readFromNBT((NBTTagCompound) Platform.openNbtData(target).copy());
