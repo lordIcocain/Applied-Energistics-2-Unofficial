@@ -34,12 +34,11 @@ public class BlockWirelessConnector extends AEBaseTileBlock {
         super(Material.iron);
         this.setTileEntity(TileWirelessConnector.class);
         this.setFeature(EnumSet.of(AEFeature.Channels));
-        this.hasSubtypes = true;
     }
 
     @Override
-    public Class<ItemWireless> getItemBlockClass() {
-        return ItemWireless.class;
+    public void setHasSubtypes(boolean b) {
+        super.setHasSubtypes(true);
     }
 
     @Override
@@ -54,6 +53,15 @@ public class BlockWirelessConnector extends AEBaseTileBlock {
         ArrayList<ItemStack> arr = new ArrayList<>();
         arr.add(is);
         return arr;
+    }
+
+    @Override
+    public void addInformation(ItemStack is, EntityPlayer p, List<String> lines, boolean advancedItemTooltips) {
+        if (is.getItemDamage() == 0) {
+            lines.add(AEColor.values()[16].toString());
+        } else {
+            lines.add(AEColor.values()[is.getItemDamage() - 1].toString());
+        }
     }
 
     @Override
