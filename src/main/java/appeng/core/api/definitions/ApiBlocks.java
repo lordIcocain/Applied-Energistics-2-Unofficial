@@ -32,6 +32,7 @@ import appeng.block.grindstone.BlockGrinder;
 import appeng.block.misc.BlockCellWorkbench;
 import appeng.block.misc.BlockCharger;
 import appeng.block.misc.BlockCondenser;
+import appeng.block.misc.BlockGrower;
 import appeng.block.misc.BlockInscriber;
 import appeng.block.misc.BlockInterface;
 import appeng.block.misc.BlockLightDetector;
@@ -178,6 +179,7 @@ public final class ApiBlocks implements IBlocks {
 
     private final ITileDefinition wirelessConnector;
     private final ITileDefinition wirelessHub;
+    private final ITileDefinition grower;
 
     public ApiBlocks(final DefinitionConstructor constructor) {
         final BlockLightDetector lightDetector = new BlockLightDetector();
@@ -330,6 +332,7 @@ public final class ApiBlocks implements IBlocks {
         this.cubeGenerator = constructor.registerBlockDefinition(new BlockCubeGenerator());
         this.wirelessConnector = constructor.registerTileDefinition(new BlockWirelessConnector());
         this.wirelessHub = constructor.registerTileDefinition(new BlockWirelessHub());
+        this.grower = constructor.registerTileDefinition(new BlockGrower());
     }
 
     @Override
@@ -721,6 +724,11 @@ public final class ApiBlocks implements IBlocks {
     @Override
     public ITileDefinition wirelessHub() {
         return this.wirelessHub;
+    }
+
+    @Override
+    public ITileDefinition grower() {
+        return this.grower;
     }
 
     public IBlockDefinition chunkLoader() {

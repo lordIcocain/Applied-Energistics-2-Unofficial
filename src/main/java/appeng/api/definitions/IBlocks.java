@@ -197,4 +197,6 @@ public interface IBlocks {
     ITileDefinition wirelessConnector();
 
     ITileDefinition wirelessHub();
+
+    ITileDefinition grower();
 }

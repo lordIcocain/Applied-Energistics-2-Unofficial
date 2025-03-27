@@ -60,6 +60,7 @@ import appeng.container.implementations.ContainerCraftingTerm;
 import appeng.container.implementations.ContainerDrive;
 import appeng.container.implementations.ContainerFormationPlane;
 import appeng.container.implementations.ContainerGrinder;
+import appeng.container.implementations.ContainerGrower;
 import appeng.container.implementations.ContainerIOPort;
 import appeng.container.implementations.ContainerInscriber;
 import appeng.container.implementations.ContainerInterface;
@@ -111,6 +112,7 @@ import appeng.tile.crafting.TileMolecularAssembler;
 import appeng.tile.grindstone.TileGrinder;
 import appeng.tile.misc.TileCellWorkbench;
 import appeng.tile.misc.TileCondenser;
+import appeng.tile.misc.TileGrower;
 import appeng.tile.misc.TileInscriber;
 import appeng.tile.misc.TileSecurity;
 import appeng.tile.misc.TileVibrationChamber;
@@ -225,7 +227,9 @@ public enum GuiBridge implements IGuiHandler {
 
     GUI_CELL_RESTRICTION(ContainerCellRestriction.class, ICellRestriction.class, GuiHostType.ITEM_OR_WORLD, null),
 
-    GUI_SUPER_WIRELESS_KIT(ContainerSuperWirelessKit.class, IGuiItemObject.class, GuiHostType.ITEM, null);
+    GUI_SUPER_WIRELESS_KIT(ContainerSuperWirelessKit.class, IGuiItemObject.class, GuiHostType.ITEM, null),
+
+    GUI_GROWER(ContainerGrower.class, TileGrower.class, GuiHostType.WORLD, null);
 
     private final Class tileClass;
     private final Class containerClass;
