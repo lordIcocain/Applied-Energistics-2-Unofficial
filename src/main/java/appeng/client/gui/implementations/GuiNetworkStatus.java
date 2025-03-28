@@ -22,7 +22,6 @@ import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
-import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 
@@ -85,17 +84,19 @@ public class GuiNetworkStatus extends AEBaseGui implements ISortSource {
 
     @Override
     protected void mouseClicked(int xCoord, int yCoord, int btn) {
-        if (btn == 0 && Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) && tooltip > -1) {
+        if (btn == 0 && isShiftKeyDown() && tooltip > -1) {
             final ItemStack is = repo.getReferenceItem(tooltip).getItemStack();
-            NBTTagCompound tag = is.getTagCompound();
-            List<DimensionalCoord> dcl = DimensionalCoord.readAsListFromNBT(tag);
-            BlockPosHighlighter.highlightBlocks(
-                    mc.thePlayer,
-                    dcl,
-                    is.getDisplayName(),
-                    PlayerMessages.MachineHighlighted.getName(),
-                    PlayerMessages.MachineInInOtherDim.getName());
-            mc.thePlayer.closeScreen();
+            if (is.hasTagCompound()) {
+                NBTTagCompound tag = is.getTagCompound();
+                List<DimensionalCoord> dcl = DimensionalCoord.readAsListFromNBT(tag);
+                BlockPosHighlighter.highlightBlocks(
+                        mc.thePlayer,
+                        dcl,
+                        is.getDisplayName(),
+                        PlayerMessages.MachineHighlighted.getName(),
+                        PlayerMessages.MachineInInOtherDim.getName());
+                mc.thePlayer.closeScreen();
+            }
         }
         super.mouseClicked(xCoord, yCoord, btn);
     }

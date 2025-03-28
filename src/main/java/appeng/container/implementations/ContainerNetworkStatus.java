@@ -235,11 +235,16 @@ public class ContainerNetworkStatus extends AEBaseContainer {
                 }
 
                 for (final IAEItemStack ais : list) {
-                    ItemStack is = ais.getItemStack();
-                    NBTTagCompound tag = new NBTTagCompound();
-                    DimensionalCoord.writeListToNBT(tag, dcMap.get(ais));
-                    is.setTagCompound(tag);
-                    piu.appendItem(AEItemStack.create(is));
+                    ArrayList<DimensionalCoord> dcl = dcMap.get(ais);
+                    if (dcl != null) {
+                        ItemStack is = ais.getItemStack();
+                        NBTTagCompound tag = new NBTTagCompound();
+                        DimensionalCoord.writeListToNBT(tag, dcl);
+                        is.setTagCompound(tag);
+                        piu.appendItem(AEItemStack.create(is));
+                    } else {
+                        piu.appendItem(ais);
+                    }
                 }
 
                 // Send packet
