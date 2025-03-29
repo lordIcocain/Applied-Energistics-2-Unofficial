@@ -90,6 +90,7 @@ public class GuiContextMenu {
             } else if (wheel < 0 && scrollOffset < list.size() - visibleSections) {
                 scrollOffset++;
             }
+            return true;
         }
         return false;
     }
