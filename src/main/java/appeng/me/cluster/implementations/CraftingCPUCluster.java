@@ -163,6 +163,8 @@ public final class CraftingCPUCluster implements IAECluster, ICraftingCPU {
     private int countToTryExtractItems;
     private boolean isMissingMode;
 
+    private IAEItemStack lastJob;
+
     private final Map<String, List<CraftNotification>> unreadNotifications = new HashMap<>();
 
     private final List<CraftCompleteListener> defaultOnComplete = Arrays
@@ -211,6 +213,14 @@ public final class CraftingCPUCluster implements IAECluster, ICraftingCPU {
             player.worldObj.playSoundAtEntity(player, "random.levelup", 1f, 1f);
             this.unreadNotifications.remove(playerName);
         }
+    }
+
+    public IAEItemStack getLastJob() {
+        return lastJob;
+    }
+
+    public void resetLastJob() {
+        lastJob = null;
     }
 
     @Override
@@ -973,6 +983,7 @@ public final class CraftingCPUCluster implements IAECluster, ICraftingCPU {
                 // when it comes to a new craft,
                 if (job.getOutput() != null) {
                     this.finalOutput = job.getOutput();
+                    lastJob = finalOutput.copy();
                     this.isFakeCrafting = false;
                     this.waiting = false;
                     this.isComplete = false;

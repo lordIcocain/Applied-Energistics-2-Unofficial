@@ -40,6 +40,7 @@ public class CraftingCPUStatus implements Comparable<CraftingCPUStatus> {
     private final long totalItems;
     private final long remainingItems;
     private final IAEItemStack crafting;
+    private final IAEItemStack lastJob;
 
     public CraftingCPUStatus() {
         this.serverCluster = null;
@@ -52,6 +53,7 @@ public class CraftingCPUStatus implements Comparable<CraftingCPUStatus> {
         this.totalItems = 0;
         this.remainingItems = 0;
         this.crafting = null;
+        this.lastJob = null;
     }
 
     public CraftingCPUStatus(ICraftingCPU cluster, int serial) {
@@ -72,6 +74,7 @@ public class CraftingCPUStatus implements Comparable<CraftingCPUStatus> {
         }
         this.storage = cluster.getAvailableStorage();
         this.coprocessors = cluster.getCoProcessors();
+        this.lastJob = cluster.getLastJob();
     }
 
     public CraftingCPUStatus(NBTTagCompound i) {
@@ -85,6 +88,7 @@ public class CraftingCPUStatus implements Comparable<CraftingCPUStatus> {
         this.totalItems = i.getLong("totalItems");
         this.remainingItems = i.getLong("remainingItems");
         this.crafting = i.hasKey("crafting") ? AEItemStack.loadItemStackFromNBT(i.getCompoundTag("crafting")) : null;
+        this.lastJob = i.hasKey("lastJob") ? AEItemStack.loadItemStackFromNBT(i.getCompoundTag("lastJob")) : null;
     }
 
     public CraftingCPUStatus(ByteBuf packet) throws IOException {
@@ -114,6 +118,11 @@ public class CraftingCPUStatus implements Comparable<CraftingCPUStatus> {
             NBTTagCompound stack = new NBTTagCompound();
             crafting.writeToNBT(stack);
             i.setTag("crafting", stack);
+        }
+        if (lastJob != null) {
+            NBTTagCompound stack = new NBTTagCompound();
+            lastJob.writeToNBT(stack);
+            i.setTag("lastJob", stack);
         }
     }
 
@@ -167,6 +176,10 @@ public class CraftingCPUStatus implements Comparable<CraftingCPUStatus> {
 
     public IAEItemStack getCrafting() {
         return crafting;
+    }
+
+    public IAEItemStack getLastJob() {
+        return lastJob;
     }
 
     public boolean isBusy() {
