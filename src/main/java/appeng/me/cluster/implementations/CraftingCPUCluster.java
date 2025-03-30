@@ -163,8 +163,6 @@ public final class CraftingCPUCluster implements IAECluster, ICraftingCPU {
     private int countToTryExtractItems;
     private boolean isMissingMode;
 
-    private IAEItemStack lastJob;
-
     private final Map<String, List<CraftNotification>> unreadNotifications = new HashMap<>();
 
     private final List<CraftCompleteListener> defaultOnComplete = Arrays
@@ -215,12 +213,9 @@ public final class CraftingCPUCluster implements IAECluster, ICraftingCPU {
         }
     }
 
-    public IAEItemStack getLastJob() {
-        return lastJob;
-    }
-
-    public void resetLastJob() {
-        lastJob = null;
+    @Override
+    public void resetFinalOutput() {
+        finalOutput = null;
     }
 
     @Override
@@ -983,7 +978,6 @@ public final class CraftingCPUCluster implements IAECluster, ICraftingCPU {
                 // when it comes to a new craft,
                 if (job.getOutput() != null) {
                     this.finalOutput = job.getOutput();
-                    lastJob = finalOutput.copy();
                     this.isFakeCrafting = false;
                     this.waiting = false;
                     this.isComplete = false;

@@ -103,8 +103,5 @@ public interface ICraftingCPU extends IBaseMonitor<IAEItemStack> {
      */
     default void addOnCraftingUpdateListener(CraftUpdateListener onCraftingStatusUpdate) {}
 
-    @Nullable
-    default IAEItemStack getLastJob() {
-        return null;
-    }
+    default void resetFinalOutput() {}
 }

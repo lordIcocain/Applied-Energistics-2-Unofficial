@@ -24,6 +24,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.util.ForgeDirection;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 
 import appeng.api.AEApi;
@@ -290,19 +291,27 @@ public class ContainerMEMonitorable extends AEBaseContainer
                 if (host instanceof ITerminalPins itp) {
                     AppEngInternalAEInventory api = itp.getPins();
                     final ICraftingGrid cc = itp.getGrid().getCache(ICraftingGrid.class);
-                    final ImmutableSet<ICraftingCPU> cpuSet = cc.getCpus();
+                    final ImmutableList<ICraftingCPU> cpuSet = cc.getCpus().asList();
                     int j = 0;
+                    int jj = 0;
                     for (int i = 0; i < api.getSizeInventory(); i++) {
                         IAEItemStack ais = api.getAEStackInSlot(i);
                         if (ais == null) {
                             while (j < cpuSet.size()) {
-                                ICraftingCPU cpu = cpuSet.asList().get(j);
-                                if (cpu.getFinalOutput() != null) {
+                                ICraftingCPU cpu = cpuSet.get(j);
+                                if (cpu.isBusy() && cpu.getFinalOutput() != null) {
                                     ais = cpu.getFinalOutput();
-                                } else if (cpu.getLastJob() != null) {
-                                    ais = cpu.getLastJob();
                                 }
                                 j++;
+                            }
+                            if (ais == null) {
+                                while (jj < cpuSet.size()) {
+                                    ICraftingCPU cpu = cpuSet.get(jj);
+                                    if (!cpu.isBusy() && cpu.getFinalOutput() != null) {
+                                        ais = cpu.getFinalOutput();
+                                    }
+                                    jj++;
+                                }
                             }
                         }
                         if (ais != null) {
@@ -447,9 +456,28 @@ public class ContainerMEMonitorable extends AEBaseContainer
 
     public void setPin(ItemStack is, int idx) {
         if (host instanceof ITerminalPins itp) {
-            itp.getPins().setInventorySlotContents(idx, is);
-            itp.getPins().markDirty();
-            updatePin(itp.getPins().getAEStackInSlot(idx), idx);
+            AppEngInternalAEInventory aip = itp.getPins();
+
+            for (int i = 0; i < aip.getSizeInventory(); i++) {
+                if (aip.getAEStackInSlot(i) != null && aip.getAEStackInSlot(i).isSameType(is)) {
+                    return;
+                }
+            }
+
+            IAEItemStack oldStack = aip.getAEStackInSlot(idx);
+            aip.setInventorySlotContents(idx, is);
+            aip.markDirty();
+            updatePin(aip.getAEStackInSlot(idx), idx);
+
+            if (is == null) {
+                final ICraftingGrid cc = itp.getGrid().getCache(ICraftingGrid.class);
+                final ImmutableSet<ICraftingCPU> cpuSet = cc.getCpus();
+                for (ICraftingCPU cpu : cpuSet.asList()) {
+                    if (!cpu.isBusy() && cpu.getFinalOutput() != null && cpu.getFinalOutput().isSameType(oldStack)) {
+                        cpu.resetFinalOutput();
+                    }
+                }
+            }
         }
     }
 
