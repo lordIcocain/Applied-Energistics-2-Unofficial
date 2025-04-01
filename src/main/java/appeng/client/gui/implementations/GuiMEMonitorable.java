@@ -31,6 +31,7 @@ import appeng.api.implementations.guiobjects.IPortableCell;
 import appeng.api.implementations.tiles.IMEChest;
 import appeng.api.implementations.tiles.IViewCellStorage;
 import appeng.api.storage.ITerminalHost;
+import appeng.api.storage.ITerminalPins;
 import appeng.api.storage.data.IAEItemStack;
 import appeng.api.storage.data.IDisplayRepo;
 import appeng.api.util.IConfigManager;
@@ -102,6 +103,7 @@ public class GuiMEMonitorable extends AEBaseMEGui implements ISortSource, IConfi
     private boolean isAutoFocus = false;
     private int currentMouseX = 0;
     private int currentMouseY = 0;
+    private boolean isPinsHost = false;
 
     public GuiMEMonitorable(final InventoryPlayer inventoryPlayer, final ITerminalHost te) {
         this(inventoryPlayer, te, new ContainerMEMonitorable(inventoryPlayer, te));
@@ -136,6 +138,11 @@ public class GuiMEMonitorable extends AEBaseMEGui implements ISortSource, IConfi
             this.myName = GuiText.Chest;
         } else if (te instanceof AbstractPartTerminal) {
             this.myName = GuiText.Terminal;
+
+        }
+
+        if (te instanceof ITerminalPins) {
+            isPinsHost = true;
         }
 
         this.searchField = new MEGuiTextField(90, 12, ButtonToolTips.SearchStringTooltip.getLocal()) {
@@ -221,13 +228,19 @@ public class GuiMEMonitorable extends AEBaseMEGui implements ISortSource, IConfi
         this.rows = calculateRowsCount();
 
         this.getMeSlots().clear();
-        for (int x = 0; x < this.perRow; x++) {
-            this.getMeSlots().add(new PinSlotME(this.repo, x, this.offsetX + x * 18, 18));
-        }
-        for (int y = 0; y < this.rows - 1; y++) {
+        if (isPinsHost) {
             for (int x = 0; x < this.perRow; x++) {
-                this.getMeSlots()
-                        .add(new InternalSlotME(this.repo, x + y * this.perRow, this.offsetX + x * 18, 36 + y * 18));
+                this.getMeSlots().add(new PinSlotME(this.repo, x, this.offsetX + x * 18, 18));
+            }
+        }
+        for (int y = 0; y < this.rows - (isPinsHost ? 1 : 0); y++) {
+            for (int x = 0; x < this.perRow; x++) {
+                this.getMeSlots().add(
+                        new InternalSlotME(
+                                this.repo,
+                                x + y * this.perRow,
+                                this.offsetX + x * 18,
+                                18 + (isPinsHost ? 18 : 0) + y * 18));
             }
         }
 
