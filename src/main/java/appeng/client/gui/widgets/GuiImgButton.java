@@ -38,6 +38,7 @@ import appeng.api.config.LockCraftingMode;
 import appeng.api.config.OperationMode;
 import appeng.api.config.PatternBeSubstitution;
 import appeng.api.config.PatternSlotConfig;
+import appeng.api.config.PinsState;
 import appeng.api.config.PowerUnits;
 import appeng.api.config.PriorityCardMode;
 import appeng.api.config.RedstoneMode;
@@ -813,6 +814,20 @@ public class GuiImgButton extends GuiButton implements ITooltip {
                     ActionItems.CELL_RESTRICTION,
                     ButtonToolTips.CellRestrictionLabel,
                     ButtonToolTips.CellRestrictionHint);
+
+            this.registerApp(
+                    16 * 15 + 14,
+                    Settings.PINS_STATE,
+                    PinsState.ACTIVE,
+                    ButtonToolTips.PinsSection,
+                    ButtonToolTips.PinsSectionActive);
+
+            this.registerApp(
+                    16 * 15 + 15,
+                    Settings.PINS_STATE,
+                    PinsState.DISABLED,
+                    ButtonToolTips.PinsSection,
+                    ButtonToolTips.PinsSectionDisabled);
 
         }
     }

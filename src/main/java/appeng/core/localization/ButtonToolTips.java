@@ -228,7 +228,11 @@ public enum ButtonToolTips {
     CellRestrictionHint,
 
     SearchGotoNext,
-    SearchGotoPrev;
+    SearchGotoPrev,
+
+    PinsSection,
+    PinsSectionActive,
+    PinsSectionDisabled;
 
     private final String root;
 

@@ -566,6 +566,10 @@ gui.tooltips.appliedenergistics2.CellRestrictionHint=Setup Cell Restriction
 
 gui.tooltips.appliedenergistics2.SearchGotoNext=Find next
 gui.tooltips.appliedenergistics2.SearchGotoPrev=Find prev
+
+gui.tooltips.appliedenergistics2.PinsSection=Pins Section
+gui.tooltips.appliedenergistics2.PinsSectionActive=Pins Section Enabled
+gui.tooltips.appliedenergistics2.PinsSectionDisabled=Pins Section Disabled
 # Units
 gui.appliedenergistics2.units.appliedenergstics=AE
 gui.appliedenergistics2.units.ic2=Energy Units

@@ -23,6 +23,7 @@ import org.lwjgl.input.Mouse;
 
 import appeng.api.AEApi;
 import appeng.api.config.CraftingStatus;
+import appeng.api.config.PinsState;
 import appeng.api.config.SearchBoxMode;
 import appeng.api.config.Settings;
 import appeng.api.config.TerminalStyle;
@@ -100,6 +101,7 @@ public class GuiMEMonitorable extends AEBaseMEGui implements ISortSource, IConfi
     private GuiImgButton terminalStyleBox;
     private GuiImgButton searchStringSave;
     private GuiImgButton typeFilter;
+    private GuiImgButton pinsState;
     private boolean isAutoFocus = false;
     private int currentMouseX = 0;
     private int currentMouseY = 0;
@@ -228,19 +230,20 @@ public class GuiMEMonitorable extends AEBaseMEGui implements ISortSource, IConfi
         this.rows = calculateRowsCount();
 
         this.getMeSlots().clear();
-        if (isPinsHost) {
+        if (configSrc.getSetting(Settings.PINS_STATE) == PinsState.ACTIVE) {
             for (int x = 0; x < this.perRow; x++) {
                 this.getMeSlots().add(new PinSlotME(this.repo, x, this.offsetX + x * 18, 18));
             }
         }
-        for (int y = 0; y < this.rows - (isPinsHost ? 1 : 0); y++) {
+        for (int y = 0; y < this.rows - (configSrc.getSetting(Settings.PINS_STATE) == PinsState.ACTIVE ? 1 : 0); y++) {
             for (int x = 0; x < this.perRow; x++) {
                 this.getMeSlots().add(
                         new InternalSlotME(
                                 this.repo,
                                 x + y * this.perRow,
                                 this.offsetX + x * 18,
-                                18 + (isPinsHost ? 18 : 0) + y * 18));
+                                18 + (configSrc.getSetting(Settings.PINS_STATE) == PinsState.ACTIVE ? 18 : 0)
+                                        + y * 18));
             }
         }
 
@@ -343,6 +346,15 @@ public class GuiMEMonitorable extends AEBaseMEGui implements ISortSource, IConfi
                                 itemRender));
                 this.craftingStatusBtn.setHideEdge(13); // GuiTabButton implementation //
             }
+        }
+
+        if (isPinsHost) {
+            this.buttonList.add(
+                    this.pinsState = new GuiImgButton(
+                            this.guiLeft + 178,
+                            this.guiTop + 80,
+                            Settings.PINS_STATE,
+                            configSrc.getSetting(Settings.PINS_STATE)));
         }
 
         // Enum setting = AEConfig.INSTANCE.getSetting( "Terminal", SearchBoxMode.class, SearchBoxMode.AUTOSEARCH );
@@ -570,6 +582,10 @@ public class GuiMEMonitorable extends AEBaseMEGui implements ISortSource, IConfi
         }
         if (this.typeFilter != null) {
             this.typeFilter.set(this.configSrc.getSetting(Settings.TYPE_FILTER));
+        }
+        if (this.pinsState != null) {
+            this.pinsState.set(this.configSrc.getSetting(Settings.PINS_STATE));
+            initGui();
         }
 
         this.repo.updateView();
