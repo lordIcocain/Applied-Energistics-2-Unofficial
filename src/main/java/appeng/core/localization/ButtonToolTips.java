@@ -228,18 +228,7 @@ public enum ButtonToolTips {
     CellRestrictionHint,
 
     SearchGotoNext,
-    SearchGotoPrev,
-
-    SuperWirelessToolGroupBySingleName,
-    SuperWirelessToolGroupBySingleDesc,
-    SuperWirelessToolGroupByNetworkName,
-    SuperWirelessToolGroupByNetworkDesc,
-    SuperWirelessToolGroupByColorName,
-    SuperWirelessToolGroupByColorDesc,
-    SuperWirelessToolHideBoundedYesName,
-    SuperWirelessToolHideBoundedYesDesc,
-    SuperWirelessToolHideBoundedNoName,
-    SuperWirelessToolHideBoundedNoDesc;
+    SearchGotoPrev;
 
     private final String root;
 

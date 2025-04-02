@@ -47,8 +47,6 @@ import appeng.core.sync.packets.PacketPatternMultiSet;
 import appeng.core.sync.packets.PacketPatternSlot;
 import appeng.core.sync.packets.PacketPatternValueSet;
 import appeng.core.sync.packets.PacketProgressBar;
-import appeng.core.sync.packets.PacketSuperWirelessToolCommand;
-import appeng.core.sync.packets.PacketSuperWirelessToolData;
 import appeng.core.sync.packets.PacketSwapSlots;
 import appeng.core.sync.packets.PacketSwitchGuis;
 import appeng.core.sync.packets.PacketTransitionEffect;
@@ -122,8 +120,6 @@ public class AppEngPacketHandlerBase {
         PACKET_INTERFACE_TERMINAL_UPDATE(PacketInterfaceTerminalUpdate.class),
         PACKET_OPTIMIZE_PATTERNS(PacketOptimizePatterns.class),
         PACKET_NETWORK_STATUS_SELECTED(PacketNetworkStatusSelected.class),
-        PACKET_SUPER_WIRELESS_TOOL_DATA(PacketSuperWirelessToolData.class),
-        PACKET_SUPER_WIRELESS_TOOL_COMMAND(PacketSuperWirelessToolCommand.class),
         PACKET_NETWORK_VISUALISER_DATA(PacketNetworkVisualiserData.class);
 
         private final Class<? extends AppEngPacket> packetClass;

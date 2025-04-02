@@ -36,7 +36,6 @@ import appeng.items.tools.ToolMemoryCard;
 import appeng.items.tools.ToolNetworkTool;
 import appeng.items.tools.ToolNetworkVisualiser;
 import appeng.items.tools.ToolPriorityCard;
-import appeng.items.tools.ToolSuperWirelessKit;
 import appeng.items.tools.powered.ToolChargedStaff;
 import appeng.items.tools.powered.ToolColorApplicator;
 import appeng.items.tools.powered.ToolEntropyManipulator;
@@ -121,7 +120,6 @@ public final class ApiItems implements IItems {
     private final IItemDefinition toolDebugCard;
     private final IItemDefinition toolReplicatorCard;
 
-    private final IItemDefinition toolSuperWirelessKit;
     private final IItemDefinition toolNetworkVisualiser;
 
     public ApiItems(final DefinitionConstructor constructor) {
@@ -198,7 +196,6 @@ public final class ApiItems implements IItems {
         this.toolMeteoritePlacer = constructor.registerItemDefinition(new ToolMeteoritePlacer());
         this.toolDebugCard = constructor.registerItemDefinition(new ToolDebugCard());
         this.toolReplicatorCard = constructor.registerItemDefinition(new ToolReplicatorCard());
-        this.toolSuperWirelessKit = constructor.registerItemDefinition(new ToolSuperWirelessKit());
         this.toolNetworkVisualiser = constructor.registerItemDefinition(new ToolNetworkVisualiser());
     }
 
@@ -460,11 +457,6 @@ public final class ApiItems implements IItems {
 
     public IItemDefinition toolReplicatorCard() {
         return this.toolReplicatorCard;
-    }
-
-    @Override
-    public IItemDefinition toolSuperWirelessKit() {
-        return this.toolSuperWirelessKit;
     }
 
     public IItemDefinition toolNetworkVisualiser() {
