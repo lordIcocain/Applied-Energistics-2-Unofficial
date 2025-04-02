@@ -460,4 +460,20 @@ public class ToolSuperWirelessKit extends AEBaseItem implements IGuiItem {
     public IGuiItemObject getGuiObject(final ItemStack is, final World world, final int x, final int y, final int z) {
         return new SuperWirelessKitObject(is, world);
     }
+
+
+
+    TileWirelessConnector
+    public SuperWirelessToolDataObject getDataForTool(int i) {
+        return new SuperWirelessToolDataObject(
+                i,
+                this.hasCustomName() ? this.getCustomName() : this.getBlockType().getLocalizedName(),
+                getLocation(),
+                hasConnection(),
+                getTarget(),
+                getColor(),
+                getChannelUsage(),
+                isHub(),
+                getFreeSlots());
+    }
 }
