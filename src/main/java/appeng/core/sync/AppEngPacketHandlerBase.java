@@ -118,7 +118,9 @@ public class AppEngPacketHandlerBase {
         PACKET_NEI_BOOKMARK(PacketNEIBookmark.class),
         PACKET_INTERFACE_TERMINAL_UPDATE(PacketInterfaceTerminalUpdate.class),
         PACKET_OPTIMIZE_PATTERNS(PacketOptimizePatterns.class),
-        PACKET_NETWORK_STATUS_SELECTED(PacketNetworkStatusSelected.class),;
+        PACKET_NETWORK_STATUS_SELECTED(PacketNetworkStatusSelected.class),
+        PACKET_SUPER_WIRELESS_TOOL_DATA(PacketSuperWirelessToolData.class),
+        PACKET_SUPER_WIRELESS_TOOL_COMMAND(PacketSuperWirelessToolCommand.class);
 
         private final Class<? extends AppEngPacket> packetClass;
         private final Constructor<? extends AppEngPacket> packetConstructor;

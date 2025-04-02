@@ -29,6 +29,7 @@ import java.util.WeakHashMap;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import com.gtnewhorizon.gtnhlib.keybind.SyncedKeybind;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
@@ -134,6 +135,7 @@ import cpw.mods.fml.common.ModContainer;
 import cpw.mods.fml.relauncher.ReflectionHelper;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import org.lwjgl.input.Keyboard;
 
 /**
  * @author AlgorithmX2
@@ -164,6 +166,8 @@ public class Platform {
     private static final double[] BYTE_LIMIT;
     private static final int DIVISION_BASE = 1000;
     private static final DecimalFormat df = new DecimalFormat("#.##");
+    public static final SyncedKeybind keyBindLCtrl = SyncedKeybind.create(Keyboard.KEY_LCONTROL);
+    public static final SyncedKeybind keyBindTab = SyncedKeybind.create(Keyboard.KEY_TAB);
 
     static {
         BYTE_LIMIT = new double[10];

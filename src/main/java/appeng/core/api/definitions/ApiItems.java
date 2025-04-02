@@ -119,6 +119,8 @@ public final class ApiItems implements IItems {
     private final IItemDefinition toolDebugCard;
     private final IItemDefinition toolReplicatorCard;
 
+    private final IItemDefinition toolSuperWirelessKit;
+
     public ApiItems(final DefinitionConstructor constructor) {
         this.certusQuartzAxe = constructor.registerItemDefinition(new ToolQuartzAxe(AEFeature.CertusQuartzTools));
         this.certusQuartzHoe = constructor.registerItemDefinition(new ToolQuartzHoe(AEFeature.CertusQuartzTools));
@@ -193,6 +195,7 @@ public final class ApiItems implements IItems {
         this.toolMeteoritePlacer = constructor.registerItemDefinition(new ToolMeteoritePlacer());
         this.toolDebugCard = constructor.registerItemDefinition(new ToolDebugCard());
         this.toolReplicatorCard = constructor.registerItemDefinition(new ToolReplicatorCard());
+        this.toolSuperWirelessKit = constructor.registerItemDefinition(new ToolSuperWirelessKit());
     }
 
     @Override
@@ -453,5 +456,9 @@ public final class ApiItems implements IItems {
 
     public IItemDefinition toolReplicatorCard() {
         return this.toolReplicatorCard;
+    }
+
+    public IItemDefinition toolSuperWirelessKit() {
+        return this.toolSuperWirelessKit;
     }
 }
