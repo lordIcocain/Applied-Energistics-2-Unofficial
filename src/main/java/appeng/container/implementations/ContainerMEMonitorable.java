@@ -85,6 +85,7 @@ public class ContainerMEMonitorable extends AEBaseContainer
     private final IItemList<IAEItemStack> items = AEApi.instance().storage().createItemList();
     private final IConfigManager clientCM;
     private final ITerminalHost host;
+    private final IAEItemStack[] serverPins = new IAEItemStack[9];
 
     @GuiSync(99)
     public boolean canAccessViewCells = false;
@@ -459,7 +460,8 @@ public class ContainerMEMonitorable extends AEBaseContainer
                             }
                         }
                     }
-                    if (ais != null) {
+                    if (ais != null && checkPins(ais)) {
+                        serverPins[i] = ais;
                         updatePin(ais, i);
                     }
                 }
@@ -469,6 +471,13 @@ public class ContainerMEMonitorable extends AEBaseContainer
                 }
             }
         }
+    }
+
+    private boolean checkPins(IAEItemStack ais) {
+        for (IAEItemStack serverPin : serverPins) {
+            if (ais.isSameType(serverPin)) return false;
+        }
+        return true;
     }
 
     public void setPin(ItemStack is, int idx) {
@@ -490,7 +499,8 @@ public class ContainerMEMonitorable extends AEBaseContainer
                 final ICraftingGrid cc = itp.getGrid().getCache(ICraftingGrid.class);
                 final ImmutableSet<ICraftingCPU> cpuSet = cc.getCpus();
                 for (ICraftingCPU cpu : cpuSet.asList()) {
-                    if (!cpu.isBusy() && cpu.getFinalOutput() != null && cpu.getFinalOutput().isSameType(oldStack)) {
+                    if (!cpu.isBusy() && cpu.getFinalOutput() != null
+                            && cpu.getFinalOutput().isSameType(serverPins[idx])) {
                         cpu.resetFinalOutput();
                     }
                 }
