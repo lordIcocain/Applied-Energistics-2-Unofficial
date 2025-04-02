@@ -58,7 +58,7 @@ public class BlockWirelessConnector extends AEBaseTileBlock {
     @Override
     public void addInformation(ItemStack is, EntityPlayer p, List<String> lines, boolean advancedItemTooltips) {
         if (is.getItemDamage() == 0) {
-            lines.add(AEColor.values()[16].toString());
+            lines.add(AEColor.Transparent.toString());
         } else {
             lines.add(AEColor.values()[is.getItemDamage() - 1].toString());
         }
