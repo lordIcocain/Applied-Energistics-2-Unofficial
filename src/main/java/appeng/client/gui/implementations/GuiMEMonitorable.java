@@ -230,20 +230,21 @@ public class GuiMEMonitorable extends AEBaseMEGui implements ISortSource, IConfi
         this.rows = calculateRowsCount();
 
         this.getMeSlots().clear();
-        if (configSrc.getSetting(Settings.PINS_STATE) == PinsState.ACTIVE) {
+        if (isPinsHost && configSrc.getSetting(Settings.PINS_STATE) == PinsState.ACTIVE) {
             for (int x = 0; x < this.perRow; x++) {
                 this.getMeSlots().add(new PinSlotME(this.repo, x, this.offsetX + x * 18, 18));
             }
         }
-        for (int y = 0; y < this.rows - (configSrc.getSetting(Settings.PINS_STATE) == PinsState.ACTIVE ? 1 : 0); y++) {
+        for (int y = 0; y < this.rows
+                - (isPinsHost && configSrc.getSetting(Settings.PINS_STATE) == PinsState.ACTIVE ? 1 : 0); y++) {
             for (int x = 0; x < this.perRow; x++) {
                 this.getMeSlots().add(
                         new InternalSlotME(
                                 this.repo,
                                 x + y * this.perRow,
                                 this.offsetX + x * 18,
-                                18 + (configSrc.getSetting(Settings.PINS_STATE) == PinsState.ACTIVE ? 18 : 0)
-                                        + y * 18));
+                                18 + (isPinsHost && configSrc.getSetting(Settings.PINS_STATE) == PinsState.ACTIVE ? 18
+                                        : 0) + y * 18));
             }
         }
 
