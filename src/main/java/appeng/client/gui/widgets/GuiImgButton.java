@@ -26,6 +26,7 @@ import appeng.api.config.ActionItems;
 import appeng.api.config.AdvancedBlockingMode;
 import appeng.api.config.CellType;
 import appeng.api.config.CondenserOutput;
+import appeng.api.config.CraftingAllow;
 import appeng.api.config.CraftingMode;
 import appeng.api.config.CraftingSortOrder;
 import appeng.api.config.CraftingStatus;
@@ -816,6 +817,25 @@ public class GuiImgButton extends GuiButton implements ITooltip {
                     ButtonToolTips.CellRestrictionHint);
 
             this.registerApp(
+                    16 * 14 + 3,
+                    Settings.CRAFTING_ALLOW,
+                    CraftingAllow.ALLOW_ALL,
+                    ButtonToolTips.CPUAllowMode,
+                    ButtonToolTips.CPUAllowAllDesc);
+            this.registerApp(
+                    16 * 14 + 4,
+                    Settings.CRAFTING_ALLOW,
+                    CraftingAllow.ONLY_PLAYER,
+                    ButtonToolTips.CPUAllowMode,
+                    ButtonToolTips.CPUOnlyAllowPlayerDesc);
+            this.registerApp(
+                    16 * 14 + 5,
+                    Settings.CRAFTING_ALLOW,
+                    CraftingAllow.ONLY_NONPLAYER,
+                    ButtonToolTips.CPUAllowMode,
+                    ButtonToolTips.CPUOnlyAllowNonPlayerDesc);
+
+            this.registerApp(
                     16 * 15 + 14,
                     Settings.PINS_STATE,
                     PinsState.ACTIVE,
@@ -828,7 +848,6 @@ public class GuiImgButton extends GuiButton implements ITooltip {
                     PinsState.DISABLED,
                     ButtonToolTips.PinsSection,
                     ButtonToolTips.PinsSectionDisabled);
-
         }
     }
 

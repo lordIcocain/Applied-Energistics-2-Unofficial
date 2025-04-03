@@ -230,6 +230,11 @@ public enum ButtonToolTips {
     SearchGotoNext,
     SearchGotoPrev,
 
+    CPUAllowMode,
+    CPUAllowAllDesc,
+    CPUOnlyAllowPlayerDesc,
+    CPUOnlyAllowNonPlayerDesc,
+
     PinsSection,
     PinsSectionActive,
     PinsSectionDisabled;
