@@ -89,7 +89,7 @@ public enum Settings {
     INTERFACE_TERMINAL_SECTION_ORDER(EnumSet.allOf(StringOrder.class)),
 
     NETWORK_VISUALISER(EnumSet.allOf(VisualisationModes.class)),
-  
+
     CRAFTING_ALLOW(EnumSet.allOf(CraftingAllow.class));
 
     private final EnumSet<? extends Enum<?>> values;

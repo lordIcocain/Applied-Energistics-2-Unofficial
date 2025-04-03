@@ -227,7 +227,7 @@ public enum GuiBridge implements IGuiHandler {
     GUI_CELL_RESTRICTION(ContainerCellRestriction.class, ICellRestriction.class, GuiHostType.ITEM_OR_WORLD, null),
 
     GUI_PATTERN_ITEM_RENAMER(ContainerPatternItemRenamer.class, ITerminalHost.class, GuiHostType.ITEM_OR_WORLD, null),
-  
+
     GUI_GROWER(ContainerGrower.class, TileGrower.class, GuiHostType.WORLD, null);
 
     private final Class tileClass;
