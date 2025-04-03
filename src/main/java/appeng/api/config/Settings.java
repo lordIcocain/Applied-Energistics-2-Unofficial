@@ -88,9 +88,9 @@ public enum Settings {
 
     INTERFACE_TERMINAL_SECTION_ORDER(EnumSet.allOf(StringOrder.class)),
 
-    SUPER_WIRELESS_TOOL_HIDE_BOUNDED(EnumSet.of(YesNo.YES, YesNo.NO)),
-
-    NETWORK_VISUALISER(EnumSet.allOf(VisualisationModes.class));
+    NETWORK_VISUALISER(EnumSet.allOf(VisualisationModes.class)),
+  
+    CRAFTING_ALLOW(EnumSet.allOf(CraftingAllow.class));
 
     private final EnumSet<? extends Enum<?>> values;
 
