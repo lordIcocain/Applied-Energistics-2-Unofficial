@@ -62,6 +62,7 @@ import appeng.core.sync.GuiBridge;
 import appeng.core.sync.network.NetworkHandler;
 import appeng.core.sync.packets.PacketSwitchGuis;
 import appeng.core.sync.packets.PacketValueConfig;
+import appeng.helpers.IPinsHandler;
 import appeng.helpers.WirelessTerminalGuiObject;
 import appeng.integration.IntegrationRegistry;
 import appeng.integration.IntegrationType;
@@ -71,7 +72,8 @@ import appeng.tile.misc.TileSecurity;
 import appeng.util.IConfigManagerHost;
 import appeng.util.Platform;
 
-public class GuiMEMonitorable extends AEBaseMEGui implements ISortSource, IConfigManagerHost, IDropToFillTextField {
+public class GuiMEMonitorable extends AEBaseMEGui
+        implements ISortSource, IConfigManagerHost, IDropToFillTextField, IPinsHandler {
 
     public static int craftingGridOffsetX;
     public static int craftingGridOffsetY;
@@ -696,7 +698,8 @@ public class GuiMEMonitorable extends AEBaseMEGui implements ISortSource, IConfi
         return Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT);
     }
 
-    public void setPin(IAEItemStack ais, int idx) {
+    @Override
+    public void setAEPin(IAEItemStack ais, int idx) {
         repo.setPin(ais, idx);
         this.repo.updateView();
     }

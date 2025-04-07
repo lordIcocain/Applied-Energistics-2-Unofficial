@@ -19,7 +19,6 @@ import net.minecraft.tileentity.TileEntity;
 
 import appeng.api.storage.data.IAEItemStack;
 import appeng.client.ClientHelper;
-import appeng.client.gui.implementations.GuiMEMonitorable;
 import appeng.container.AEBaseContainer;
 import appeng.container.ContainerOpenContext;
 import appeng.container.implementations.ContainerCraftAmount;
@@ -29,6 +28,7 @@ import appeng.container.implementations.ContainerPatternValueAmount;
 import appeng.core.sync.AppEngPacket;
 import appeng.core.sync.GuiBridge;
 import appeng.core.sync.network.INetworkInfo;
+import appeng.helpers.IPinsHandler;
 import appeng.helpers.InventoryAction;
 import appeng.util.Platform;
 import appeng.util.item.AEItemStack;
@@ -183,8 +183,8 @@ public class PacketInventoryAction extends AppEngPacket {
             } else {
                 ClientHelper.proxy.getPlayers().get(0).inventory.setItemStack(this.slotItem.getItemStack());
             }
-        } else if (Minecraft.getMinecraft().currentScreen instanceof GuiMEMonitorable gmm) {
-            gmm.setPin(slotItem, slot);
+        } else if (Minecraft.getMinecraft().currentScreen instanceof IPinsHandler iph) {
+            iph.setAEPin(slotItem, slot);
         }
     }
 }

@@ -68,6 +68,7 @@ import appeng.core.sync.network.NetworkHandler;
 import appeng.core.sync.packets.PacketInventoryAction;
 import appeng.core.sync.packets.PacketMEInventoryUpdate;
 import appeng.core.sync.packets.PacketValueConfig;
+import appeng.helpers.IPinsHandler;
 import appeng.helpers.InventoryAction;
 import appeng.helpers.WirelessTerminalGuiObject;
 import appeng.me.helpers.ChannelPowerSrc;
@@ -78,7 +79,7 @@ import appeng.util.Platform;
 import appeng.util.item.AEItemStack;
 
 public class ContainerMEMonitorable extends AEBaseContainer
-        implements IConfigManagerHost, IConfigurableObject, IMEMonitorHandlerReceiver<IAEItemStack> {
+        implements IConfigManagerHost, IConfigurableObject, IMEMonitorHandlerReceiver<IAEItemStack>, IPinsHandler {
 
     private final SlotRestrictedInput[] cellView = new SlotRestrictedInput[5];
     private final IMEMonitor<IAEItemStack> monitor;
@@ -481,6 +482,7 @@ public class ContainerMEMonitorable extends AEBaseContainer
         return true;
     }
 
+    @Override
     public void setPin(ItemStack is, int idx) {
         if (host instanceof ITerminalPins itp) {
             AppEngInternalAEInventory aip = itp.getPins();

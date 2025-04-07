@@ -55,7 +55,6 @@ import appeng.client.me.SlotME;
 import appeng.container.guisync.GuiSync;
 import appeng.container.guisync.SyncData;
 import appeng.container.implementations.ContainerCellWorkbench;
-import appeng.container.implementations.ContainerMEMonitorable;
 import appeng.container.implementations.ContainerUpgradeable;
 import appeng.container.slot.AppEngSlot;
 import appeng.container.slot.SlotCraftingMatrix;
@@ -72,6 +71,7 @@ import appeng.core.sync.packets.PacketInventoryAction;
 import appeng.core.sync.packets.PacketPartialItem;
 import appeng.core.sync.packets.PacketValueConfig;
 import appeng.helpers.ICustomNameObject;
+import appeng.helpers.IPinsHandler;
 import appeng.helpers.InventoryAction;
 import appeng.items.materials.ItemMultiMaterial;
 import appeng.parts.automation.UpgradeInventory;
@@ -712,11 +712,11 @@ public abstract class AEBaseContainer extends Container {
             }
 
             if (action == InventoryAction.SET_PIN) {
-                if (this instanceof ContainerMEMonitorable cmm) {
+                if (this instanceof IPinsHandler iph) {
                     if (id == -1) {
-                        cmm.setPin(null, slot);
+                        iph.setPin(null, slot);
                     } else if (player.inventory.getItemStack() != null) {
-                        cmm.setPin(player.inventory.getItemStack(), slot);
+                        iph.setPin(player.inventory.getItemStack(), slot);
                     }
                 }
             }
