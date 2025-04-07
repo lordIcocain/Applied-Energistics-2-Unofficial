@@ -467,6 +467,7 @@ public class ContainerMEMonitorable extends AEBaseContainer
                 }
             } else {
                 for (int i = 0; i < api.getSizeInventory(); i++) {
+                    serverPins[i] = null;
                     updatePin(null, i);
                 }
             }

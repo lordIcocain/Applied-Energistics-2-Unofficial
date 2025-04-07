@@ -353,7 +353,7 @@ public class GuiMEMonitorable extends AEBaseMEGui implements ISortSource, IConfi
             this.buttonList.add(
                     this.pinsState = new GuiImgButton(
                             this.guiLeft + 178,
-                            this.guiTop + 96,
+                            this.guiTop + 18 + (rows * 18) + 25,
                             Settings.PINS_STATE,
                             configSrc.getSetting(Settings.PINS_STATE)));
         }
