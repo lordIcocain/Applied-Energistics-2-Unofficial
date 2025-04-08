@@ -78,7 +78,7 @@ public class ItemRepo implements IDisplayRepo {
             if (ais != null) {
                 pins[idx] = ais.copy();
                 ais.reset();
-            } else {
+            } else if (!pin.isSameType(pins[idx])) {
                 pins[idx] = pin;
             }
         }
