@@ -447,7 +447,7 @@ public class ContainerMEMonitorable extends AEBaseContainer
                         while (j < cpuSet.size()) {
                             ICraftingCPU cpu = cpuSet.get(j);
                             if (cpu.isBusy() && cpu.getFinalOutput() != null) {
-                                ais = cpu.getFinalOutput();
+                                ais = cpu.getFinalOutput().copy();
                             }
                             j++;
                         }
@@ -455,7 +455,7 @@ public class ContainerMEMonitorable extends AEBaseContainer
                             while (jj < cpuSet.size()) {
                                 ICraftingCPU cpu = cpuSet.get(jj);
                                 if (!cpu.isBusy() && cpu.getFinalOutput() != null) {
-                                    ais = cpu.getFinalOutput();
+                                    ais = cpu.getFinalOutput().copy();
                                 }
                                 jj++;
                             }
@@ -493,7 +493,6 @@ public class ContainerMEMonitorable extends AEBaseContainer
                 }
             }
 
-            IAEItemStack oldStack = aip.getAEStackInSlot(idx);
             aip.setInventorySlotContents(idx, is);
             aip.markDirty();
             updatePin(aip.getAEStackInSlot(idx), idx);
