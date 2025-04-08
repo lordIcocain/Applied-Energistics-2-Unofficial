@@ -29,6 +29,7 @@ import com.google.common.collect.ImmutableSet;
 
 import appeng.api.AEApi;
 import appeng.api.config.Actionable;
+import appeng.api.config.CraftingAllow;
 import appeng.api.config.PinsState;
 import appeng.api.config.PowerMultiplier;
 import appeng.api.config.SecurityPermissions;
@@ -87,6 +88,8 @@ public class ContainerMEMonitorable extends AEBaseContainer
     private final IConfigManager clientCM;
     private final ITerminalHost host;
     private final IAEItemStack[] serverPins = new IAEItemStack[9];
+    private ImmutableList<ICraftingCPU> lastCpuSet = null;
+    private int lastUpdate = 0;
 
     @GuiSync(99)
     public boolean canAccessViewCells = false;
@@ -193,6 +196,8 @@ public class ContainerMEMonitorable extends AEBaseContainer
                 this.setValidContainer(false);
             }
 
+            boolean extraordinary = false;
+
             for (final Settings set : this.serverCM.getSettings()) {
                 final Enum<?> sideLocal = this.serverCM.getSetting(set);
                 final Enum<?> sideRemote = this.clientCM.getSetting(set);
@@ -210,10 +215,13 @@ public class ContainerMEMonitorable extends AEBaseContainer
                     }
 
                     if (set == Settings.PINS_STATE) {
-                        updatePins();
+                        extraordinary = true;
+                        lastUpdate = 24;
                     }
                 }
             }
+
+            updatePins(extraordinary);
 
             if (!this.items.isEmpty()) {
                 try {
@@ -433,43 +441,56 @@ public class ContainerMEMonitorable extends AEBaseContainer
         }
     }
 
-    public void updatePins() {
+    public void updatePins(boolean ext) {
         if (host instanceof ITerminalPins itp) {
+            ++lastUpdate;
             AppEngInternalAEInventory api = itp.getPins();
-            if (serverCM.getSetting(Settings.PINS_STATE) == PinsState.ACTIVE) {
-                final ICraftingGrid cc = itp.getGrid().getCache(ICraftingGrid.class);
-                final ImmutableList<ICraftingCPU> cpuSet = cc.getCpus().asList();
-                int j = 0;
-                int jj = 0;
-                for (int i = 0; i < api.getSizeInventory(); i++) {
-                    IAEItemStack ais = api.getAEStackInSlot(i);
-                    if (ais == null) {
-                        while (j < cpuSet.size()) {
-                            ICraftingCPU cpu = cpuSet.get(j);
-                            if (cpu.isBusy() && cpu.getFinalOutput() != null) {
-                                ais = cpu.getFinalOutput().copy();
-                            }
-                            j++;
-                        }
-                        if (ais == null) {
-                            while (jj < cpuSet.size()) {
-                                ICraftingCPU cpu = cpuSet.get(jj);
-                                if (!cpu.isBusy() && cpu.getFinalOutput() != null) {
-                                    ais = cpu.getFinalOutput().copy();
+            boolean isActive = serverCM.getSetting(Settings.PINS_STATE) == PinsState.ACTIVE;
+            if (ext || isActive) {
+                if (isActive) {
+                    final ICraftingGrid cc = itp.getGrid().getCache(ICraftingGrid.class);
+                    final ImmutableList<ICraftingCPU> cpuSet = cc.getCpus().asList();
+
+                    if (!cpuSet.equals(lastCpuSet) || lastUpdate > 20) {
+                        lastUpdate = 0;
+                        lastCpuSet = cpuSet;
+                        int j = 0;
+                        int jj = 0;
+                        for (int i = 0; i < api.getSizeInventory(); i++) {
+                            IAEItemStack ais = api.getAEStackInSlot(i);
+                            if (ais == null) {
+                                while (j < cpuSet.size()) {
+                                    ICraftingCPU cpu = cpuSet.get(j);
+                                    j++;
+                                    if (cpu.getCraftingAllowMode() != CraftingAllow.ONLY_NONPLAYER && cpu.isBusy()
+                                            && cpu.getFinalOutput() != null) {
+                                        ais = cpu.getFinalOutput().copy();
+                                        break;
+                                    }
                                 }
-                                jj++;
+                                if (ais == null) {
+                                    while (jj < cpuSet.size()) {
+                                        ICraftingCPU cpu = cpuSet.get(jj);
+                                        jj++;
+                                        if (cpu.getCraftingAllowMode() != CraftingAllow.ONLY_NONPLAYER && !cpu.isBusy()
+                                                && cpu.getFinalOutput() != null) {
+                                            ais = cpu.getFinalOutput().copy();
+                                            break;
+                                        }
+                                    }
+                                }
+                            }
+                            if (ais != null && checkPins(ais)) {
+                                serverPins[i] = ais;
+                                updatePin(ais, i);
                             }
                         }
                     }
-                    if (ais != null && checkPins(ais)) {
-                        serverPins[i] = ais;
-                        updatePin(ais, i);
+                } else {
+                    for (int i = 0; i < api.getSizeInventory(); i++) {
+                        serverPins[i] = null;
+                        updatePin(null, i);
                     }
-                }
-            } else {
-                for (int i = 0; i < api.getSizeInventory(); i++) {
-                    serverPins[i] = null;
-                    updatePin(null, i);
                 }
             }
         }
@@ -501,7 +522,8 @@ public class ContainerMEMonitorable extends AEBaseContainer
                 final ICraftingGrid cc = itp.getGrid().getCache(ICraftingGrid.class);
                 final ImmutableSet<ICraftingCPU> cpuSet = cc.getCpus();
                 for (ICraftingCPU cpu : cpuSet.asList()) {
-                    if (!cpu.isBusy() && cpu.getFinalOutput() != null
+                    if (cpu.getCraftingAllowMode() != CraftingAllow.ONLY_NONPLAYER && !cpu.isBusy()
+                            && cpu.getFinalOutput() != null
                             && cpu.getFinalOutput().isSameType(serverPins[idx])) {
                         cpu.resetFinalOutput();
                     }
