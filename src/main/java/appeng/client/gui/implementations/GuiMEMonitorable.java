@@ -49,6 +49,7 @@ import appeng.container.implementations.ContainerMEMonitorable;
 import appeng.container.slot.AppEngSlot;
 import appeng.container.slot.SlotCraftingMatrix;
 import appeng.container.slot.SlotFakeCraftingMatrix;
+import appeng.container.slot.SlotRestrictedInput;
 import appeng.core.AEConfig;
 import appeng.core.AELog;
 import appeng.core.CommonHelper;
@@ -63,6 +64,7 @@ import appeng.helpers.WirelessTerminalGuiObject;
 import appeng.integration.IntegrationRegistry;
 import appeng.integration.IntegrationType;
 import appeng.integration.modules.NEI;
+import appeng.items.storage.ItemViewCell;
 import appeng.parts.reporting.AbstractPartTerminal;
 import appeng.tile.misc.TileSecurity;
 import appeng.util.IConfigManagerHost;
@@ -401,6 +403,32 @@ public class GuiMEMonitorable extends AEBaseMEGui implements ISortSource, IConfi
     @Override
     protected void mouseClicked(final int xCoord, final int yCoord, final int btn) {
         searchField.mouseClicked(xCoord, yCoord, btn);
+        if (this.viewCell && monitorableContainer.canAccessViewCells && btn == 1) {
+            SlotRestrictedInput[] cvss = monitorableContainer.getCellViewSlots();
+            for (int i = 0; i < cvss.length; i++) {
+                SlotRestrictedInput cvs = cvss[i];
+                // if it has an item
+                if (!cvs.getHasStack()) continue;
+                // just in case
+                if (!(cvs.getStack().getItem() instanceof ItemViewCell)) continue;
+                // check bounds
+                int dx = xCoord - guiLeft, dy = yCoord - guiTop;
+                if (dx < cvs.getX() || dx > cvs.getX() + 18) continue;
+                if (dy < cvs.getY() || dy > cvs.getY() + 18) continue;
+
+                // everything met! update the view cell
+                try {
+                    NetworkHandler.instance
+                            .sendToServer(new PacketValueConfig("Terminal.UpdateViewCell", Integer.toString(i)));
+                } catch (IOException e) {
+                    AELog.debug(e);
+                }
+
+                // eat the input if a view cell was successfully ctrl-clicked
+                return;
+            }
+
+        }
         super.mouseClicked(xCoord, yCoord, btn);
     }
 
