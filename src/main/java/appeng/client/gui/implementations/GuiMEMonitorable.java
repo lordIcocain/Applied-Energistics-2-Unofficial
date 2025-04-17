@@ -424,7 +424,7 @@ public class GuiMEMonitorable extends AEBaseMEGui implements ISortSource, IConfi
                     AELog.debug(e);
                 }
 
-                // eat the input if a view cell was successfully ctrl-clicked
+                // eat the right-click input if a view cell was successfully toggled
                 return;
             }
 
