@@ -815,6 +815,27 @@ public class GuiImgButton extends GuiButton implements ITooltip {
                     ButtonToolTips.CellRestrictionHint);
 
             this.registerApp(
+                    16 * 14 + 3,
+                    Settings.CRAFTING_ALLOW,
+                    CraftingAllow.ALLOW_ALL,
+                    ButtonToolTips.CPUAllowMode,
+                    ButtonToolTips.CPUAllowAllDesc);
+
+            this.registerApp(
+                    16 * 14 + 4,
+                    Settings.CRAFTING_ALLOW,
+                    CraftingAllow.ONLY_PLAYER,
+                    ButtonToolTips.CPUAllowMode,
+                    ButtonToolTips.CPUOnlyAllowPlayerDesc);
+
+            this.registerApp(
+                    16 * 14 + 5,
+                    Settings.CRAFTING_ALLOW,
+                    CraftingAllow.ONLY_NONPLAYER,
+                    ButtonToolTips.CPUAllowMode,
+                    ButtonToolTips.CPUOnlyAllowNonPlayerDesc);
+
+            this.registerApp(
                     16 * 6 + 9,
                     Settings.SUPER_WIRELESS_TOOL_GROUP_BY,
                     SuperWirelessToolGroupBy.Single,
@@ -848,8 +869,7 @@ public class GuiImgButton extends GuiButton implements ITooltip {
                     YesNo.NO,
                     ButtonToolTips.SuperWirelessToolHideBoundedNoName,
                     ButtonToolTips.SuperWirelessToolHideBoundedNoDesc);
-
-        }
+            }
     }
 
     private void registerApp(final int iconIndex, final Settings setting, final Enum val, final ButtonToolTips title,

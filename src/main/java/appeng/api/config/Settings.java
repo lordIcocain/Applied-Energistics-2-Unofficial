@@ -86,6 +86,10 @@ public enum Settings {
 
     INTERFACE_TERMINAL_SECTION_ORDER(EnumSet.allOf(StringOrder.class)),
 
+    NETWORK_VISUALISER(EnumSet.allOf(VisualisationModes.class)),
+
+    CRAFTING_ALLOW(EnumSet.allOf(CraftingAllow.class)),
+
     SUPER_WIRELESS_TOOL(EnumSet.allOf(SuperWirelessTool.class)),
 
     SUPER_WIRELESS_TOOL_ADVANCED(EnumSet.allOf(SuperWirelessToolAdvanced.class)),

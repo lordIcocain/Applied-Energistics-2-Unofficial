@@ -119,6 +119,8 @@ public class AppEngPacketHandlerBase {
         PACKET_INTERFACE_TERMINAL_UPDATE(PacketInterfaceTerminalUpdate.class),
         PACKET_OPTIMIZE_PATTERNS(PacketOptimizePatterns.class),
         PACKET_NETWORK_STATUS_SELECTED(PacketNetworkStatusSelected.class),
+        PACKET_PATTERN_ITEM_RENAMER(PacketPatternItemRenamer.class),
+        PACKET_NETWORK_VISUALISER_DATA(PacketNetworkVisualiserData.class),
         PACKET_SUPER_WIRELESS_TOOL_DATA(PacketSuperWirelessToolData.class),
         PACKET_SUPER_WIRELESS_TOOL_COMMAND(PacketSuperWirelessToolCommand.class);
 

@@ -229,6 +229,12 @@ public enum ButtonToolTips {
 
     SearchGotoNext,
     SearchGotoPrev,
+
+    CPUAllowMode,
+    CPUAllowAllDesc,
+    CPUOnlyAllowPlayerDesc,
+    CPUOnlyAllowNonPlayerDesc,
+
     SuperWirelessToolGroupBySingleName,
     SuperWirelessToolGroupBySingleDesc,
     SuperWirelessToolGroupByNetworkName,

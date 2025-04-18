@@ -119,6 +119,7 @@ public final class ApiItems implements IItems {
     private final IItemDefinition toolDebugCard;
     private final IItemDefinition toolReplicatorCard;
 
+    private final IItemDefinition toolNetworkVisualiser;
     private final IItemDefinition toolSuperWirelessKit;
 
     public ApiItems(final DefinitionConstructor constructor) {
@@ -195,6 +196,7 @@ public final class ApiItems implements IItems {
         this.toolMeteoritePlacer = constructor.registerItemDefinition(new ToolMeteoritePlacer());
         this.toolDebugCard = constructor.registerItemDefinition(new ToolDebugCard());
         this.toolReplicatorCard = constructor.registerItemDefinition(new ToolReplicatorCard());
+        this.toolNetworkVisualiser = constructor.registerItemDefinition(new ToolNetworkVisualiser());
         this.toolSuperWirelessKit = constructor.registerItemDefinition(new ToolSuperWirelessKit());
     }
 
@@ -456,9 +458,5 @@ public final class ApiItems implements IItems {
 
     public IItemDefinition toolReplicatorCard() {
         return this.toolReplicatorCard;
-    }
-
-    public IItemDefinition toolSuperWirelessKit() {
-        return this.toolSuperWirelessKit;
     }
 }

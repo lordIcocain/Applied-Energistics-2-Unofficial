@@ -320,7 +320,7 @@ public class Platform {
     }
 
     private static boolean isNotValidSetting(final Enum e) {
-        if (e == SortOrder.INVTWEAKS && !IntegrationRegistry.INSTANCE.isEnabled(IntegrationType.InvTweaks)) {
+        if (e == SortOrder.INVTWEAKS && !InvTweakSortingModule.isLoaded()) {
             return true;
         }
 
