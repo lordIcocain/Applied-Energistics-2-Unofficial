@@ -176,15 +176,15 @@ public final class AEConfig extends Configuration implements IConfigurableObject
                 .get("worldGen", "meteoriteDimensionWhitelist", this.meteoriteDimensionWhitelist).getStringList();
         this.addCustomCategoryComment(
                 "worldGen",
-                "The meteorite dimension whitelist list can be used alone or in unison with the meteorite (in)valid blocks whitelist. \n" +
-                        "Default debris is the following (in this order) Stone, Cobblestone, biomeFillerBlock (what's under the top block, usually dirt), Gravel, biomeTopBlock (usually grass) \n" +
-                        "Format: dimensionID, modID:blockID:metadata, modID:blockID:metadata, modID:blockID:metadata, modID:blockID:metadata, modID:blockID:metadata \n" +
-                        "--------------------------------------------------------------------------------------------------------# \n" +
-                        "The meteorite (in)valid spawn blocks list can be used alone or in unison with the meteorite dimension whitelist. Format: modId:blockID, modId:blockID, etc. ");
-        this.meteoriteValidBlocks = this
-                .get("worldGen", "meteoriteValidSpawnBlocks", this.meteoriteValidBlocks).getStringList();
-        this.meteoriteInvalidBlocks = this
-                .get("worldGen", "meteoriteInvalidSpawnBlocks", this.meteoriteInvalidBlocks).getStringList();
+                "The meteorite dimension whitelist list can be used alone or in unison with the meteorite (in)valid blocks whitelist. \n"
+                        + "Default debris is the following (in this order) Stone, Cobblestone, biomeFillerBlock (what's under the top block, usually dirt), Gravel, biomeTopBlock (usually grass) \n"
+                        + "Format: dimensionID, modID:blockID:metadata, modID:blockID:metadata, modID:blockID:metadata, modID:blockID:metadata, modID:blockID:metadata \n"
+                        + "--------------------------------------------------------------------------------------------------------# \n"
+                        + "The meteorite (in)valid spawn blocks list can be used alone or in unison with the meteorite dimension whitelist. Format: modId:blockID, modId:blockID, etc. ");
+        this.meteoriteValidBlocks = this.get("worldGen", "meteoriteValidSpawnBlocks", this.meteoriteValidBlocks)
+                .getStringList();
+        this.meteoriteInvalidBlocks = this.get("worldGen", "meteoriteInvalidSpawnBlocks", this.meteoriteInvalidBlocks)
+                .getStringList();
         this.quartzOresPerCluster = this.get("worldGen", "quartzOresPerCluster", this.quartzOresPerCluster)
                 .getInt(this.quartzOresPerCluster);
         this.quartzOresClusterAmount = this.get("worldGen", "quartzOresClusterAmount", this.quartzOresClusterAmount)
