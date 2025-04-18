@@ -373,10 +373,10 @@ public class ContainerMEMonitorable extends AEBaseContainer
         return this.cellView;
     }
 
-    public void toggleViewCell(int viewCellIdx) {
+    public void toggleViewCell(int slotIdx) {
         if (!this.canAccessViewCells) return;
-        if (viewCellIdx < 0 || viewCellIdx >= this.cellView.length) return;
-        SlotRestrictedInput slot = getCellViewSlot(viewCellIdx);
+        Slot slot = getSlot(slotIdx);
+        if (!(slot instanceof SlotRestrictedInput)) return;
         ItemStack cellStack = slot.getStack();
         if (cellStack == null) return;
         if (!(cellStack.getItem() instanceof ItemViewCell viewCell)) return;
