@@ -155,7 +155,7 @@ public class ToolSuperWirelessKit extends AEBaseItem implements IGuiItem {
 
     @Override
     public boolean onItemUse(ItemStack is, EntityPlayer p, World w, int x, int y, int z, int side, float xOff,
-                             float yOff, float zOff) {
+            float yOff, float zOff) {
         if (Platform.isServer()) {
             SuperWirelessTool mode = (SuperWirelessTool) getConfigManager(is).getSetting(Settings.SUPER_WIRELESS_TOOL);
             TileEntity te = w.getTileEntity(x, y, z);
@@ -164,11 +164,11 @@ public class ToolSuperWirelessKit extends AEBaseItem implements IGuiItem {
                 return false;
             } else if (!((ISecurityGrid) gh.getGridNode(ForgeDirection.UNKNOWN).getGrid().getCache(ISecurityGrid.class))
                     .hasPermission(p, SecurityPermissions.BUILD)) {
-                p.addChatMessage(
-                        new ChatComponentTranslation(
-                                "item.appliedenergistics2.ToolSuperWirelessKit.security.player"));
-                return false;
-            }
+                        p.addChatMessage(
+                                new ChatComponentTranslation(
+                                        "item.appliedenergistics2.ToolSuperWirelessKit.security.player"));
+                        return false;
+                    }
 
             switch (mode) {
                 case Simple -> {
@@ -209,18 +209,18 @@ public class ToolSuperWirelessKit extends AEBaseItem implements IGuiItem {
                                             p.addChatMessage(
                                                     new ChatComponentTranslation(
                                                             "item.appliedenergistics2.ToolSuperWirelessKit.bound.advanced.filled")
-                                                            .setChatStyle(
-                                                                    new ChatStyle()
-                                                                            .setColor(EnumChatFormatting.RED)));
+                                                                    .setChatStyle(
+                                                                            new ChatStyle()
+                                                                                    .setColor(EnumChatFormatting.RED)));
                                             return false;
                                         }
                                     } else {
                                         p.addChatMessage(
                                                 new ChatComponentTranslation(
                                                         "item.appliedenergistics2.ToolSuperWirelessKit.bound.advanced.filled")
-                                                        .setChatStyle(
-                                                                new ChatStyle()
-                                                                        .setColor(EnumChatFormatting.RED)));
+                                                                .setChatStyle(
+                                                                        new ChatStyle()
+                                                                                .setColor(EnumChatFormatting.RED)));
                                         return false;
                                     }
                                 }
@@ -340,14 +340,14 @@ public class ToolSuperWirelessKit extends AEBaseItem implements IGuiItem {
 
     @Override
     protected void addCheckedInformation(ItemStack is, EntityPlayer player, List<String> lines,
-                                         boolean displayMoreInfo) {
+            boolean displayMoreInfo) {
         SuperWirelessTool mode = (SuperWirelessTool) getConfigManager(is).getSetting(Settings.SUPER_WIRELESS_TOOL);
         lines.add(
                 StatCollector.translateToLocal("item.appliedenergistics2.ToolSuperWirelessKit.mode") + " "
                         + EnumChatFormatting.YELLOW
                         + StatCollector.translateToLocal(
-                        "item.appliedenergistics2.ToolSuperWirelessKit.mode."
-                                + mode.toString().toLowerCase(Locale.US)));
+                                "item.appliedenergistics2.ToolSuperWirelessKit.mode."
+                                        + mode.toString().toLowerCase(Locale.US)));
         lines.add(StatCollector.translateToLocal("item.appliedenergistics2.ToolSuperWirelessKit.clear"));
         switch (mode) {
             case Simple -> {
@@ -459,21 +459,5 @@ public class ToolSuperWirelessKit extends AEBaseItem implements IGuiItem {
     @Override
     public IGuiItemObject getGuiObject(final ItemStack is, final World world, final int x, final int y, final int z) {
         return new SuperWirelessKitObject(is, world);
-    }
-
-
-
-    TileWirelessConnector
-    public SuperWirelessToolDataObject getDataForTool(int i) {
-        return new SuperWirelessToolDataObject(
-                i,
-                this.hasCustomName() ? this.getCustomName() : this.getBlockType().getLocalizedName(),
-                getLocation(),
-                hasConnection(),
-                getTarget(),
-                getColor(),
-                getChannelUsage(),
-                isHub(),
-                getFreeSlots());
     }
 }

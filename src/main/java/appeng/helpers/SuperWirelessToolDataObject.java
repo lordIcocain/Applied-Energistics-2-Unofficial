@@ -21,7 +21,7 @@ public class SuperWirelessToolDataObject {
     public int slots;
 
     public SuperWirelessToolDataObject(int n, String name, DimensionalCoord cord, boolean isConnected,
-                                       DimensionalCoord targetCord, AEColor color, int channels, boolean isHub, int slots) {
+            DimensionalCoord targetCord, AEColor color, int channels, boolean isHub, int slots) {
         this.network = n;
         this.customName = name;
         this.cord = cord;

@@ -9,7 +9,7 @@ public class GuiColorButton extends GuiAeButton {
     private AEColor color;
 
     public GuiColorButton(int id, int xPosition, int yPosition, int width, int height, AEColor color,
-                          String tootipString) {
+            String tootipString) {
         super(id, xPosition, yPosition, width, height, "", tootipString);
         this.color = color;
     }

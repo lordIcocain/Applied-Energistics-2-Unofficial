@@ -1,3 +1,5 @@
+package appeng.client.gui.widgets;
+
 import net.minecraft.client.Minecraft;
 
 import org.lwjgl.opengl.GL11;

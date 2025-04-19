@@ -26,6 +26,7 @@ import appeng.api.config.ActionItems;
 import appeng.api.config.AdvancedBlockingMode;
 import appeng.api.config.CellType;
 import appeng.api.config.CondenserOutput;
+import appeng.api.config.CraftingAllow;
 import appeng.api.config.CraftingMode;
 import appeng.api.config.CraftingSortOrder;
 import appeng.api.config.CraftingStatus;
@@ -50,6 +51,7 @@ import appeng.api.config.SortDir;
 import appeng.api.config.SortOrder;
 import appeng.api.config.StorageFilter;
 import appeng.api.config.StringOrder;
+import appeng.api.config.SuperWirelessToolGroupBy;
 import appeng.api.config.TerminalStyle;
 import appeng.api.config.TypeFilter;
 import appeng.api.config.ViewItems;
@@ -869,7 +871,7 @@ public class GuiImgButton extends GuiButton implements ITooltip {
                     YesNo.NO,
                     ButtonToolTips.SuperWirelessToolHideBoundedNoName,
                     ButtonToolTips.SuperWirelessToolHideBoundedNoDesc);
-            }
+        }
     }
 
     private void registerApp(final int iconIndex, final Settings setting, final Enum val, final ButtonToolTips title,

@@ -29,7 +29,6 @@ import java.util.WeakHashMap;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import com.gtnewhorizon.gtnhlib.keybind.SyncedKeybind;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
@@ -69,6 +68,9 @@ import net.minecraftforge.common.util.FakePlayerFactory;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.oredict.OreDictionary;
 
+import org.lwjgl.input.Keyboard;
+
+import com.gtnewhorizon.gtnhlib.keybind.SyncedKeybind;
 import com.mojang.authlib.GameProfile;
 
 import appeng.api.AEApi;
@@ -135,7 +137,6 @@ import cpw.mods.fml.common.ModContainer;
 import cpw.mods.fml.relauncher.ReflectionHelper;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import org.lwjgl.input.Keyboard;
 
 /**
  * @author AlgorithmX2

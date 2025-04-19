@@ -95,7 +95,7 @@ public class GuiSuperWirelessKit extends AEBaseGui implements IConfigManagerHost
     }
 
     public GuiSuperWirelessKit(final InventoryPlayer inventoryPlayer, final SuperWirelessKitObject te,
-                               final ContainerSuperWirelessKit c) {
+            final ContainerSuperWirelessKit c) {
         super(c);
         this.configSrc = ((IConfigurableObject) this.inventorySlots).getConfigManager();
         ((ContainerSuperWirelessKit) this.inventorySlots).setGui(this);
@@ -659,14 +659,14 @@ public class GuiSuperWirelessKit extends AEBaseGui implements IConfigManagerHost
         }
 
         groupUnit(SuperWirelessToolDataObject data, String customNetworkName, boolean byColor, String customColorName,
-                  boolean includeConnectors, boolean includeHubs, boolean isPinned) {
+                boolean includeConnectors, boolean includeHubs, boolean isPinned) {
             this(data, customNetworkName, byColor, includeConnectors, includeHubs, isPinned);
             data.customName = Objects.equals(customColorName, "") ? data.color.name() : customColorName;
             this.customColorName = customColorName;
         }
 
         groupUnit(SuperWirelessToolDataObject data, String customNetworkName, boolean byColor,
-                  boolean includeConnectors, boolean includeHubs, boolean isPinned) {
+                boolean includeConnectors, boolean includeHubs, boolean isPinned) {
             super(data, customNetworkName);
             this.byColor = byColor;
             this.wsList.add(data);
