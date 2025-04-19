@@ -1031,6 +1031,7 @@ public final class CraftingCPUCluster implements IAECluster, ICraftingCPU {
         } catch (final CraftBranchFailure e) {
             handleCraftBranchFailure(e, src);
 
+            this.waitingForMissing.resetStatus();
             this.tasks.clear();
             this.providers.clear();
             this.inventory.getItemList().resetStatus();
@@ -1653,6 +1654,7 @@ public final class CraftingCPUCluster implements IAECluster, ICraftingCPU {
                                 AELog.logSimple(Level.INFO, "MISSING MODE OVERFLOW! TELL DEVS ASAP!");
                                 pg.getItemInventory()
                                         .injectItems((IAEItemStack) notInjected, Actionable.MODULATE, this.machineSrc);
+                                waitingForItem.setStackSize(0);
                             }
                         }
                     }
