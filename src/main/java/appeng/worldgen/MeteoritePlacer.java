@@ -322,9 +322,12 @@ public final class MeteoritePlacer {
 
             final TileEntity te = w.getTileEntity(x, y, z);
             if (te instanceof IInventory) {
+
+                /*-------------------This is the loot-------------------*/
                 final Random lootRng = new Random(this.seed + SEED_OFFSET_CHEST_LOOT);
                 final InventoryAdaptor ap = InventoryAdaptor.getAdaptor(te, ForgeDirection.UP);
 
+                /*-------------------Presses-------------------*/
                 final ArrayList<ItemStack> pressTypes = new ArrayList<>(4);
                 final IMaterials materials = AEApi.instance().definitions().materials();
                 pressTypes.addAll(materials.calcProcessorPress().maybeStack(1).asSet());
@@ -340,10 +343,13 @@ public final class MeteoritePlacer {
                     pressTypes.remove(lootRng.nextInt(pressTypes.size()));
                 }
 
+
                 for (ItemStack toAdd : pressTypes) {
                     ap.addItems(toAdd);
                 }
+                /*-------------------Presses-------------------*/
 
+                /*-------------------Nuggets-------------------*/
                 final List<ItemStack> nuggetLoot = new ArrayList<>();
                 nuggetLoot.addAll(OreDictionary.getOres("nuggetIron"));
                 nuggetLoot.addAll(OreDictionary.getOres("nuggetCopper"));
@@ -376,6 +382,22 @@ public final class MeteoritePlacer {
                         // Add nothing
                     }
                 }
+                /*-------------------CONFIG JSON FORMAT-------------------*//*
+                {
+                    "map": {
+                        "0": [
+                            {
+                                "item": "minecraft:gold_nugget",
+                                    "meta_data": 0,
+                                    "min_value": 0,
+                                    "max_value": 12,
+                                    "weight": 1,
+                                    "exclusiveGroupID": 1
+                            }
+                        ]
+                    }
+                }
+                *//*-------------------This is the loot-------------------*/
             }
         }
     }
