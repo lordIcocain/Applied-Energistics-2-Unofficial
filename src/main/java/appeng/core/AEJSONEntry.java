@@ -32,4 +32,9 @@ public class AEJSONEntry {
         this.weight = weight;
         this.exclusiveGroupID = exclusiveGroupID;
     }
+    public String toString()
+    {
+        String[] itemID = item.split(":");
+        return "Entry for " + GameRegistry.findItem(itemID[0], itemID[1]).getUnlocalizedName() + ". Meta data: " + meta_data + ". Minimum and Maximum Value: " + min_value + ", " + max_value + ". Weight and Exclusive Group ID: " + weight + ", " + exclusiveGroupID + ".";
+    }
 }

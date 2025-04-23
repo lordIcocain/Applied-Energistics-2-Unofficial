@@ -132,7 +132,7 @@ public final class AppEng {
         final Configuration recipeConfiguration = new Configuration(recipeFile);
 
         AEConfig.instance = new AEConfig(configFile);
-        AEJSONConfig aejsonConfig = AEJSONConfig.fromFile(jsonConfigFIle);
+        AEJSONConfig.instance = new AEJSONConfig(jsonConfigFIle);
         FacadeConfig.instance = new FacadeConfig(facadeFile);
         this.customRecipeConfig = new CustomRecipeForgeConfiguration(recipeConfiguration);
         this.exportConfig = new ForgeExportConfig(recipeConfiguration);

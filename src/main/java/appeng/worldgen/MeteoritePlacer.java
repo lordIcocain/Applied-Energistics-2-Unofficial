@@ -17,6 +17,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
 
+import appeng.core.AEJSONConfig;
 import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
@@ -382,6 +383,7 @@ public final class MeteoritePlacer {
                         // Add nothing
                     }
                 }
+                System.out.println("AE2: JSON CONFIG FOR DIM: 0 | " + AEJSONConfig.instance.getEntriesForDimension("0").toString());
                 /*-------------------CONFIG JSON FORMAT-------------------*//*
                 {
                     "map": {

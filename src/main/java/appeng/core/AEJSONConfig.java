@@ -7,12 +7,8 @@ import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
-import cpw.mods.fml.common.registry.GameRegistry;
-import net.minecraft.world.World;
 import net.minecraftforge.common.DimensionManager;
 import org.apache.commons.io.FileUtils;
-import org.lwjgl.Sys;
-
 import java.io.File;
 import java.lang.reflect.Type;
 import java.nio.charset.Charset;
@@ -22,7 +18,8 @@ import java.util.List;
 import java.util.Map;
 
 public class AEJSONConfig{
-    public static Map<String, List<AEJSONEntry>> dimension_loot_tables = new HashMap<>();
+    public static AEJSONConfig instance;
+    private Map<String, List<AEJSONEntry>> dimension_loot_tables = new HashMap<>();
 
     //Required
     private static final String JSON_ITEM = "item";
@@ -52,10 +49,17 @@ public class AEJSONConfig{
             final int max_value = object.has(JSON_MAX_VALUE) ? object.get(JSON_MAX_VALUE).getAsInt() : 1;
             final int weight = object.has(JSON_WEIGHT) ? object.get(JSON_WEIGHT).getAsInt() : 1;
             final int exclusiveGroupID = object.has(JSON_EXCLUSIVE_GROUP_ID) ? object.get(JSON_EXCLUSIVE_GROUP_ID).getAsInt() : -1;
-
-            return new AEJSONEntry(item, meta_data, min_value, max_value, weight, exclusiveGroupID);
+            final AEJSONEntry entry = new AEJSONEntry(item, meta_data, min_value, max_value, weight, exclusiveGroupID);
+            AEJSONConfig.instance.addEntryToDimension(dimensionID+"", entry);
+            return entry;
         }
     }).setPrettyPrinting().create();
+
+    public AEJSONConfig() {}
+    public AEJSONConfig(File file)
+    {
+        this.fromFile(file);
+    }
     public void toFile(File file) {
         try {
             FileUtils.writeStringToFile(file, GSON.toJson(this), Charset.defaultCharset());
@@ -65,7 +69,7 @@ public class AEJSONConfig{
         }
     }
 
-    public static AEJSONConfig fromFile(File file)
+    public AEJSONConfig fromFile(File file)
     {
         if (!file.exists()) {
             AEJSONConfig defaultConfig = createDefaultConfig();
@@ -92,10 +96,26 @@ public class AEJSONConfig{
         config.dimension_loot_tables.put("0", Arrays.asList(goldNugget));
         return config;
     }
-    public static List<AEJSONEntry> getEntriesFromDimension(String dimensionID)
+    private void addEntryToDimension(String dimensionID, AEJSONEntry entry)
+    {
+        if(dimension_loot_tables.containsKey(dimensionID)) {
+            List<AEJSONEntry> temp = dimension_loot_tables.get(dimensionID);
+            temp.add(entry);
+            dimension_loot_tables.put(dimensionID, temp);
+        }
+        else {
+            dimension_loot_tables.put(dimensionID, Arrays.asList(entry));
+        }
+    }
+    public List<AEJSONEntry> getEntriesForDimension(String dimensionID)
     {
         if(DimensionManager.isDimensionRegistered(Integer.parseInt(dimensionID))) {
-            return dimension_loot_tables.get(dimensionID);
+            if(dimension_loot_tables.containsKey(dimensionID)) {
+                return dimension_loot_tables.get(dimensionID);
+            }
+            else {
+                return createDefaultConfig().getEntriesForDimension("0");
+            }
         }
         else {
             System.err.println("AE2: Failure While Getting Loot Tables for Dimension: " + dimensionID + " | Error: Dimension is not registered");
