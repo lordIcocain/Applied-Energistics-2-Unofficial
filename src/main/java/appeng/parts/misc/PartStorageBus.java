@@ -18,6 +18,8 @@ import java.util.function.Predicate;
 
 import javax.annotation.Nullable;
 
+import appeng.core.AELog;
+import appeng.util.item.AEItemStack;
 import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
@@ -95,6 +97,7 @@ public class PartStorageBus extends PartUpgradeable implements IGridTickable, IC
 
     private final BaseActionSource mySrc;
     private final AppEngInternalAEInventory Config = new AppEngInternalAEInventory(this, 63);
+    private final ItemStack[] invbackup = new ItemStack[63-18];
     private int priority = 0;
     private boolean cached = false;
     private MEMonitorIInventory monitor = null;
@@ -120,10 +123,22 @@ public class PartStorageBus extends PartUpgradeable implements IGridTickable, IC
             NBTTagCompound tag = is.getTagCompound();
             if (tag.hasKey("priority")) {
                 priority = tag.getInteger("priority");
-                // if we don't do this, the tag will stick forever to the storage bus, as it's never cleaned up,
-                // even when the item is broken with a pickaxe
-                this.is.setTagCompound(null);
             }
+            if (tag.hasKey("config")) {
+                Config.readFromNBT(tag, "config");
+            }
+            if (tag.hasKey("invbackup")) {
+                NBTTagCompound tagCompound = tag.getCompoundTag("invbackup");
+                for (int x = 0; x < invbackup.length; x++) {
+                    if (tagCompound.hasKey("#" + x)) {
+                        NBTTagCompound c = tagCompound.getCompoundTag("#" + x);
+                        invbackup[x] = ItemStack.loadItemStackFromNBT(c);
+                    }
+                }
+            }
+            // if we don't do this, the tag will stick forever to the storage bus, as it's never cleaned up,
+            // even when the item is broken with a pickaxe
+            this.is.setTagCompound(null);
         }
     }
 
@@ -131,7 +146,21 @@ public class PartStorageBus extends PartUpgradeable implements IGridTickable, IC
     public ItemStack getItemStack(final PartItemStack type) {
         if (type == PartItemStack.Wrench) {
             final NBTTagCompound tag = new NBTTagCompound();
-            tag.setInteger("priority", priority);
+            super.writeToNBT(tag);
+            if (!this.Config.isEmpty()) this.Config.writeToNBT(tag, "config");
+            if (this.priority != 0) tag.setInteger("priority", this.priority);
+            if (!this.oreFilterString.isEmpty()) tag.setString("filter", this.oreFilterString);
+            boolean hasItems = false;
+            final NBTTagCompound tagCompound = new NBTTagCompound();
+            for (int x = 0; x < invbackup.length; x++) {
+                if (invbackup[x] != null) {
+                    hasItems = true;
+                    final NBTTagCompound c = new NBTTagCompound();
+                    invbackup[x].writeToNBT(c);
+                    tagCompound.setTag("#" + x, c);
+                }
+            }
+            if (hasItems) tag.setTag("invbackup", tagCompound);
             final ItemStack copy = this.is.copy();
             copy.setTagCompound(tag);
             return copy;
@@ -180,6 +209,9 @@ public class PartStorageBus extends PartUpgradeable implements IGridTickable, IC
         super.onChangeInventory(inv, slot, mc, removedStack, newStack);
 
         if (inv == this.Config) {
+            if ((removedStack != null || newStack != null) && slot >= 18 && (slot < (18 + this.getInstalledUpgrades(Upgrades.CAPACITY) * 9)))
+                this.invbackup[slot-18] = newStack;
+
             this.resetCache(true);
         }
     }
@@ -188,6 +220,11 @@ public class PartStorageBus extends PartUpgradeable implements IGridTickable, IC
     public void upgradesChanged() {
         super.upgradesChanged();
         if (getInstalledUpgrades(Upgrades.ORE_FILTER) == 0) this.oreFilterString = "";
+        for (int x = 0; x < (this.getInstalledUpgrades(Upgrades.CAPACITY) * 9); x++) {
+                final ItemStack is = invbackup[x];
+                if (is != null) this.Config.setInventorySlotContents(x + 18, is);
+        }
+
         this.resetCache(true);
     }
 
@@ -197,6 +234,13 @@ public class PartStorageBus extends PartUpgradeable implements IGridTickable, IC
         this.Config.readFromNBT(data, "config");
         this.priority = data.getInteger("priority");
         this.oreFilterString = data.getString("filter");
+        final NBTTagCompound tagCompound = data.getCompoundTag("invbackup");
+        for (int x = 0; x < invbackup.length; x++) {
+                if (tagCompound.hasKey("#" + x)) {
+                    final NBTTagCompound c = tagCompound.getCompoundTag("#" + x);
+                    invbackup[x] = ItemStack.loadItemStackFromNBT(c);
+                }
+        }
     }
 
     @Override
@@ -205,6 +249,15 @@ public class PartStorageBus extends PartUpgradeable implements IGridTickable, IC
         this.Config.writeToNBT(data, "config");
         data.setInteger("priority", this.priority);
         data.setString("filter", this.oreFilterString);
+        final NBTTagCompound tagCompound = new NBTTagCompound();
+        for (int x = 0; x < invbackup.length; x++) {
+                if (invbackup[x] != null) {
+                    final NBTTagCompound c = new NBTTagCompound();
+                    invbackup[x].writeToNBT(c);
+                    tagCompound.setTag("#" + x, c);
+                }
+        }
+        data.setTag("invbackup", tagCompound);
     }
 
     @Override
