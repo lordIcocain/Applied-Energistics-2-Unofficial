@@ -18,8 +18,6 @@ import java.util.function.Predicate;
 
 import javax.annotation.Nullable;
 
-import appeng.core.AELog;
-import appeng.util.item.AEItemStack;
 import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
