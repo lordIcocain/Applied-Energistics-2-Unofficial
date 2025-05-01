@@ -12,7 +12,9 @@ package appeng.container.implementations;
 
 import java.util.Iterator;
 
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.entity.player.InventoryPlayer;
+import net.minecraft.inventory.ICrafting;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 
@@ -135,7 +137,34 @@ public class ContainerStorageBus extends ContainerUpgradeable {
                     (StorageFilter) this.getUpgradeable().getConfigManager().getSetting(Settings.STORAGE_FILTER));
             this.setStickyMode((YesNo) this.getUpgradeable().getConfigManager().getSetting(Settings.STICKY_MODE));
         }
-
+        final int upgrades = this.getUpgradeable().getInstalledUpgrades(Upgrades.CAPACITY);
+        if (upgrades > 0 || this.storageBus.needSyncGUI) { // update last row if we have upgrades or all if card is inserted
+            boolean needSync = this.storageBus.needSyncGUI;
+            this.storageBus.needSyncGUI = false;
+            IInventory inv = this.getUpgradeable().getInventoryByName("config");
+            for (ICrafting crafter : this.crafters) {
+                boolean isChangingQuantityOnly = false;
+                if (crafter instanceof EntityPlayerMP && ((EntityPlayerMP) crafter).isChangingQuantityOnly) {
+                    isChangingQuantityOnly = true;
+                    ((EntityPlayerMP) crafter).isChangingQuantityOnly = false;
+                }
+                int x = needSync ? 18 : 9 + (9 * upgrades);
+                for (; x < inv.getSizeInventory(); x++) {
+                    if (upgrades <= (x / 9 - 2)) {
+                        break;
+                    }
+                    ItemStack stack = inv.getStackInSlot(x);
+                    //if (stack == null) stack = this.storageBus.filterBackup[x - 18];
+                    if (stack != null) {
+                        stack = stack.copy();
+                    }
+                    crafter.sendSlotContents(this, x, stack);
+                }
+                if (isChangingQuantityOnly) {
+                    ((EntityPlayerMP) crafter).isChangingQuantityOnly = true;
+                }
+            }
+        }
         this.standardDetectAndSendChanges();
     }
 
