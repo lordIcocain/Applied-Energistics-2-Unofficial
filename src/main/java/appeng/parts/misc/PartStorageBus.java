@@ -91,11 +91,11 @@ import cpw.mods.fml.relauncher.SideOnly;
 
 @Interface(iname = IntegrationType.BuildCraftTransport, iface = "buildcraft.api.transport.IPipeConnection")
 public class PartStorageBus extends PartUpgradeable implements IGridTickable, ICellContainer,
-        IMEMonitorHandlerReceiver<IAEItemStack>, IPipeConnection, IPriorityHost, IOreFilterable {
+        IMEMonitorHandlerReceiver<IAEItemStack>, IPipeConnection, IPriorityHost, IOreFilterable/* , IDataCopyable */ {
 
     private final BaseActionSource mySrc;
     private final AppEngInternalAEInventory Config = new AppEngInternalAEInventory(this, 63);
-    private final ItemStack[] invbackup = new ItemStack[63-18];
+    private final ItemStack[] filterBackup = new ItemStack[63 - 18];
     private int priority = 0;
     private boolean cached = false;
     private MEMonitorIInventory monitor = null;
@@ -104,6 +104,8 @@ public class PartStorageBus extends PartUpgradeable implements IGridTickable, IC
     private boolean wasActive = false;
     private byte resetCacheLogic = 0;
     private String oreFilterString = "";
+    public boolean needSyncGUI = false;
+    // private final static String COPIED_DATA_IDENTIFIER = "AE_stockingBus_part";
     /**
      * used to read changes once when the list of extractable items was changed
      */
@@ -208,7 +210,7 @@ public class PartStorageBus extends PartUpgradeable implements IGridTickable, IC
 
         if (inv == this.Config) {
             if ((removedStack != null || newStack != null) && slot >= 18 && (slot < (18 + this.getInstalledUpgrades(Upgrades.CAPACITY) * 9)))
-                this.invbackup[slot-18] = newStack;
+                this.filterBackup[slot-18] = newStack;
 
             this.resetCache(true);
         }
@@ -672,4 +674,15 @@ public class PartStorageBus extends PartUpgradeable implements IGridTickable, IC
         oreFilterString = filter;
         resetCache(true);
     }
+
+    /*
+     * @Override public NBTTagCompound getCopiedData(EntityPlayer player) { NBTTagCompound tag = new NBTTagCompound();
+     * tag.setString("type", COPIED_DATA_IDENTIFIER); NBTTagCompound save = new NBTTagCompound(); writeToNBT(save);
+     * tag.setTag("data", save); return tag; }
+     * @Override public boolean pasteCopiedData(EntityPlayer player, NBTTagCompound nbt) { if (nbt == null ||
+     * !COPIED_DATA_IDENTIFIER.equals(nbt.getString("type"))) return false; NBTTagCompound data =
+     * nbt.getCompoundTag("data"); if (data != null) { readFromNBT(data); this.resetCache(true); return true; } return
+     * false; }
+     * @Override public String getCopiedDataIdentifier(EntityPlayer player) { return COPIED_DATA_IDENTIFIER; }
+     */
 }
