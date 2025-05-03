@@ -91,7 +91,7 @@ import cpw.mods.fml.relauncher.SideOnly;
 
 @Interface(iname = IntegrationType.BuildCraftTransport, iface = "buildcraft.api.transport.IPipeConnection")
 public class PartStorageBus extends PartUpgradeable implements IGridTickable, ICellContainer,
-        IMEMonitorHandlerReceiver<IAEItemStack>, IPipeConnection, IPriorityHost, IOreFilterable/* , IDataCopyable */ {
+        IMEMonitorHandlerReceiver<IAEItemStack>, IPipeConnection, IPriorityHost, IOreFilterable {
 
     private final BaseActionSource mySrc;
     private final AppEngInternalAEInventory Config = new AppEngInternalAEInventory(this, 63);
@@ -694,15 +694,4 @@ public class PartStorageBus extends PartUpgradeable implements IGridTickable, IC
         previousOreFilterString = filter;
         resetCache(true);
     }
-
-    /*
-     * @Override public NBTTagCompound getCopiedData(EntityPlayer player) { NBTTagCompound tag = new NBTTagCompound();
-     * tag.setString("type", COPIED_DATA_IDENTIFIER); NBTTagCompound save = new NBTTagCompound(); writeToNBT(save);
-     * tag.setTag("data", save); return tag; }
-     * @Override public boolean pasteCopiedData(EntityPlayer player, NBTTagCompound nbt) { if (nbt == null ||
-     * !COPIED_DATA_IDENTIFIER.equals(nbt.getString("type"))) return false; NBTTagCompound data =
-     * nbt.getCompoundTag("data"); if (data != null) { readFromNBT(data); this.resetCache(true); return true; } return
-     * false; }
-     * @Override public String getCopiedDataIdentifier(EntityPlayer player) { return COPIED_DATA_IDENTIFIER; }
-     */
 }
