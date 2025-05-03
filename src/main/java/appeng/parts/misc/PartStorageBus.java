@@ -143,7 +143,7 @@ public class PartStorageBus extends PartUpgradeable implements IGridTickable, IC
             if (tag.hasKey("configManager")) {
                 NBTTagCompound configManagerTag = tag.getCompoundTag("configManager");
                 final IConfigManager manager = this.getConfigManager();
-                for (final Settings setting: manager.getSettings()) {
+                for (final Settings setting : manager.getSettings()) {
                     String value = configManagerTag.getString(setting.name());
                     Enum<?> oldValue = manager.getSetting(setting);
                     manager.registerSetting(setting, Enum.valueOf(oldValue.getClass(), value));
@@ -225,8 +225,9 @@ public class PartStorageBus extends PartUpgradeable implements IGridTickable, IC
         super.onChangeInventory(inv, slot, mc, removedStack, newStack);
 
         if (inv == this.Config) {
-            if ((removedStack != null || newStack != null) && slot >= 18 && (slot < (18 + this.getInstalledUpgrades(Upgrades.CAPACITY) * 9)))
-                this.filterCache[slot-18] = newStack;
+            if ((removedStack != null || newStack != null) && slot >= 18
+                    && (slot < (18 + this.getInstalledUpgrades(Upgrades.CAPACITY) * 9)))
+                this.filterCache[slot - 18] = newStack;
 
             this.resetCache(true);
         }
@@ -236,8 +237,7 @@ public class PartStorageBus extends PartUpgradeable implements IGridTickable, IC
     public void upgradesChanged() {
         super.upgradesChanged();
         if (getInstalledUpgrades(Upgrades.ORE_FILTER) == 0) this.oreFilterString = "";
-        else if (this.oreFilterString.isEmpty())
-            this.oreFilterString = previousOreFilterString;
+        else if (this.oreFilterString.isEmpty()) this.oreFilterString = previousOreFilterString;
 
         for (int x = 0; x < (this.getInstalledUpgrades(Upgrades.CAPACITY) * 9); x++) {
             final ItemStack is = filterCache[x];
@@ -270,8 +270,6 @@ public class PartStorageBus extends PartUpgradeable implements IGridTickable, IC
         data.setInteger("priority", this.priority);
         data.setString("filter", this.oreFilterString);
         final NBTTagCompound tagCompound = new NBTTagCompound();
-        for (int x = 0; x < filterBackup.length; x++) {
-            if (filterBackup[x] != null) {
         for (int x = 0; x < filterCache.length; x++) {
             if (filterCache[x] != null) {
                 final NBTTagCompound c = new NBTTagCompound();

@@ -126,6 +126,7 @@ public class ContainerStorageBus extends ContainerUpgradeable {
     }
 
     private int iRow = 0;
+
     @Override
     public void detectAndSendChanges() {
         this.verifyPermissions(SecurityPermissions.BUILD, false);
@@ -145,15 +146,14 @@ public class ContainerStorageBus extends ContainerUpgradeable {
             this.storageBus.needSyncGUI = false;
             if (iRow >= upgrades) {
                 iRow = 0;
-            }
-            else if (needSync) {
+            } else if (needSync) {
                 iRow = upgrades; // to be sure that the last line is sent correctly (do during the next update)
-            } else
-                iRow = iRow + 1;
+            } else iRow = iRow + 1;
 
             IInventory inv = this.getUpgradeable().getInventoryByName("config");
             int from = needSync ? 18 : 9 + (9 * upgrades); // start at first filter slot or at specific row
-            int to = needSync ? inv.getSizeInventory() : 18 + (9 * upgrades); // end at last filter slot or at end of specific row
+            int to = needSync ? inv.getSizeInventory() : 18 + (9 * upgrades); // end at last filter slot or at end of
+                                                                              // specific row
             for (; from < to; from++) {
                 if (upgrades <= (from / 9 - 2)) {
                     break;
@@ -166,7 +166,8 @@ public class ContainerStorageBus extends ContainerUpgradeable {
                     boolean isChangingQuantityOnly = false;
                     if (crafter instanceof EntityPlayerMP && ((EntityPlayerMP) crafter).isChangingQuantityOnly) {
                         isChangingQuantityOnly = true;
-                        ((EntityPlayerMP) crafter).isChangingQuantityOnly = false; // necessary to ensure that the package is sent correctly
+                        ((EntityPlayerMP) crafter).isChangingQuantityOnly = false; // necessary to ensure that the
+                                                                                   // package is sent correctly
                     }
                     crafter.sendSlotContents(this, from, stack);
                     if (isChangingQuantityOnly) {
