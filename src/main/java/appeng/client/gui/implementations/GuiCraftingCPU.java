@@ -18,13 +18,12 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import appeng.util.ScheduledReason;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-
 import net.minecraft.util.StatCollector;
+
 import org.apache.commons.lang3.time.DurationFormatUtils;
 import org.lwjgl.opengl.GL11;
 
@@ -65,6 +64,7 @@ import appeng.core.sync.packets.PacketValueConfig;
 import appeng.helpers.InventoryAction;
 import appeng.util.Platform;
 import appeng.util.ReadableNumberConverter;
+import appeng.util.ScheduledReason;
 
 public class GuiCraftingCPU extends AEBaseGui implements ISortSource, IGuiTooltipHandler {
 
@@ -635,7 +635,9 @@ public class GuiCraftingCPU extends AEBaseGui implements ISortSource, IGuiToolti
 
                 ScheduledReason sr = ScheduledReason.values()[data.getInteger("ScheduledReason")];
                 if (sr != ScheduledReason.UNDEFINED) {
-                    lineList.add(StatCollector.translateToLocal("gui.tooltips.appliedenergistics2.scheduledreason." + sr.toString()));
+                    lineList.add(
+                            StatCollector.translateToLocal(
+                                    "gui.tooltips.appliedenergistics2.scheduledreason." + sr.toString()));
                 }
 
                 if (blocks.isEmpty()) return;

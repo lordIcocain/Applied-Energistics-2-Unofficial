@@ -20,7 +20,6 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
-import appeng.util.ScheduledReason;
 import net.minecraft.block.Block;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.ISidedInventory;
@@ -96,6 +95,7 @@ import appeng.util.ConfigManager;
 import appeng.util.IConfigManagerHost;
 import appeng.util.InventoryAdaptor;
 import appeng.util.Platform;
+import appeng.util.ScheduledReason;
 import appeng.util.inv.AdaptorIInventory;
 import appeng.util.inv.IInventoryDestination;
 import appeng.util.inv.ItemSlot;
@@ -1003,7 +1003,6 @@ public class DualityInterface implements IGridTickable, IStorageMonitorable, IIn
                     scheduledReason = ScheduledReason.BLOCKING_MODE;
                     continue;
                 }
-
 
                 if (acceptsItems(ad, table, getInsertionMode())) {
                     for (int x = 0; x < table.getSizeInventory(); x++) {

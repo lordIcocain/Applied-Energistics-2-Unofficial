@@ -13,9 +13,10 @@
 
 package appeng.api.networking.crafting;
 
-import appeng.util.ScheduledReason;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
+
+import appeng.util.ScheduledReason;
 
 /**
  * A place to send Items for crafting purposes, this is considered part of AE's External crafting system.
