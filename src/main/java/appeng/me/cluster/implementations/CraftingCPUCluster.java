@@ -34,6 +34,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.IntConsumer;
 import java.util.stream.IntStream;
 
+import appeng.util.ScheduledReason;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.inventory.InventoryCrafting;
@@ -197,6 +198,7 @@ public final class CraftingCPUCluster implements IAECluster, ICraftingCPU {
     private final List<CraftCancelListener> craftCancelListeners = new ArrayList<>();
     private final List<String> playersFollowingCurrentCraft = new ArrayList<>();
     private final HashMap<ICraftingPatternDetails, List<ICraftingMedium>> parallelismProvider = new HashMap<>();
+    private final HashMap<ICraftingPatternDetails, ScheduledReason> reasonProvider = new HashMap<>();
 
     public CraftingCPUCluster(final WorldCoord min, final WorldCoord max) {
         this.min = min;
@@ -644,6 +646,7 @@ public final class CraftingCPUCluster implements IAECluster, ICraftingCPU {
         this.waitingFor.resetStatus();
         this.waitingForMissing.resetStatus();
         parallelismProvider.clear();
+        reasonProvider.clear();
 
         for (final IAEItemStack is : items) {
             this.postCraftingStatusChange(is);
@@ -738,13 +741,16 @@ public final class CraftingCPUCluster implements IAECluster, ICraftingCPU {
                 final ICraftingPatternDetails ceKey = craftingEntry.getKey();
                 this.tasks.remove(ceKey);
                 parallelismProvider.remove(ceKey);
+                reasonProvider.remove(ceKey);
                 craftingTaskIterator.remove();
                 continue;
             }
 
             final ICraftingPatternDetails details = craftingEntry.getKey();
+            ScheduledReason sr = null;
             if (!this.canCraft(details, details.getCondensedInputs())) {
                 craftingTaskIterator.remove(); // No need to revisit this task on next executeCrafting this tick
+                reasonProvider.put(details, ScheduledReason.NOT_ENOUGH_INGREDIENTS);
                 continue;
             }
 
@@ -771,12 +777,15 @@ public final class CraftingCPUCluster implements IAECluster, ICraftingCPU {
                 }
 
                 for (final ICraftingMedium medium : mediumsList) {
+                    if (mediumListCheck != null) mediumListCheck.remove(medium);
+
                     if (craftingEntry.getValue().value <= 0 || knownBusyMediums.contains(medium)) {
                         continue;
                     }
 
                     if (medium.isBusy()) {
                         knownBusyMediums.add(medium);
+                        sr = medium.getScheduledReason();
                         continue;
                     }
 
@@ -850,32 +859,11 @@ public final class CraftingCPUCluster implements IAECluster, ICraftingCPU {
                         pushedPattern = true;
                         this.isFakeCrafting = (medium instanceof DualityInterface di && di.isFakeCraftingMode());
 
-                        if (mediumListCheck != null) mediumListCheck.remove(medium);
-
                         // Process output items.
                         for (final IAEItemStack outputItemStack : details.getCondensedOutputs()) {
                             this.postChange(outputItemStack, this.machineSrc);
                             this.waitingFor.add(outputItemStack.copy());
                             this.postCraftingStatusChange(outputItemStack.copy());
-
-                            // Add this medium to the list of providers for the outputItemStack if not yet in there.
-                            providers.computeIfAbsent(outputItemStack, k -> new ArrayList<>());
-                            List<DimensionalCoord> list = providers.get(outputItemStack);
-                            if (medium instanceof ICraftingProvider) {
-                                TileEntity tile = this.getTile(medium);
-                                if (tile == null) continue;
-                                DimensionalCoord tileDimensionalCoord = new DimensionalCoord(tile);
-                                boolean isAdded = false;
-                                for (DimensionalCoord dimensionalCoord : list) {
-                                    if (dimensionalCoord.isEqual(tileDimensionalCoord)) {
-                                        isAdded = true;
-                                        break;
-                                    }
-                                }
-                                if (!isAdded) {
-                                    list.add(tileDimensionalCoord);
-                                }
-                            }
                         }
 
                         if (details.isCraftable()) {
@@ -912,8 +900,13 @@ public final class CraftingCPUCluster implements IAECluster, ICraftingCPU {
                         // Smart blocking is fine sending the same recipe again.
                         if (medium.getBlockingMode() == BlockingMode.BLOCKING) break;
 
-                        if (!this.canCraft(details, details.getCondensedInputs())) break;
+                        if (!this.canCraft(details, details.getCondensedInputs())) {
+                            sr = ScheduledReason.NOT_ENOUGH_INGREDIENTS;
+                            break;
+                        }
                     }
+
+                    sr = medium.getScheduledReason();
                 }
                 if (craftingInventory != null) {
                     // No suitable craftingInventory was found,
@@ -928,6 +921,8 @@ public final class CraftingCPUCluster implements IAECluster, ICraftingCPU {
             } while (didPatternCraft);
 
             if (mediumListCheck != null) parallelismProvider.put(details, mediumListCheck);
+
+            if (sr != null) reasonProvider.put(details, sr);
 
             if (!pushedPattern) {
                 // If in all mediums no pattern was pushed,
@@ -1649,6 +1644,17 @@ public final class CraftingCPUCluster implements IAECluster, ICraftingCPU {
     @SuppressWarnings("unchecked")
     public List<DimensionalCoord> getProviders(IAEItemStack is) {
         return this.providers.getOrDefault(is, Collections.EMPTY_LIST);
+    }
+
+    public ScheduledReason getScheduledReason(IAEItemStack is) {
+        for (final Entry<ICraftingPatternDetails, TaskProgress> t : this.tasks.entrySet()) {
+            for (final IAEItemStack ais : t.getKey().getCondensedOutputs()) {
+                if (Objects.equals(ais, is)) {
+                    return reasonProvider.getOrDefault(t.getKey(), ScheduledReason.UNDEFINED);
+                }
+            }
+        }
+        return ScheduledReason.UNDEFINED;
     }
 
     private TileEntity getTile(ICraftingMedium craftingProvider) {

@@ -13,6 +13,7 @@
 
 package appeng.api.networking.crafting;
 
+import appeng.util.ScheduledReason;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
 
@@ -49,6 +50,10 @@ public interface ICraftingMedium {
      */
     default BlockingMode getBlockingMode() {
         return BlockingMode.NONE;
+    }
+
+    default ScheduledReason getScheduledReason() {
+        return ScheduledReason.UNDEFINED;
     }
 
     enum BlockingMode {
