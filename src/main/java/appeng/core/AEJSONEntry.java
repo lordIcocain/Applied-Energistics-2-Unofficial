@@ -1,21 +1,10 @@
 package appeng.core;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonDeserializationContext;
-import com.google.gson.JsonDeserializer;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParseException;
 import cpw.mods.fml.common.registry.GameRegistry;
-import net.minecraft.item.Item;
-
-import java.lang.reflect.Type;
+import net.minecraft.item.ItemStack;
+import java.util.Random;
 
 public class AEJSONEntry {
-
-
-
     public String item;
     public int meta_data = 0;
     public int min_value = 0;
@@ -23,6 +12,15 @@ public class AEJSONEntry {
     public int weight = 1;
     public int exclusiveGroupID = -1;
 
+    public AEJSONEntry(String dimensionID, String item, int meta_data, int min_value, int max_value, int weight, int exclusiveGroupID)
+    {
+        this.item = item;
+        this.meta_data = meta_data;
+        this.min_value = min_value;
+        this.max_value = max_value;
+        this.weight = weight;
+        this.exclusiveGroupID = exclusiveGroupID;
+    }
     public AEJSONEntry(String item, int meta_data, int min_value, int max_value, int weight, int exclusiveGroupID)
     {
         this.item = item;
@@ -32,6 +30,16 @@ public class AEJSONEntry {
         this.weight = weight;
         this.exclusiveGroupID = exclusiveGroupID;
     }
+    private ItemStack getItemStack(int amount)
+    {
+        String[] temp = item.split(":");
+        return new ItemStack(GameRegistry.findItem(temp[0], temp[1]), amount, meta_data);
+    }
+    public ItemStack getItemStack(Random rand)
+    {
+        return getItemStack(rand.nextInt(this.max_value-min_value)+min_value);
+    }
+
     public String toString()
     {
         String[] itemID = item.split(":");

@@ -13,11 +13,14 @@ package appeng.worldgen;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 import appeng.core.AEJSONConfig;
+import appeng.core.AEJSONEntry;
 import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
@@ -322,7 +325,8 @@ public final class MeteoritePlacer {
             }
 
             final TileEntity te = w.getTileEntity(x, y, z);
-            if (te instanceof IInventory) {
+            //Set to false temporarily, if-statement will be removed.
+            if (te instanceof IInventory && false) {
 
                 /*-------------------This is the loot-------------------*/
                 final Random lootRng = new Random(this.seed + SEED_OFFSET_CHEST_LOOT);
@@ -379,27 +383,78 @@ public final class MeteoritePlacer {
                                 ap.addItems(nugget);
                             }
                         }
-                        default -> {}
+                        default -> {
+                        }
                         // Add nothing
                     }
                 }
-                System.out.println("AE2: JSON CONFIG FOR DIM: 0 | " + AEJSONConfig.instance.getEntriesForDimension("0").toString());
-                /*-------------------CONFIG JSON FORMAT-------------------*//*
+            }
+            if (te instanceof IInventory) {
+                final Random lootRng = new Random(this.seed + SEED_OFFSET_CHEST_LOOT);
+                final InventoryAdaptor ap = InventoryAdaptor.getAdaptor(te, ForgeDirection.UP);
+
+                final int dimID = w.getWorld().provider.dimensionId;
+                final List<AEJSONEntry> loot_table = AEJSONConfig.instance.getWeightedLootTable(dimID, lootRng);
+                //TODO: Check that switching dimensions in game doesn't break anything
+                final Map<Integer, List<AEJSONEntry>> exlcusion_table_map = new HashMap<>();
+
+                int totalWeight = 0;
+                for(AEJSONEntry entry : loot_table)
                 {
-                    "map": {
-                        "0": [
-                            {
-                                "item": "minecraft:gold_nugget",
-                                    "meta_data": 0,
-                                    "min_value": 0,
-                                    "max_value": 12,
-                                    "weight": 1,
-                                    "exclusiveGroupID": 1
-                            }
-                        ]
-                    }
+                    totalWeight+=entry.weight;
                 }
-                *//*-------------------This is the loot-------------------*/
+                if(totalWeight > 0) {
+                    List<ItemStack> loot = new ArrayList<>();
+                    int randWeight = lootRng.nextInt(totalWeight);
+                    int curWeight = 0;
+                    for(AEJSONEntry entry : loot_table)
+                    {
+                        if(entry.exclusiveGroupID == -1) {
+                            curWeight += entry.weight;
+                            if (randWeight < curWeight) {
+                                loot.add(entry.getItemStack(lootRng));
+                            }
+                        }
+                        else {
+                            if(exlcusion_table_map.containsKey(entry.exclusiveGroupID)) {
+                                List<AEJSONEntry> temp = exlcusion_table_map.get(entry.exclusiveGroupID);
+                                temp.add(entry);
+                                exlcusion_table_map.put(entry.exclusiveGroupID, temp);
+                            }
+                            else
+                                exlcusion_table_map.put(entry.exclusiveGroupID, Arrays.asList(entry));
+                        }
+                    }
+                    for(Integer key : exlcusion_table_map.keySet()) {
+                        totalWeight = 0;
+                        curWeight = 0;
+                        for(AEJSONEntry entry : exlcusion_table_map.get(key))
+                        {
+                            totalWeight+=entry.weight;
+                        }
+                        if(exlcusion_table_map.get(key).size() > 1) {
+                            for (AEJSONEntry entry : exlcusion_table_map.get(key)) {
+                                curWeight += entry.weight;
+                                if (randWeight < curWeight) {
+                                    loot.add(entry.getItemStack(lootRng));
+                                    break;
+                                }
+                            }
+                        }
+                        else {
+                            AEJSONEntry entry = exlcusion_table_map.get(key).get(0);
+                            if(entry.weight > 0) {
+                                loot.add(entry.getItemStack(lootRng));
+                            }
+                        }
+                    }
+                    for(ItemStack items : loot)
+                        if(items != null) {
+                            ap.addItems(items.copy());
+                        }
+                        else
+                            System.err.println("AE2: Item is null! | Error: Failed while adding item to loot chest in meteoritePlacer");
+                }
             }
         }
     }
