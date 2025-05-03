@@ -125,6 +125,7 @@ public class ContainerStorageBus extends ContainerUpgradeable {
         return 5;
     }
 
+    private int iRow = 0;
     @Override
     public void detectAndSendChanges() {
         this.verifyPermissions(SecurityPermissions.BUILD, false);
@@ -138,32 +139,42 @@ public class ContainerStorageBus extends ContainerUpgradeable {
             this.setStickyMode((YesNo) this.getUpgradeable().getConfigManager().getSetting(Settings.STICKY_MODE));
         }
         final int upgrades = this.getUpgradeable().getInstalledUpgrades(Upgrades.CAPACITY);
-        if (upgrades > 0 || this.storageBus.needSyncGUI) { // update last row if we have upgrades or all if card is inserted
+
+        if (upgrades > 0) { // sync filter slots
             boolean needSync = this.storageBus.needSyncGUI;
             this.storageBus.needSyncGUI = false;
+            if (iRow >= upgrades) {
+                iRow = 0;
+            }
+            else if (needSync) {
+                iRow = upgrades; // to be sure that the last line is sent correctly (do during the next update)
+            } else
+                iRow = iRow + 1;
+
             IInventory inv = this.getUpgradeable().getInventoryByName("config");
-            for (ICrafting crafter : this.crafters) {
-                boolean isChangingQuantityOnly = false;
-                if (crafter instanceof EntityPlayerMP && ((EntityPlayerMP) crafter).isChangingQuantityOnly) {
-                    isChangingQuantityOnly = true;
-                    ((EntityPlayerMP) crafter).isChangingQuantityOnly = false;
+            int from = needSync ? 18 : 9 + (9 * upgrades); // start at first filter slot or at specific row
+            int to = needSync ? inv.getSizeInventory() : 18 + (9 * upgrades); // end at last filter slot or at end of specific row
+            for (; from < to; from++) {
+                if (upgrades <= (from / 9 - 2)) {
+                    break;
                 }
-                int x = needSync ? 18 : 9 + (9 * upgrades);
-                for (; x < inv.getSizeInventory(); x++) {
-                    if (upgrades <= (x / 9 - 2)) {
-                        break;
-                    }
-                    ItemStack stack = inv.getStackInSlot(x);
-                    //if (stack == null) stack = this.storageBus.filterBackup[x - 18];
-                    if (stack != null) {
-                        stack = stack.copy();
-                    }
-                    crafter.sendSlotContents(this, x, stack);
+                ItemStack stack = inv.getStackInSlot(from);
+                if (stack == null) {
+                    continue;
                 }
-                if (isChangingQuantityOnly) {
-                    ((EntityPlayerMP) crafter).isChangingQuantityOnly = true;
+                for (ICrafting crafter : this.crafters) {
+                    boolean isChangingQuantityOnly = false;
+                    if (crafter instanceof EntityPlayerMP && ((EntityPlayerMP) crafter).isChangingQuantityOnly) {
+                        isChangingQuantityOnly = true;
+                        ((EntityPlayerMP) crafter).isChangingQuantityOnly = false; // necessary to ensure that the package is sent correctly
+                    }
+                    crafter.sendSlotContents(this, from, stack);
+                    if (isChangingQuantityOnly) {
+                        ((EntityPlayerMP) crafter).isChangingQuantityOnly = true;
+                    }
                 }
             }
+
         }
         this.standardDetectAndSendChanges();
     }

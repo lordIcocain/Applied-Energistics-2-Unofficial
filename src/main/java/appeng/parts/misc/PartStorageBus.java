@@ -95,7 +95,8 @@ public class PartStorageBus extends PartUpgradeable implements IGridTickable, IC
 
     private final BaseActionSource mySrc;
     private final AppEngInternalAEInventory Config = new AppEngInternalAEInventory(this, 63);
-    private final ItemStack[] filterBackup = new ItemStack[63 - 18];
+    public boolean needSyncGUI = false;
+    private final ItemStack[] filterCache = new ItemStack[63 - 18];
     private int priority = 0;
     private boolean cached = false;
     private MEMonitorIInventory monitor = null;
@@ -104,8 +105,8 @@ public class PartStorageBus extends PartUpgradeable implements IGridTickable, IC
     private boolean wasActive = false;
     private byte resetCacheLogic = 0;
     private String oreFilterString = "";
-    public boolean needSyncGUI = false;
-    // private final static String COPIED_DATA_IDENTIFIER = "AE_stockingBus_part";
+    private String previousOreFilterString = "";
+
     /**
      * used to read changes once when the list of extractable items was changed
      */
@@ -127,13 +128,25 @@ public class PartStorageBus extends PartUpgradeable implements IGridTickable, IC
             if (tag.hasKey("config")) {
                 Config.readFromNBT(tag, "config");
             }
-            if (tag.hasKey("invbackup")) {
-                NBTTagCompound tagCompound = tag.getCompoundTag("invbackup");
-                for (int x = 0; x < filterBackup.length; x++) {
+            if (tag.hasKey("filter")) {
+                previousOreFilterString = tag.getString("filter");
+            }
+            if (tag.hasKey("filterCache")) {
+                NBTTagCompound tagCompound = tag.getCompoundTag("filterCache");
+                for (int x = 0; x < filterCache.length; x++) {
                     if (tagCompound.hasKey("#" + x)) {
                         NBTTagCompound c = tagCompound.getCompoundTag("#" + x);
-                        filterBackup[x] = ItemStack.loadItemStackFromNBT(c);
+                        filterCache[x] = ItemStack.loadItemStackFromNBT(c);
                     }
+                }
+            }
+            if (tag.hasKey("configManager")) {
+                NBTTagCompound configManagerTag = tag.getCompoundTag("configManager");
+                final IConfigManager manager = this.getConfigManager();
+                for (final Settings setting: manager.getSettings()) {
+                    String value = configManagerTag.getString(setting.name());
+                    Enum<?> oldValue = manager.getSetting(setting);
+                    manager.registerSetting(setting, Enum.valueOf(oldValue.getClass(), value));
                 }
             }
             // if we don't do this, the tag will stick forever to the storage bus, as it's never cleaned up,
@@ -152,15 +165,18 @@ public class PartStorageBus extends PartUpgradeable implements IGridTickable, IC
             if (!this.oreFilterString.isEmpty()) tag.setString("filter", this.oreFilterString);
             boolean hasItems = false;
             final NBTTagCompound tagCompound = new NBTTagCompound();
-            for (int x = 0; x < filterBackup.length; x++) {
-                if (filterBackup[x] != null) {
+            for (int x = 0; x < filterCache.length; x++) {
+                if (filterCache[x] != null) {
                     hasItems = true;
                     final NBTTagCompound c = new NBTTagCompound();
-                    filterBackup[x].writeToNBT(c);
+                    filterCache[x].writeToNBT(c);
                     tagCompound.setTag("#" + x, c);
                 }
             }
-            if (hasItems) tag.setTag("invbackup", tagCompound);
+            if (hasItems) tag.setTag("filterCache", tagCompound);
+            final NBTTagCompound configManagerTag = new NBTTagCompound();
+            this.getConfigManager().writeToNBT(configManagerTag);
+            tag.setTag("configManager", configManagerTag);
             final ItemStack copy = this.is.copy();
             copy.setTagCompound(tag);
             return copy;
@@ -210,7 +226,7 @@ public class PartStorageBus extends PartUpgradeable implements IGridTickable, IC
 
         if (inv == this.Config) {
             if ((removedStack != null || newStack != null) && slot >= 18 && (slot < (18 + this.getInstalledUpgrades(Upgrades.CAPACITY) * 9)))
-                this.filterBackup[slot-18] = newStack;
+                this.filterCache[slot-18] = newStack;
 
             this.resetCache(true);
         }
@@ -220,8 +236,11 @@ public class PartStorageBus extends PartUpgradeable implements IGridTickable, IC
     public void upgradesChanged() {
         super.upgradesChanged();
         if (getInstalledUpgrades(Upgrades.ORE_FILTER) == 0) this.oreFilterString = "";
+        else if (this.oreFilterString.isEmpty())
+            this.oreFilterString = previousOreFilterString;
+
         for (int x = 0; x < (this.getInstalledUpgrades(Upgrades.CAPACITY) * 9); x++) {
-            final ItemStack is = filterBackup[x];
+            final ItemStack is = filterCache[x];
             if (is != null) this.Config.setInventorySlotContents(x + 18, is);
         }
         needSyncGUI = true;
@@ -235,11 +254,11 @@ public class PartStorageBus extends PartUpgradeable implements IGridTickable, IC
         this.Config.readFromNBT(data, "config");
         this.priority = data.getInteger("priority");
         this.oreFilterString = data.getString("filter");
-        final NBTTagCompound tagCompound = data.getCompoundTag("invbackup");
-        for (int x = 0; x < filterBackup.length; x++) {
+        final NBTTagCompound tagCompound = data.getCompoundTag("filterCache");
+        for (int x = 0; x < filterCache.length; x++) {
             if (tagCompound.hasKey("#" + x)) {
                 final NBTTagCompound c = tagCompound.getCompoundTag("#" + x);
-                filterBackup[x] = ItemStack.loadItemStackFromNBT(c);
+                filterCache[x] = ItemStack.loadItemStackFromNBT(c);
             }
         }
     }
@@ -253,12 +272,14 @@ public class PartStorageBus extends PartUpgradeable implements IGridTickable, IC
         final NBTTagCompound tagCompound = new NBTTagCompound();
         for (int x = 0; x < filterBackup.length; x++) {
             if (filterBackup[x] != null) {
+        for (int x = 0; x < filterCache.length; x++) {
+            if (filterCache[x] != null) {
                 final NBTTagCompound c = new NBTTagCompound();
-                filterBackup[x].writeToNBT(c);
+                filterCache[x].writeToNBT(c);
                 tagCompound.setTag("#" + x, c);
             }
         }
-        data.setTag("invbackup", tagCompound);
+        data.setTag("filterCache", tagCompound);
     }
 
     @Override
@@ -672,6 +693,7 @@ public class PartStorageBus extends PartUpgradeable implements IGridTickable, IC
     @Override
     public void setFilter(String filter) {
         oreFilterString = filter;
+        previousOreFilterString = filter;
         resetCache(true);
     }
 
