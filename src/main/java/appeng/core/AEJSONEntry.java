@@ -2,6 +2,10 @@ package appeng.core;
 
 import cpw.mods.fml.common.registry.GameRegistry;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.oredict.OreDictionary;
+
+import java.util.Arrays;
+import java.util.List;
 import java.util.Random;
 
 public class AEJSONEntry {
@@ -30,14 +34,17 @@ public class AEJSONEntry {
         this.weight = weight;
         this.exclusiveGroupID = exclusiveGroupID;
     }
-    private ItemStack getItemStack(int amount)
+    private List<ItemStack> getItemStacks(int amount)
     {
         String[] temp = item.split(":");
-        return new ItemStack(GameRegistry.findItem(temp[0], temp[1]), amount, meta_data);
+        if(temp[0] != "ore") {
+            return Arrays.asList(new ItemStack(GameRegistry.findItem(temp[0], temp[1]), amount, meta_data));
+        }
+        return OreDictionary.getOres(temp[1]);
     }
-    public ItemStack getItemStack(Random rand)
+    public List<ItemStack> getItemStacks(Random rand)
     {
-        return getItemStack(rand.nextInt(this.max_value-min_value)+min_value);
+        return getItemStacks(rand.nextInt(this.max_value-min_value)+min_value);
     }
 
     public String toString()

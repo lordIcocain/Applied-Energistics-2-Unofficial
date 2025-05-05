@@ -53,13 +53,34 @@ public class AEJSONConfig{
 
     public static AEJSONConfig createDefaultConfig() {
         AEJSONConfig config = new AEJSONConfig();
-        AEJSONEntry calcProcessorPress;
-        AEJSONEntry engProcessorPress ;
-        AEJSONEntry logicProcessorPress;
-        AEJSONEntry siliconPress;
-        AEJSONEntry goldNugget = new AEJSONEntry("minecraft:gold_nugget", 0, 0, 12, 1, -1);
+        AEJSONEntry calcProcessorPress = new AEJSONEntry("appliedenergistics2:item.ItemMultiMaterial", 13, 0, 1, 1, 1);
+        AEJSONEntry engProcessorPress = new AEJSONEntry("appliedenergistics2:item.ItemMultiMaterial", 14, 0, 1, 1, 1);
+        AEJSONEntry logicProcessorPress = new AEJSONEntry("appliedenergistics2:item.ItemMultiMaterial", 15, 0, 1, 1, 1);
+        AEJSONEntry siliconPress = new AEJSONEntry("appliedenergistics2:item.ItemMultiMaterial", 19, 0, 1, 1, 1);
 
-        config.dimension_loot_tables.put("0", Arrays.asList(Arrays.asList(goldNugget)));
+        AEJSONEntry IronNugget = new AEJSONEntry("ore:nuggetIron", 0, 0, 12, 1, -1);
+        AEJSONEntry CopperNugget = new AEJSONEntry("ore:nuggetCopper", 0, 0, 12, 1, 3);
+        AEJSONEntry TinNugget = new AEJSONEntry("ore:nuggetTin", 0, 0, 12, 1, 4);
+        AEJSONEntry SilverNugget = new AEJSONEntry("ore:nuggetSilver", 0, 0, 12, 1, 5);
+        AEJSONEntry LeadNugget = new AEJSONEntry("ore:nuggetLead", 0, 0, 12, 1, 2);
+        AEJSONEntry PlatinumNugget = new AEJSONEntry("ore:nuggetPlatinum", 0, 0, 12, 1, 3);
+        AEJSONEntry NickelNugget = new AEJSONEntry("ore:nuggetNickel", 0, 0, 12, 1, 4);
+        AEJSONEntry AluminiumNugget = new AEJSONEntry("ore:nuggetAluminium", 0, 0, 12, 1, 5);
+        AEJSONEntry ElectrumNugget = new AEJSONEntry("ore:nuggetElectrum", 0, 0, 12, 1, 2);
+        AEJSONEntry GoldNugget = new AEJSONEntry("minecraft:gold_nugget", 0, 0, 12, 1, -1);
+        AEJSONEntry Diamond = new AEJSONEntry("minecraft:diamond", 0, 2, 4, 1, 1);
+        config.dimension_loot_tables.put("0", Arrays.asList(
+                Arrays.asList(calcProcessorPress, CopperNugget, PlatinumNugget, IronNugget, GoldNugget),
+                Arrays.asList(engProcessorPress, TinNugget, NickelNugget, IronNugget, GoldNugget),
+                Arrays.asList(logicProcessorPress, SilverNugget, AluminiumNugget, IronNugget, GoldNugget),
+                Arrays.asList(siliconPress, LeadNugget, ElectrumNugget, IronNugget, GoldNugget)
+                                                            ));
+        config.dimension_loot_tables.put("-29", Arrays.asList(
+                Arrays.asList(calcProcessorPress, CopperNugget, PlatinumNugget, IronNugget, GoldNugget, Diamond),
+                Arrays.asList(engProcessorPress, TinNugget, NickelNugget, IronNugget, GoldNugget, Diamond),
+                Arrays.asList(logicProcessorPress, SilverNugget, AluminiumNugget, IronNugget, GoldNugget, Diamond),
+                Arrays.asList(siliconPress, LeadNugget, ElectrumNugget, IronNugget, GoldNugget, Diamond)
+        ));
         return config;
     }
 
@@ -67,11 +88,14 @@ public class AEJSONConfig{
 
 
 
-    public List<List<AEJSONEntry>> getTablesForDimension(int dimensionID)
+    private List<List<AEJSONEntry>> getTablesForDimension(int dimensionID)
     {
         if(DimensionManager.isDimensionRegistered(dimensionID)) {
             if(dimension_loot_tables.containsKey(dimensionID+"")) {
                 return dimension_loot_tables.get(dimensionID+"");
+            }
+            else if (dimension_loot_tables.containsKey("0")) {
+                return dimension_loot_tables.get("0");
             }
             else {
                 return createDefaultConfig().getTablesForDimension(0);

@@ -395,7 +395,6 @@ public final class MeteoritePlacer {
 
                 final int dimID = w.getWorld().provider.dimensionId;
                 final List<AEJSONEntry> loot_table = AEJSONConfig.instance.getWeightedLootTable(dimID, lootRng);
-                //TODO: Check that switching dimensions in game doesn't break anything
                 final Map<Integer, List<AEJSONEntry>> exlcusion_table_map = new HashMap<>();
 
                 int totalWeight = 0;
@@ -412,7 +411,7 @@ public final class MeteoritePlacer {
                         if(entry.exclusiveGroupID == -1) {
                             curWeight += entry.weight;
                             if (randWeight < curWeight) {
-                                loot.add(entry.getItemStack(lootRng));
+                                loot.addAll(entry.getItemStacks(lootRng));
                             }
                         }
                         else {
@@ -436,7 +435,7 @@ public final class MeteoritePlacer {
                             for (AEJSONEntry entry : exlcusion_table_map.get(key)) {
                                 curWeight += entry.weight;
                                 if (randWeight < curWeight) {
-                                    loot.add(entry.getItemStack(lootRng));
+                                    loot.addAll(entry.getItemStacks(lootRng));
                                     break;
                                 }
                             }
@@ -444,7 +443,7 @@ public final class MeteoritePlacer {
                         else {
                             AEJSONEntry entry = exlcusion_table_map.get(key).get(0);
                             if(entry.weight > 0) {
-                                loot.add(entry.getItemStack(lootRng));
+                                loot.addAll(entry.getItemStacks(lootRng));
                             }
                         }
                     }
