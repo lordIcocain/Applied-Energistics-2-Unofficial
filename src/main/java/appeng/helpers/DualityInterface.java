@@ -142,6 +142,7 @@ public class DualityInterface implements IGridTickable, IStorageMonitorable, IIn
     private UnlockCraftingEvent unlockEvent;
     private List<IAEItemStack> unlockStacks;
     private int lastInputHash = 0;
+    private boolean isImportantFree;
 
     public DualityInterface(final AENetworkProxy networkProxy, final IInterfaceHost ih) {
         this.gridProxy = networkProxy;
@@ -1069,6 +1070,16 @@ public class DualityInterface implements IGridTickable, IStorageMonitorable, IIn
         }
 
         return busy;
+    }
+
+    @Override
+    public boolean isImportantFree() {
+        return isImportantFree;
+    }
+
+    @Override
+    public void setImportantLock(boolean important) {
+        isImportantFree = !important;
     }
 
     private boolean sameGrid(final IGrid grid) throws GridAccessException {

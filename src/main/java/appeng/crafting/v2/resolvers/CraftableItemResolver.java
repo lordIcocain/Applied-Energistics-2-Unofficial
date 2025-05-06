@@ -434,6 +434,7 @@ public class CraftableItemResolver implements CraftingRequestResolver<IAEItemSta
                                 IAEItemStack.class,
                                 allowSimulation,
                                 request.craftingMode,
+                                request.isImportant,
                                 stack -> this.isValidSubstitute(input, stack, context.world, finalSlot));
                         complexRequestPerSlot.add(req);
                         newChildren.add(req);
@@ -457,6 +458,7 @@ public class CraftableItemResolver implements CraftingRequestResolver<IAEItemSta
                                     IAEItemStack.class,
                                     allowSimulation,
                                     request.craftingMode,
+                                    request.isImportant,
                                     stack -> this.isValidSubstitute(recInput, stack, context.world));
                             newChildren.add(req);
                             childRecursionRequests.put(recInput, req);
@@ -471,6 +473,7 @@ public class CraftableItemResolver implements CraftingRequestResolver<IAEItemSta
                                 IAEItemStack.class,
                                 allowSimulation,
                                 request.craftingMode,
+                                request.isImportant,
                                 stack -> this.isValidSubstitute(input, stack, context.world));
                         newChildren.add(req);
                         childRequests.add(new RequestAndPerCraftAmount(req, input.getStackSize()));

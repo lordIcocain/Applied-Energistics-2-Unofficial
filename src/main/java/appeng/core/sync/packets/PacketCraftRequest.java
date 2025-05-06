@@ -39,11 +39,14 @@ public class PacketCraftRequest extends AppEngPacket {
 
     private final CraftingMode craftingMode;
 
+    private final boolean isImportant;
+
     // automatic.
     public PacketCraftRequest(final ByteBuf stream) {
         this.heldShift = stream.readBoolean();
         this.amount = stream.readLong();
         this.craftingMode = CraftingMode.values()[stream.readByte()];
+        this.isImportant = stream.readBoolean();
     }
 
     public PacketCraftRequest(final int craftAmt, final boolean shift) {
@@ -51,9 +54,15 @@ public class PacketCraftRequest extends AppEngPacket {
     }
 
     public PacketCraftRequest(final long craftAmt, final boolean shift, final CraftingMode craftingMode) {
+        this(craftAmt, shift, craftingMode, false);
+    }
+
+    public PacketCraftRequest(final long craftAmt, final boolean shift, final CraftingMode craftingMode,
+            final boolean important) {
         this.amount = craftAmt;
         this.heldShift = shift;
         this.craftingMode = craftingMode;
+        this.isImportant = important;
 
         final ByteBuf data = Unpooled.buffer();
 
@@ -61,6 +70,7 @@ public class PacketCraftRequest extends AppEngPacket {
         data.writeBoolean(shift);
         data.writeLong(this.amount);
         data.writeByte(craftingMode.ordinal());
+        data.writeBoolean(important);
 
         this.configureWrite(data);
     }
@@ -92,6 +102,7 @@ public class PacketCraftRequest extends AppEngPacket {
                                 cca.getActionSrc(),
                                 cca.getItemToCraft(),
                                 this.craftingMode,
+                                isImportant,
                                 null);
                     } else {
                         futureJob = cg.beginCraftingJob(

@@ -56,4 +56,10 @@ public interface ICraftingMedium {
         BLOCKING,
         SMART_BLOCKING
     }
+
+    default boolean isImportantFree() {
+        return true;
+    }
+
+    default void setImportantLock(boolean lock) {}
 }

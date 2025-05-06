@@ -480,18 +480,19 @@ public class CraftingGridCache
     @Override
     public Future<ICraftingJob> beginCraftingJob(final World world, final IGrid grid, final BaseActionSource actionSrc,
             final IAEItemStack slotItem, final ICraftingCallback cb) {
-        return beginCraftingJob(world, grid, actionSrc, slotItem, CraftingMode.STANDARD, cb);
+        return beginCraftingJob(world, grid, actionSrc, slotItem, CraftingMode.STANDARD, false, cb);
     }
 
     public Future<ICraftingJob> beginCraftingJob(final World world, final IGrid grid, final BaseActionSource actionSrc,
-            final IAEItemStack slotItem, final CraftingMode craftingMode, final ICraftingCallback cb) {
+            final IAEItemStack slotItem, final CraftingMode craftingMode, final boolean important,
+            final ICraftingCallback cb) {
         if (world == null || grid == null || actionSrc == null || slotItem == null) {
             throw new IllegalArgumentException("Invalid Crafting Job Request");
         }
 
         final ICraftingJob job = switch (AEConfig.instance.craftingCalculatorVersion) {
             case 1 -> new CraftingJob(world, grid, actionSrc, slotItem, cb);
-            case 2 -> new CraftingJobV2(world, grid, actionSrc, slotItem, craftingMode, cb);
+            case 2 -> new CraftingJobV2(world, grid, actionSrc, slotItem, craftingMode, important, cb);
             default -> throw new IllegalStateException("Invalid crafting calculator version");
         };
 

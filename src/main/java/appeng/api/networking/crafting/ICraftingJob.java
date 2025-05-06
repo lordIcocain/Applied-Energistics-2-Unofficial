@@ -73,4 +73,8 @@ public interface ICraftingJob {
      */
     default void startCrafting(final MECraftingInventory storage, final ICraftingCPU craftingCPUCluster,
             final BaseActionSource src) {}
+
+    default boolean isImportant() {
+        return false;
+    }
 }

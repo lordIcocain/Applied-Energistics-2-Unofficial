@@ -164,6 +164,7 @@ public final class CraftingCPUCluster implements IAECluster, ICraftingCPU {
     private long numsOfOutput;
     private int countToTryExtractItems;
     private boolean isMissingMode;
+    private boolean isImportant;
     private CraftingAllow craftingAllowMode = CraftingAllow.ALLOW_ALL;
 
     private final Map<String, List<CraftNotification>> unreadNotifications = new HashMap<>();
@@ -655,6 +656,9 @@ public final class CraftingCPUCluster implements IAECluster, ICraftingCPU {
         }
         this.craftCancelListeners.clear();
         this.craftUpdateListeners.clear();
+
+        if (isImportant) setImportantLock(false);
+
         this.storeItems(); // marks dirty
     }
 
@@ -758,6 +762,8 @@ public final class CraftingCPUCluster implements IAECluster, ICraftingCPU {
                         knownBusyMediums.add(medium);
                         continue;
                     }
+
+                    if (!medium.isImportantFree() && !isImportant) break doWhileCraftingLoop;
 
                     // Find a valid craftingInventory for this craft.
                     double sum = 0;
@@ -975,6 +981,12 @@ public final class CraftingCPUCluster implements IAECluster, ICraftingCPU {
         final IMEInventory<IAEItemStack> storage = sg.getItemInventory();
         final MECraftingInventory ci = new MECraftingInventory(storage, true, false, false);
         this.isMissingMode = job.getCraftingMode() == CraftingMode.IGNORE_MISSING;
+
+        if (job.isImportant()) {
+            isImportant = true;
+            setImportantLock(true);
+        }
+
         ci.setMissingMode(this.isMissingMode);
         ci.setCpuInventory(this.inventory);
 
@@ -1040,6 +1052,7 @@ public final class CraftingCPUCluster implements IAECluster, ICraftingCPU {
                 this.tasks.clear();
                 this.providers.clear();
                 this.inventory.getItemList().resetStatus();
+                if (isImportant) setImportantLock(false);
             }
         } catch (final CraftBranchFailure e) {
             handleCraftBranchFailure(e, src);
@@ -1048,6 +1061,7 @@ public final class CraftingCPUCluster implements IAECluster, ICraftingCPU {
             this.tasks.clear();
             this.providers.clear();
             this.inventory.getItemList().resetStatus();
+            if (isImportant) setImportantLock(false);
         }
 
         return null;
@@ -1097,6 +1111,11 @@ public final class CraftingCPUCluster implements IAECluster, ICraftingCPU {
                 this.usedStorage += job.getByteTotal();
                 this.numsOfOutput += job.getOutput().getStackSize();
                 this.isMissingMode = job.getCraftingMode() == CraftingMode.IGNORE_MISSING;
+
+                if (job.isImportant()) {
+                    isImportant = true;
+                    setImportantLock(true);
+                }
 
                 this.prepareStepCount();
                 this.markDirty();
@@ -1737,5 +1756,20 @@ public final class CraftingCPUCluster implements IAECluster, ICraftingCPU {
     public void changeCraftingAllowMode(CraftingAllow mode) {
         this.craftingAllowMode = mode;
         this.markDirty();
+    }
+
+    private void setImportantLock(boolean lock) {
+        IGrid grid = getGrid();
+        if (grid != null) {
+            CraftingGridCache cache = getGrid().getCache(ICraftingGrid.class);
+            if (cache != null) {
+                for (final Entry<ICraftingPatternDetails, TaskProgress> t : this.tasks.entrySet()) {
+                    List<ICraftingMedium> craftingProviders = cache.getMediums(t.getKey());
+                    for (final ICraftingMedium medium : craftingProviders) {
+                        medium.setImportantLock(lock);
+                    }
+                }
+            }
+        }
     }
 }

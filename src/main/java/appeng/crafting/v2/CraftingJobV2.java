@@ -57,11 +57,12 @@ public class CraftingJobV2 implements ICraftingJob, Future<ICraftingJob>, ITreeS
 
     public CraftingJobV2(final World world, final IGrid meGrid, final BaseActionSource actionSource,
             final IAEItemStack what, final ICraftingCallback callback) {
-        this(world, meGrid, actionSource, what, CraftingMode.STANDARD, callback);
+        this(world, meGrid, actionSource, what, CraftingMode.STANDARD, false, callback);
     }
 
     public CraftingJobV2(final World world, final IGrid meGrid, final BaseActionSource actionSource,
-            final IAEItemStack what, final CraftingMode craftingMode, final ICraftingCallback callback) {
+            final IAEItemStack what, final CraftingMode craftingMode, final boolean important,
+            final ICraftingCallback callback) {
         this.context = new CraftingContext(world, meGrid, actionSource);
         this.callback = callback;
         this.originalRequest = new CraftingRequest<>(
@@ -69,7 +70,8 @@ public class CraftingJobV2 implements ICraftingJob, Future<ICraftingJob>, ITreeS
                 SubstitutionMode.PRECISE_FRESH,
                 IAEItemStack.class,
                 true,
-                craftingMode);
+                craftingMode,
+                important);
         this.context.addRequest(this.originalRequest);
         this.context.itemModel.ignore(what);
     }
@@ -298,5 +300,10 @@ public class CraftingJobV2 implements ICraftingJob, Future<ICraftingJob>, ITreeS
             case FINISHED -> this;
             default -> throw new IllegalStateException();
         };
+    }
+
+    @Override
+    public boolean isImportant() {
+        return originalRequest.isImportant;
     }
 }
