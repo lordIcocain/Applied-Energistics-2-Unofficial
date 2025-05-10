@@ -1,11 +1,11 @@
 package appeng.core;
 
 import cpw.mods.fml.common.registry.GameRegistry;
+import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.oredict.OreDictionary;
 
-import java.util.Arrays;
-import java.util.List;
+import java.util.ArrayList;
 import java.util.Random;
 
 public class AEJSONEntry {
@@ -15,16 +15,7 @@ public class AEJSONEntry {
     public int max_value = 1;
     public int weight = 1;
     public int exclusiveGroupID = -1;
-
-    public AEJSONEntry(String dimensionID, String item, int meta_data, int min_value, int max_value, int weight, int exclusiveGroupID)
-    {
-        this.item = item;
-        this.meta_data = meta_data;
-        this.min_value = min_value;
-        this.max_value = max_value;
-        this.weight = weight;
-        this.exclusiveGroupID = exclusiveGroupID;
-    }
+    //TODO: Replace the int with Integer to see if not including a parameter will just set it to null
     public AEJSONEntry(String item, int meta_data, int min_value, int max_value, int weight, int exclusiveGroupID)
     {
         this.item = item;
@@ -34,22 +25,26 @@ public class AEJSONEntry {
         this.weight = weight;
         this.exclusiveGroupID = exclusiveGroupID;
     }
-    private List<ItemStack> getItemStacks(int amount)
+    private ItemStack getItemStack(int amount)
     {
         String[] temp = item.split(":");
-        if(temp[0] != "ore") {
-            return Arrays.asList(new ItemStack(GameRegistry.findItem(temp[0], temp[1]), amount, meta_data));
+        if(!temp[0].equals("ore")) {
+            return new ItemStack(GameRegistry.findItem(temp[0], temp[1]), amount, meta_data);
         }
-        return OreDictionary.getOres(temp[1]);
+        //TODO: Figure this out
+            ArrayList<ItemStack> items = OreDictionary.getOres(temp[1]);
+            if(items.size() > 0)
+                return items.get(0);
+        System.err.println("AE2: NO SUCH ORE DICTIONARY OBJECT FOUND: " + item + " | ERROR: Getting itemStack for meteorite loot");
+        return new ItemStack(Items.diamond_hoe);
     }
-    public List<ItemStack> getItemStacks(Random rand)
+    public ItemStack getItemStack(Random rand)
     {
-        return getItemStacks(rand.nextInt(this.max_value-min_value)+min_value);
+        return getItemStack(rand.nextInt(this.max_value-min_value)+min_value);
     }
 
     public String toString()
     {
-        String[] itemID = item.split(":");
-        return "Entry for " + GameRegistry.findItem(itemID[0], itemID[1]).getUnlocalizedName() + ". Meta data: " + meta_data + ". Minimum and Maximum Value: " + min_value + ", " + max_value + ". Weight and Exclusive Group ID: " + weight + ", " + exclusiveGroupID + ".";
+        return "Entry for " + item + ". Meta data: " + meta_data + ". Minimum and Maximum Value: " + min_value + ", " + max_value + ". Weight and Exclusive Group ID: " + weight + ", " + exclusiveGroupID + ".";
     }
 }

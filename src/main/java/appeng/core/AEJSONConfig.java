@@ -9,7 +9,7 @@ import java.io.File;
 import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
+import java.util.ArrayList;
 import java.util.Map;
 import java.util.Random;
 
@@ -17,7 +17,7 @@ public class AEJSONConfig{
     public static AEJSONConfig instance;
     //Conbined weight of items in List<AEJSONEntry>[] is that loottable's weight when selecting a loot table for dimension
     @SerializedName("dimension_loot_tables")
-    private Map<String, List<List<AEJSONEntry>>> dimension_loot_tables = new HashMap<>();
+    private Map<String, ArrayList<ArrayList<AEJSONEntry>>> dimension_loot_tables = new HashMap<>();
 
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
 
@@ -47,8 +47,8 @@ public class AEJSONConfig{
             return loaded;        }
         catch (Exception e) {
             System.err.println("AE2: Could not read json config " + file.getAbsolutePath() + " | Error: Could not pull JSON from file");
+            return new AEJSONConfig();
         }
-        return new AEJSONConfig();
     }
 
     public static AEJSONConfig createDefaultConfig() {
@@ -69,26 +69,21 @@ public class AEJSONConfig{
         AEJSONEntry ElectrumNugget = new AEJSONEntry("ore:nuggetElectrum", 0, 0, 12, 1, 2);
         AEJSONEntry GoldNugget = new AEJSONEntry("minecraft:gold_nugget", 0, 0, 12, 1, -1);
         AEJSONEntry Diamond = new AEJSONEntry("minecraft:diamond", 0, 2, 4, 1, 1);
-        config.dimension_loot_tables.put("0", Arrays.asList(
-                Arrays.asList(calcProcessorPress, CopperNugget, PlatinumNugget, IronNugget, GoldNugget),
-                Arrays.asList(engProcessorPress, TinNugget, NickelNugget, IronNugget, GoldNugget),
-                Arrays.asList(logicProcessorPress, SilverNugget, AluminiumNugget, IronNugget, GoldNugget),
-                Arrays.asList(siliconPress, LeadNugget, ElectrumNugget, IronNugget, GoldNugget)
-                                                            ));
-        config.dimension_loot_tables.put("-29", Arrays.asList(
-                Arrays.asList(calcProcessorPress, CopperNugget, PlatinumNugget, IronNugget, GoldNugget, Diamond),
-                Arrays.asList(engProcessorPress, TinNugget, NickelNugget, IronNugget, GoldNugget, Diamond),
-                Arrays.asList(logicProcessorPress, SilverNugget, AluminiumNugget, IronNugget, GoldNugget, Diamond),
-                Arrays.asList(siliconPress, LeadNugget, ElectrumNugget, IronNugget, GoldNugget, Diamond)
-        ));
+        config.dimension_loot_tables.put("0", new ArrayList<>(Arrays.asList(
+                new ArrayList<>(Arrays.asList(calcProcessorPress, CopperNugget, PlatinumNugget, IronNugget, GoldNugget)),
+                new ArrayList<>(Arrays.asList(engProcessorPress, TinNugget, NickelNugget, IronNugget, GoldNugget)),
+                new ArrayList<>(Arrays.asList(logicProcessorPress, SilverNugget, AluminiumNugget, IronNugget, GoldNugget)),
+                new ArrayList<>(Arrays.asList(siliconPress, LeadNugget, ElectrumNugget, IronNugget, GoldNugget))
+        )));
+        config.dimension_loot_tables.put("-29", new ArrayList<>(Arrays.asList(
+                new ArrayList<>(Arrays.asList(calcProcessorPress, CopperNugget, PlatinumNugget, IronNugget, GoldNugget, Diamond)),
+                new ArrayList<>(Arrays.asList(engProcessorPress, TinNugget, NickelNugget, IronNugget, GoldNugget, Diamond)),
+                new ArrayList<>(Arrays.asList(logicProcessorPress, SilverNugget, AluminiumNugget, IronNugget, GoldNugget, Diamond)),
+                new ArrayList<>(Arrays.asList(siliconPress, LeadNugget, ElectrumNugget, IronNugget, GoldNugget, Diamond))
+        )));
         return config;
     }
-
-
-
-
-
-    private List<List<AEJSONEntry>> getTablesForDimension(int dimensionID)
+    private ArrayList<ArrayList<AEJSONEntry>> getTablesForDimension(int dimensionID)
     {
         if(DimensionManager.isDimensionRegistered(dimensionID)) {
             if(dimension_loot_tables.containsKey(dimensionID+"")) {
@@ -98,6 +93,7 @@ public class AEJSONConfig{
                 return dimension_loot_tables.get("0");
             }
             else {
+                System.err.println("AE2: Configs for overworld and dimension: " + dimensionID + " are missing! | Error: Getting loot tables for dimension");
                 return createDefaultConfig().getTablesForDimension(0);
             }
         }
@@ -106,12 +102,12 @@ public class AEJSONConfig{
             return dimension_loot_tables.get("0");
         }
     }
-    public List<AEJSONEntry> getWeightedLootTable(int dimID, Random rand)
+    public ArrayList<AEJSONEntry> getWeightedLootTable(int dimID, Random rand)
     {
-        List<List<AEJSONEntry>> loot_tables = instance.getTablesForDimension(dimID);
+        ArrayList<ArrayList<AEJSONEntry>> loot_tables = instance.getTablesForDimension(dimID);
         if (loot_tables == null || loot_tables.isEmpty()) {
             System.err.println("AE2: No loot tables found for dimension, will use default loot table" + dimID + " | Error: Empty or missing loot tables.");
-            loot_tables =  createDefaultConfig().getTablesForDimension(dimID);
+            loot_tables =  createDefaultConfig().getTablesForDimension(0);
         }
         int[] totalWeights = new int[loot_tables.size()];
         int totalWeight = 0;
@@ -124,10 +120,16 @@ public class AEJSONConfig{
 
         int randomWeight = rand.nextInt(totalWeight);
         int cumulitive = 0;
+        //System.out.println("AE2: Loot_tables: " + loot_tables);
         for(int i = 0; i < totalWeights.length; i++) {
             cumulitive+=totalWeights[i];
+            System.out.println("AE2: Comparing " + randomWeight + " <= " + cumulitive + "for index " + i + " result: " + (randomWeight <= cumulitive));
             if(randomWeight <= cumulitive) {
+                System.out.println("AE2: Attempting to find loot_table at index " + i);
+                System.out.print("AE2: Found! Returning loot_table: ");
+                //System.out.println(loot_tables.get(i));
                 return loot_tables.get(i);
+                //return Arrays.asList(new AEJSONEntry("minecraft:nether_star", 0, 4, 4, 1, 100));
             }
         }
         System.err.println("AE2: Failed to pull a weighted random loot_table for dimension: " + dimID + ", pulling unweighted random loot_table. | Error: Weighted random failed. THIS IS LIKELY A BUG.");

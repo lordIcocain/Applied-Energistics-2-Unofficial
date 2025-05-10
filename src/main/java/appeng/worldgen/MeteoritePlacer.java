@@ -15,7 +15,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
@@ -325,6 +324,9 @@ public final class MeteoritePlacer {
             }
 
             final TileEntity te = w.getTileEntity(x, y, z);
+            int TEx = te.xCoord;
+            int TEy = te.yCoord;
+            int TEz = te.zCoord;
             //Set to false temporarily, if-statement will be removed.
             if (te instanceof IInventory && false) {
 
@@ -355,7 +357,7 @@ public final class MeteoritePlacer {
                 /*-------------------Presses-------------------*/
 
                 /*-------------------Nuggets-------------------*/
-                final List<ItemStack> nuggetLoot = new ArrayList<>();
+                final ArrayList<ItemStack> nuggetLoot = new ArrayList<>();
                 nuggetLoot.addAll(OreDictionary.getOres("nuggetIron"));
                 nuggetLoot.addAll(OreDictionary.getOres("nuggetCopper"));
                 nuggetLoot.addAll(OreDictionary.getOres("nuggetTin"));
@@ -390,12 +392,12 @@ public final class MeteoritePlacer {
                 }
             }
             if (te instanceof IInventory) {
-                final Random lootRng = new Random(this.seed + SEED_OFFSET_CHEST_LOOT);
-                final InventoryAdaptor ap = InventoryAdaptor.getAdaptor(te, ForgeDirection.UP);
+                Random lootRng = new Random(this.seed + SEED_OFFSET_CHEST_LOOT);
+                InventoryAdaptor ap = InventoryAdaptor.getAdaptor(te, ForgeDirection.UP);
 
-                final int dimID = w.getWorld().provider.dimensionId;
-                final List<AEJSONEntry> loot_table = AEJSONConfig.instance.getWeightedLootTable(dimID, lootRng);
-                final Map<Integer, List<AEJSONEntry>> exlcusion_table_map = new HashMap<>();
+                int dimID = w.getWorld().provider.dimensionId;
+                ArrayList<AEJSONEntry> loot_table = new ArrayList<>(AEJSONConfig.instance.getWeightedLootTable(dimID, lootRng));
+                Map<Integer, ArrayList<AEJSONEntry>> exlcusion_table_map = new HashMap<>();
 
                 int totalWeight = 0;
                 for(AEJSONEntry entry : loot_table)
@@ -403,57 +405,57 @@ public final class MeteoritePlacer {
                     totalWeight+=entry.weight;
                 }
                 if(totalWeight > 0) {
-                    List<ItemStack> loot = new ArrayList<>();
+                    ArrayList<ItemStack> loot = new ArrayList<>();
                     int randWeight = lootRng.nextInt(totalWeight);
                     int curWeight = 0;
-                    for(AEJSONEntry entry : loot_table)
-                    {
-                        if(entry.exclusiveGroupID == -1) {
+                    for (AEJSONEntry entry : loot_table) {
+                        if (entry.exclusiveGroupID == -1) {
                             curWeight += entry.weight;
                             if (randWeight < curWeight) {
-                                loot.addAll(entry.getItemStacks(lootRng));
+                                loot.add(entry.getItemStack(lootRng));
                             }
-                        }
-                        else {
-                            if(exlcusion_table_map.containsKey(entry.exclusiveGroupID)) {
-                                List<AEJSONEntry> temp = exlcusion_table_map.get(entry.exclusiveGroupID);
+                        } else {
+                            if (exlcusion_table_map.containsKey(entry.exclusiveGroupID)) {
+                                ArrayList<AEJSONEntry> temp = exlcusion_table_map.get(entry.exclusiveGroupID);
                                 temp.add(entry);
                                 exlcusion_table_map.put(entry.exclusiveGroupID, temp);
-                            }
-                            else
-                                exlcusion_table_map.put(entry.exclusiveGroupID, Arrays.asList(entry));
+                            } else
+                                exlcusion_table_map.put(entry.exclusiveGroupID, new ArrayList<>(Arrays.asList(entry)));
                         }
                     }
-                    for(Integer key : exlcusion_table_map.keySet()) {
+                    for (Integer key : exlcusion_table_map.keySet()) {
                         totalWeight = 0;
                         curWeight = 0;
-                        for(AEJSONEntry entry : exlcusion_table_map.get(key))
-                        {
-                            totalWeight+=entry.weight;
+                        for (AEJSONEntry entry : exlcusion_table_map.get(key)) {
+                            totalWeight += entry.weight;
                         }
-                        if(exlcusion_table_map.get(key).size() > 1) {
+                        if (exlcusion_table_map.get(key).size() > 0) {
                             for (AEJSONEntry entry : exlcusion_table_map.get(key)) {
                                 curWeight += entry.weight;
                                 if (randWeight < curWeight) {
-                                    loot.addAll(entry.getItemStacks(lootRng));
+                                    loot.add(entry.getItemStack(lootRng));
                                     break;
                                 }
                             }
-                        }
-                        else {
+                        } else {
                             AEJSONEntry entry = exlcusion_table_map.get(key).get(0);
-                            if(entry.weight > 0) {
-                                loot.addAll(entry.getItemStacks(lootRng));
+                            if (entry.weight > 0) {
+                                loot.add(entry.getItemStack(lootRng));
                             }
                         }
                     }
-                    for(ItemStack items : loot)
-                        if(items != null) {
+                    for (ItemStack items : loot) {
+                        System.out.println("AE2: item added: " + items.getUnlocalizedName());
+                        if (items != null) {
+                            System.out.println("AE2: Item added for real: " + items.getUnlocalizedName() + " at location: " + TEx + ", " + TEy + ", " + TEz);
                             ap.addItems(items.copy());
-                        }
-                        else
+                        } else
                             System.err.println("AE2: Item is null! | Error: Failed while adding item to loot chest in meteoritePlacer");
+                    }
                 }
+            }
+            else {
+                System.err.println("AE2: tile entity is not inventory, WHAT." + TEx + ", " + TEy + ", " + TEz);
             }
         }
     }
