@@ -237,7 +237,11 @@ public enum ButtonToolTips {
 
     PinsSection,
     PinsSectionActive,
-    PinsSectionDisabled;
+    PinsSectionDisabled,
+
+    ToggleShowOnlySubstitute,
+    ToggleShowOnlySubstituteOnDesc,
+    ToggleShowOnlySubstituteOffDesc;
 
     private final String root;
 
