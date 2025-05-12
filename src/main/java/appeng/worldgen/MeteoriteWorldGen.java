@@ -10,7 +10,6 @@
 
 package appeng.worldgen;
 
-import java.util.Arrays;
 import java.util.Random;
 
 import net.minecraft.nbt.NBTTagCompound;
@@ -36,21 +35,20 @@ public final class MeteoriteWorldGen implements IWorldGenerator {
             // Find the meteorite grid cell corresponding to this chunk
             int defaultGridCellSize = -3124;
             int gridCellSize = -3124;
-            for(String distance : AEConfig.instance.minMeteoriteDistance) {
+            for (String distance : AEConfig.instance.minMeteoriteDistance) {
                 String[] split = distance.split("=");
-                if(split[0].equals(String.valueOf(world.provider.dimensionId))) {
+                if (split[0].equals(String.valueOf(world.provider.dimensionId))) {
                     gridCellSize = Math.max(8, Integer.parseInt(split[1]));
                 }
-                if(split[0].equals("0")) {
+                if (split[0].equals("0")) {
                     defaultGridCellSize = Integer.parseInt(split[1]);
                 }
             }
-            if(gridCellSize == -3124) {
-                if(defaultGridCellSize != -3124) {
+            if (gridCellSize == -3124) {
+                if (defaultGridCellSize != -3124) {
                     gridCellSize = defaultGridCellSize;
-                }
-                else {
-                    throw new RuntimeException("MISSING VALUE minMeteoriteDistance FOR OVERWORLD");
+                } else {
+                    throw new RuntimeException("AE2: MISSING VALUE minMeteoriteDistance FOR OVERWORLD");
                 }
             }
             final int gridCellMargin = Math.max(1, gridCellSize / 10);
@@ -61,26 +59,23 @@ public final class MeteoriteWorldGen implements IWorldGenerator {
             // Calculate a deterministic position of the meteorite in the grid cell
             int defaultSpawnSurfaceMeteor = -1;
             int check = -1;
-            for(String chance : AEConfig.instance.meteoriteSpawnChance) {
+            for (String chance : AEConfig.instance.meteoriteSpawnChance) {
                 String[] split = chance.split("=");
-                if(split[0].equals(String.valueOf(world.provider.dimensionId))) {
+                if (split[0].equals(String.valueOf(world.provider.dimensionId))) {
                     check = (rng.nextDouble() < Double.parseDouble(split[1]) ? 1 : 0);
                 }
-                if(split[0].equals("0"))
-                {
+                if (split[0].equals("0")) {
                     defaultSpawnSurfaceMeteor = (rng.nextDouble() < Double.parseDouble(split[1]) ? 1 : 0);
                 }
             }
-            if(check == -1) {
-                if(defaultSpawnSurfaceMeteor != -1) {
+            if (check == -1) {
+                if (defaultSpawnSurfaceMeteor != -1) {
                     check = defaultSpawnSurfaceMeteor;
-                }
-                else {
-                    throw new RuntimeException("MISSING VALUE meteoriteSpawnChance FOR OVERWORLD");
+                } else {
+                    throw new RuntimeException("AE2: MISSING VALUE meteoriteSpawnChance FOR OVERWORLD");
                 }
             }
             boolean spawnSurfaceMeteor = (check == 1);
-
 
             final int meteorX = (gridX * gridCellSize) + rng.nextInt(gridCellSize - 2 * gridCellMargin)
                     + gridCellMargin;

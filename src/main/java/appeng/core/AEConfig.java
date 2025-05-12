@@ -67,8 +67,8 @@ public final class AEConfig extends Configuration implements IConfigurableObject
     public final int chargedChange = 4;
     @Deprecated
     public int quartzKnifeInputLength = 32;
-    public String[] minMeteoriteDistance = {"0=707"};
-    //public int minMeteoriteDistanceSq = this.minMeteoriteDistance * this.minMeteoriteDistance;
+    public String[] minMeteoriteDistance = { "0=707" };
+    // public int minMeteoriteDistanceSq = this.minMeteoriteDistance * this.minMeteoriteDistance;
     public double spatialPowerExponent = 1.35;
     public double spatialPowerMultiplier = 1250.0;
     public String[] grinderOres = {
@@ -99,7 +99,7 @@ public final class AEConfig extends Configuration implements IConfigurableObject
     public int chargedStaffBattery = 8000;
     public boolean disableColoredCableRecipesInNEI = true;
     public boolean updatable = false;
-    //public double meteoriteClusterChance = 0.1;
+    // public double meteoriteClusterChance = 0.1;
     public String[] meteoriteSpawnChance = { "0=0.3" };
     public String[] meteoriteDimensionWhitelist = { "0, DEFAULT, DEFAULT, DEFAULT, DEFAULT, DEFAULT" };
     public String[] meteoriteValidBlocks = { "examplemod:example_block" };
@@ -166,10 +166,12 @@ public final class AEConfig extends Configuration implements IConfigurableObject
         this.spawnChargedChance = (float) (1.0
                 - this.get("worldGen", "spawnChargedChance", 1.0 - this.spawnChargedChance)
                         .getDouble(1.0 - this.spawnChargedChance));
-        this.minMeteoriteDistance = this.get("worldGen", "minMeteoriteDistance", this.minMeteoriteDistance).getStringList();
-//        this.meteoriteClusterChance = this.get("worldGen", "meteoriteClusterChance", this.meteoriteClusterChance)
-//                .getDouble(this.meteoriteClusterChance);
-        this.meteoriteSpawnChance = this.get("worldGen", "meteoriteSpawnChance", this.meteoriteSpawnChance).getStringList();
+        this.minMeteoriteDistance = this.get("worldGen", "minMeteoriteDistance", this.minMeteoriteDistance)
+                .getStringList();
+        // this.meteoriteClusterChance = this.get("worldGen", "meteoriteClusterChance", this.meteoriteClusterChance)
+        // .getDouble(this.meteoriteClusterChance);
+        this.meteoriteSpawnChance = this.get("worldGen", "meteoriteSpawnChance", this.meteoriteSpawnChance)
+                .getStringList();
         this.meteoriteDimensionWhitelist = this
                 .get("worldGen", "meteoriteDimensionWhitelist", this.meteoriteDimensionWhitelist).getStringList();
         this.addCustomCategoryComment(
@@ -188,7 +190,7 @@ public final class AEConfig extends Configuration implements IConfigurableObject
         this.quartzOresClusterAmount = this.get("worldGen", "quartzOresClusterAmount", this.quartzOresClusterAmount)
                 .getInt(this.quartzOresClusterAmount);
 
-        //this.minMeteoriteDistanceSq = this.minMeteoriteDistance * this.minMeteoriteDistance;
+        // this.minMeteoriteDistanceSq = this.minMeteoriteDistance * this.minMeteoriteDistance;
 
         this.addCustomCategoryComment(
                 "wireless",
