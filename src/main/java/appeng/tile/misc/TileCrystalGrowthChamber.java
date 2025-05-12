@@ -4,6 +4,7 @@ import java.util.List;
 
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemRedstone;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
@@ -36,23 +37,23 @@ import appeng.util.ConfigManager;
 import appeng.util.IConfigManagerHost;
 import cpw.mods.fml.common.registry.GameRegistry;
 
-public class TileGrower extends AENetworkPowerTile implements IGridTickable, IUpgradeableHost, IConfigManagerHost {
+public class TileCrystalGrowthChamber extends AENetworkPowerTile
+        implements IGridTickable, IUpgradeableHost, IConfigManagerHost {
 
     private final AppEngInternalInventory inv = new AppEngInternalInventory(this, 27);
     private final UpgradeInventory upgrades;
     private final IConfigManager settings;
 
-    private final Item redstoneDust = GameRegistry.findItem("minecraft", "redstone");
     private final Item netherQuartz = GameRegistry.findItem("minecraft", "quartz");
     private final IItemDefinition chargedCertusQuartz = AEApi.instance().definitions().materials()
             .certusQuartzCrystalCharged();
     private final IItemDefinition fluixCrystal = AEApi.instance().definitions().materials().fluixCrystal();
 
-    public TileGrower() {
+    public TileCrystalGrowthChamber() {
         setInternalMaxPower(10000);
         getProxy().setIdlePowerUsage(0);
 
-        final ITileDefinition growerDefinition = AEApi.instance().definitions().blocks().grower();
+        final ITileDefinition growerDefinition = AEApi.instance().definitions().blocks().crystalGrowthChamber();
         upgrades = new DefinitionUpgradeInventory(growerDefinition, this, 3);
         settings = new ConfigManager(this);
     }
@@ -86,7 +87,7 @@ public class TileGrower extends AENetworkPowerTile implements IGridTickable, IUp
     @Override
     public boolean isItemValidForSlot(int i, ItemStack is) {
         return is != null && (is.getItem() instanceof IGrowableCrystal || is.getItem() == netherQuartz
-                || is.getItem() == redstoneDust
+                || is.getItem() instanceof ItemRedstone
                 || chargedCertusQuartz.isSameAs(is));
     }
 
@@ -192,7 +193,7 @@ public class TileGrower extends AENetworkPowerTile implements IGridTickable, IUp
                         for (int j = 0; j < inv.getSizeInventory(); j++) {
                             ItemStack isTemp = inv.getStackInSlot(j);
                             if (isTemp != null) {
-                                if (isTemp.getItem() == redstoneDust) {
+                                if (isTemp.getItem() instanceof ItemRedstone) {
                                     redstonePos = j;
                                 } else if (isTemp.getItem() == netherQuartz) {
                                     netherPos = j;

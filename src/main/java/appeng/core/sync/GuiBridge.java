@@ -13,6 +13,8 @@ package appeng.core.sync;
 import java.lang.reflect.Constructor;
 import java.util.List;
 
+import appeng.api.implementations.guiobjects.IGuiItemObject;
+import appeng.container.implementations.ContainerSuperWirelessKit;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Slot;
@@ -31,7 +33,6 @@ import appeng.api.exceptions.AppEngException;
 import appeng.api.features.IWirelessTermHandler;
 import appeng.api.implementations.IUpgradeableHost;
 import appeng.api.implementations.guiobjects.IGuiItem;
-import appeng.api.implementations.guiobjects.IGuiItemObject;
 import appeng.api.implementations.guiobjects.INetworkTool;
 import appeng.api.implementations.guiobjects.IPortableCell;
 import appeng.api.networking.IGrid;
@@ -57,6 +58,7 @@ import appeng.container.implementations.ContainerCraftConfirm;
 import appeng.container.implementations.ContainerCraftingCPU;
 import appeng.container.implementations.ContainerCraftingStatus;
 import appeng.container.implementations.ContainerCraftingTerm;
+import appeng.container.implementations.ContainerCrystalGrowthChamber;
 import appeng.container.implementations.ContainerDrive;
 import appeng.container.implementations.ContainerFormationPlane;
 import appeng.container.implementations.ContainerGrinder;
@@ -87,7 +89,6 @@ import appeng.container.implementations.ContainerSecurity;
 import appeng.container.implementations.ContainerSkyChest;
 import appeng.container.implementations.ContainerSpatialIOPort;
 import appeng.container.implementations.ContainerStorageBus;
-import appeng.container.implementations.ContainerSuperWirelessKit;
 import appeng.container.implementations.ContainerUpgradeable;
 import appeng.container.implementations.ContainerVibrationChamber;
 import appeng.container.implementations.ContainerWireless;
@@ -113,7 +114,7 @@ import appeng.tile.crafting.TileMolecularAssembler;
 import appeng.tile.grindstone.TileGrinder;
 import appeng.tile.misc.TileCellWorkbench;
 import appeng.tile.misc.TileCondenser;
-import appeng.tile.misc.TileGrower;
+import appeng.tile.misc.TileCrystalGrowthChamber;
 import appeng.tile.misc.TileInscriber;
 import appeng.tile.misc.TileSecurity;
 import appeng.tile.misc.TileVibrationChamber;
@@ -230,7 +231,8 @@ public enum GuiBridge implements IGuiHandler {
 
     GUI_PATTERN_ITEM_RENAMER(ContainerPatternItemRenamer.class, ITerminalHost.class, GuiHostType.ITEM_OR_WORLD, null),
 
-    GUI_GROWER(ContainerGrower.class, TileGrower.class, GuiHostType.WORLD, null),
+    GUI_CRYSTAL_GROWTH_CHAMBER(ContainerCrystalGrowthChamber.class, TileCrystalGrowthChamber.class, GuiHostType.WORLD,
+            null),
 
     GUI_SUPER_WIRELESS_KIT(ContainerSuperWirelessKit.class, IGuiItemObject.class, GuiHostType.ITEM, null);
 

@@ -4,8 +4,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.EnumSet;
 
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.entity.player.EntityPlayer;
 
 import appeng.client.render.NetworkVisualiserRender;
@@ -22,20 +20,11 @@ import io.netty.buffer.Unpooled;
 
 public class PacketNetworkVisualiserData extends AppEngPacket {
 
-    public static class VisualisationData {
-
-        public static final int VERSION = 1;
-    }
-
     private ArrayList<VNode> vNodeSet;
     private ArrayList<VLink> vLinkSet;
 
     // automatic.
     public PacketNetworkVisualiserData(final ByteBuf stream) throws IOException {
-        int ver = stream.readInt();
-        if (ver != VisualisationData.VERSION) {
-            return; // error
-        }
         int vNodeCount = stream.readInt();
         int vLinkCount = stream.readInt();
 
@@ -78,7 +67,6 @@ public class PacketNetworkVisualiserData extends AppEngPacket {
         final ByteBuf data = Unpooled.buffer();
         data.writeInt(this.getPacketID());
 
-        data.writeInt(VisualisationData.VERSION);
         data.writeInt(vNodeSet.size());
         data.writeInt(vLinkSet.size());
 
@@ -108,7 +96,6 @@ public class PacketNetworkVisualiserData extends AppEngPacket {
     @Override
     @SideOnly(Side.CLIENT)
     public void clientPacketData(final INetworkInfo network, final AppEngPacket packet, final EntityPlayer player) {
-        final GuiScreen gs = Minecraft.getMinecraft().currentScreen;
         NetworkVisualiserRender.networkVisualiser(this.vNodeSet, this.vLinkSet);
     }
 }

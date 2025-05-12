@@ -198,5 +198,5 @@ public interface IBlocks {
 
     ITileDefinition wirelessHub();
 
-    ITileDefinition grower();
+    ITileDefinition crystalGrowthChamber();
 }
