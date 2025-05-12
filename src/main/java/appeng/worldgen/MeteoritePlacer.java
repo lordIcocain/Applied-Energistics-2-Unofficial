@@ -13,8 +13,9 @@ package appeng.worldgen;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 import net.minecraft.block.Block;
@@ -27,13 +28,13 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraftforge.common.util.ForgeDirection;
-import net.minecraftforge.oredict.OreDictionary;
 
 import appeng.api.AEApi;
 import appeng.api.definitions.IBlockDefinition;
 import appeng.api.definitions.IBlocks;
-import appeng.api.definitions.IMaterials;
 import appeng.core.AEConfig;
+import appeng.core.AEJSONConfig;
+import appeng.core.AEJSONEntry;
 import appeng.core.features.AEFeature;
 import appeng.core.worlddata.WorldData;
 import appeng.util.InventoryAdaptor;
@@ -47,8 +48,6 @@ import appeng.worldgen.meteorite.MeteoriteBlockPutter;
 import cpw.mods.fml.common.registry.GameRegistry;
 
 public final class MeteoritePlacer {
-
-    private static final int SKYSTONE_SPAWN_LIMIT = 12;
 
     private static final long SEED_OFFSET_CHEST_LOOT = 1;
     private static final long SEED_OFFSET_DECAY = 2;
@@ -322,82 +321,82 @@ public final class MeteoritePlacer {
 
             final TileEntity te = w.getTileEntity(x, y, z);
             if (te instanceof IInventory) {
+                try {
+                    Random lootRng = new Random(this.seed + SEED_OFFSET_CHEST_LOOT);
+                    InventoryAdaptor ap = InventoryAdaptor.getAdaptor(te, ForgeDirection.UP);
 
-                /*-------------------This is the loot-------------------*/
-                final Random lootRng = new Random(this.seed + SEED_OFFSET_CHEST_LOOT);
-                final InventoryAdaptor ap = InventoryAdaptor.getAdaptor(te, ForgeDirection.UP);
+                    int dimID = w.getWorld().provider.dimensionId;
+                    ArrayList<AEJSONEntry> loot_table = new ArrayList<>(
+                            AEJSONConfig.instance.getWeightedLootTable(dimID, lootRng));
+                    Map<Integer, ArrayList<AEJSONEntry>> exlcusion_table_map = new HashMap<>();
 
-                /*-------------------Presses-------------------*/
-                final ArrayList<ItemStack> pressTypes = new ArrayList<>(4);
-                final IMaterials materials = AEApi.instance().definitions().materials();
-                pressTypes.addAll(materials.calcProcessorPress().maybeStack(1).asSet());
-                pressTypes.addAll(materials.engProcessorPress().maybeStack(1).asSet());
-                pressTypes.addAll(materials.logicProcessorPress().maybeStack(1).asSet());
-                pressTypes.addAll(materials.siliconPress().maybeStack(1).asSet());
+                    int totalNormalWeight = 0; // Non-exclusive entries
+                    for (AEJSONEntry entry : loot_table) {
+                        if (entry.exclusiveGroupID == -1) {
+                            totalNormalWeight += entry.weight;
+                        }
+                    }
+                    ArrayList<ItemStack> loot = new ArrayList<>();
 
-                final int pressCount = 1 + lootRng.nextInt(3);
-                final int removeCount = Math.max(0, pressTypes.size() - pressCount);
-
-                // Make pressTypes contain pressCount random presses
-                for (int zz = 0; zz < removeCount; zz++) {
-                    pressTypes.remove(lootRng.nextInt(pressTypes.size()));
-                }
-
-
-                for (ItemStack toAdd : pressTypes) {
-                    ap.addItems(toAdd);
-                }
-                /*-------------------Presses-------------------*/
-
-                /*-------------------Nuggets-------------------*/
-                final List<ItemStack> nuggetLoot = new ArrayList<>();
-                nuggetLoot.addAll(OreDictionary.getOres("nuggetIron"));
-                nuggetLoot.addAll(OreDictionary.getOres("nuggetCopper"));
-                nuggetLoot.addAll(OreDictionary.getOres("nuggetTin"));
-                nuggetLoot.addAll(OreDictionary.getOres("nuggetSilver"));
-                nuggetLoot.addAll(OreDictionary.getOres("nuggetLead"));
-                nuggetLoot.addAll(OreDictionary.getOres("nuggetPlatinum"));
-                nuggetLoot.addAll(OreDictionary.getOres("nuggetNickel"));
-                nuggetLoot.addAll(OreDictionary.getOres("nuggetAluminium"));
-                nuggetLoot.addAll(OreDictionary.getOres("nuggetElectrum"));
-                nuggetLoot.add(new ItemStack(net.minecraft.init.Items.gold_nugget));
-                final int secondaryCount = 1 + lootRng.nextInt(3);
-                for (int zz = 0; zz < secondaryCount; zz++) {
-                    switch (lootRng.nextInt(3)) {
-                        case 0 -> {
-                            final int amount = 1 + lootRng.nextInt(SKYSTONE_SPAWN_LIMIT);
-                            for (final ItemStack skyStoneStack : skyStoneDefinition.maybeStack(amount).asSet()) {
-                                ap.addItems(skyStoneStack);
+                    int curWeight = 0;
+                    int randWeight = (totalNormalWeight != 0 ? lootRng.nextInt(totalNormalWeight) : 0);
+                    for (AEJSONEntry entry : loot_table) {
+                        if (entry.exclusiveGroupID == -1) {
+                            curWeight += entry.weight;
+                            if (randWeight <= curWeight) {
+                                loot.add(entry.getItemStack(lootRng));
+                            }
+                        } else {
+                            if (exlcusion_table_map.containsKey(entry.exclusiveGroupID)) {
+                                ArrayList<AEJSONEntry> temp = exlcusion_table_map.get(entry.exclusiveGroupID);
+                                temp.add(entry);
+                                exlcusion_table_map.put(entry.exclusiveGroupID, temp);
+                            } else
+                                exlcusion_table_map.put(entry.exclusiveGroupID, new ArrayList<>(Arrays.asList(entry)));
+                        }
+                    }
+                    for (Integer key : exlcusion_table_map.keySet()) {
+                        if (exlcusion_table_map.get(key).size() > 1) {
+                            int totalExclusiveWeight = 0;
+                            for (AEJSONEntry entry : exlcusion_table_map.get(key)) {
+                                totalExclusiveWeight += entry.weight;
+                            }
+                            randWeight = (totalExclusiveWeight != 0 ? lootRng.nextInt(totalExclusiveWeight) : 0);
+                            curWeight = 0;
+                            for (AEJSONEntry entry : exlcusion_table_map.get(key)) {
+                                curWeight += entry.weight;
+                                if (randWeight <= curWeight) {
+                                    loot.add(entry.getItemStack(lootRng));
+                                    break;
+                                }
+                            }
+                        } else {
+                            AEJSONEntry entry = exlcusion_table_map.get(key).get(0);
+                            if (entry.weight > 0) {
+                                loot.add(entry.getItemStack(lootRng));
                             }
                         }
-                        case 1 -> {
-                            ItemStack nugget = nuggetLoot.get(lootRng.nextInt(nuggetLoot.size()));
-                            if (nugget != null) {
-                                nugget = nugget.copy();
-                                nugget.stackSize = 1 + lootRng.nextInt(12);
-                                ap.addItems(nugget);
-                            }
-                        }
-                        default -> {}
-                        // Add nothing
                     }
-                }
-                /*-------------------CONFIG JSON FORMAT-------------------*//*
-                {
-                    "map": {
-                        "0": [
-                            {
-                                "item": "minecraft:gold_nugget",
-                                    "meta_data": 0,
-                                    "min_value": 0,
-                                    "max_value": 12,
-                                    "weight": 1,
-                                    "exclusiveGroupID": 1
-                            }
-                        ]
+
+                    for (ItemStack items : loot) {
+                        if (items != null) {
+                            ap.addItems(items.copy());
+                        } else System.err.println(
+                                "AE2: Item is null! | Error: Failed while adding item to loot chest in meteoritePlacer");
                     }
+                } catch (Exception e) {
+                    System.err.println(
+                            "AE2: An unexpected error occurred! Check your JSON or report if issue is persistent! | Error: Runtime error while loading loot for meteorite. Printing info: \n"
+                                    + "Stack Trace: "
+                                    + Arrays.toString(e.getStackTrace())
+                                    + "\n"
+                                    + "Stack Message: "
+                                    + e.getMessage()
+                                    + "\n"
+                                    + "Class: "
+                                    + e.getClass()
+                                    + "\n");
                 }
-                *//*-------------------This is the loot-------------------*/
             }
         }
     }

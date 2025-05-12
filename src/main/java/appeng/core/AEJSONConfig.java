@@ -1,105 +1,269 @@
 package appeng.core;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonDeserializationContext;
-import com.google.gson.JsonDeserializer;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParseException;
-import cpw.mods.fml.common.registry.GameRegistry;
-import net.minecraft.world.World;
-import net.minecraftforge.common.DimensionManager;
-import org.apache.commons.io.FileUtils;
-import org.lwjgl.Sys;
-
 import java.io.File;
-import java.lang.reflect.Type;
 import java.nio.charset.Charset;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
-public class AEJSONConfig{
-    public static Map<String, List<AEJSONEntry>> dimension_loot_tables = new HashMap<>();
+import net.minecraftforge.common.DimensionManager;
 
-    //Required
-    private static final String JSON_ITEM = "item";
-    //Optional
-    private static final String JSON_DIMENSIONID = "dimensionID";
-    private static final String JSON_META_DATA = "meta_data";
-    private static final String JSON_MIN_VALUE = "min_value";
-    private static final String JSON_MAX_VALUE = "max_value";
-    private static final String JSON_WEIGHT = "weight";
-    private static final String JSON_EXCLUSIVE_GROUP_ID = "exclusive_group_ID";
-    private static final Gson GSON = new GsonBuilder().registerTypeHierarchyAdapter(AEJSONEntry.class, new JsonDeserializer<AEJSONEntry>() {
-        @Override
-        public AEJSONEntry deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
+import org.apache.commons.io.FileUtils;
 
-            final JsonObject object = json.getAsJsonObject();
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.annotations.SerializedName;
 
-            if(!object.has(JSON_ITEM))
-            {
-                throw new JsonParseException("AE2: Field not found: " + JSON_ITEM + " | Error: Missing Required Field");
-            }
+public class AEJSONConfig {
 
-            final String item = object.get(JSON_ITEM).getAsString();
+    public static AEJSONConfig instance;
+    /**
+     * Parameters: item: TYPE: STRING DEFAULT VALUE: NONE. PARAMETER IS REQUIRED DESCRIPTION: The name of the item as
+     * used by the /give command EXAMPLE: "minecraft:dirt" meta_data: TYPE: NON-NEGATIVE INTEGER DEFAULT VALUE: 0
+     * DESCRIPTION: Metadata value for the item, the 3rd parameter in the /give command EXAMPLE: 3 min_value: TYPE:
+     * NON-NEGATIVE INTEGER DEFAULT VALUE: 0 DESCRIPTION: The minimum amount of that item that is inserted when that
+     * item is selected (SETTING TO 1 DOES NOT GUARANTEE THAT ITEM IN EVERY CHEST) EXAMPLE: 4 max_value: TYPE:
+     * NON-NEGATIVE INTEGER DEFAULT VALUE: 1 DESCRIPTION: The maximum amount of that item that is inserted when that
+     * item is selected EXAMPLE: 72 weight: TYPE: NON-NEGATIVE INTEGER DEFAULT VALUE: 1 DESCRIPTION: The weighted chance
+     * the item is chosen. (Weights are compared between entries with the same exclusive group) EXAMPLE: 40
+     * exclusiveGroupID: TYPE: INTEGER DEFAULT VALUE: -1 DESCRIPTION: exclusiveGroupID lets you group entries so only
+     * one from the group can appear, chosen based on weight. If multiple entries share the same group ID, only one will
+     * be picked. If an entry is the only one in its group, it's guaranteed to appear. Setting this parameter to -1 will
+     * cause it to ignore exclusivity EXAMPLE: 154
+     *
+     * Notes: The Key Value: For the dimension_loot_tables a key value is required, this value represents the
+     * dimensionID for the loot tables. For example, -29 is Galacticraft Mars, the loot tables under that id will only
+     * spawn in that dimension (if meteorites spawn there) The list of loot tables: The chance of a loot table within a
+     * dimension being selected is weighted by the total weight of every entry in that loot table against every other
+     * loot tables' total weights Format: { "dimension_loot_tables": { "0": [ This is the start of a list of loot tables
+     * [ this is the start of a loot table { ENTRY }, { ANOTHER ENTRY } ], this is the end of a loot table [ this is the
+     * start of another separate loot table { ENTRY }, { ANOTHER ENTRY } ] this is the end of a loot table ], this is
+     * the end of the list of loot tables "-29": [ this is the start of a list of loot tables for another dimension, and
+     * so on [ { }
+     */
+    @SerializedName("Info and Tips:")
+    private final String[] notes = { "Parameters:",
+            "item:  TYPE: STRING  DEFAULT VALUE:  NONE. PARAMETER IS REQUIRED  DESCRIPTION: The name of the item as used by the /give command  EXAMPLE: \"minecraft:dirt\"",
+            "meta_data:  TYPE: NON-NEGATIVE INTEGER  DEFAULT VALUE:  0  DESCRIPTION: Metadata value for the item, the 3rd parameter in the /give command  EXAMPLE: 3",
+            "min_value:  TYPE: NON-NEGATIVE INTEGER  DEFAULT VALUE:  0  DESCRIPTION: The minimum amount of that item that is inserted when that item is selected (SETTING TO 1 DOES NOT GUARANTEE THAT ITEM IN EVERY CHEST)  EXAMPLE: 4",
+            "max_value:  TYPE: NON-NEGATIVE INTEGER  DEFAULT VALUE:  1  DESCRIPTION: The maximum amount of that item that is inserted when that item is selected  EXAMPLE: 72",
+            "weight:  TYPE: NON-NEGATIVE INTEGER  DEFAULT VALUE:  1  DESCRIPTION:  The weighted chance the item is chosen. (Weights are compared between entries with the same exclusive group)  EXAMPLE: 40",
+            "exclusiveGroupID:  TYPE: INTEGER  DEFAULT VALUE:  -1  DESCRIPTION:  exclusiveGroupID lets you group entries so only one from the group can appear, chosen based on weight. If multiple entries share the same group ID, only one will be picked. If an entry is the only one in its group, its guaranteed to appear. Setting this parameter to -1 will cause it to ignore exclusivity  EXAMPLE: 154",
+            "", "Notes:",
+            "The Key Value:  For the dimension_loot_tables a key value is required, this value represents the dimensionID for the loot tables. For example, -29 is Galacticraft Mars, the loot tables under that id will only spawn in that dimension (if meteorites spawn there)",
+            "The list of loot tables:  The chance of a loot table within a dimension being selected is weighted by the total weight of every entry in that loot table against every other loot tables total weights",
+            "Format:  {", "      \"dimension_loot_tables\": {",
+            "   \"0\": [   This is the start of a list of loot tables",
+            "       [    this is the start of a loot table,", "         {", "             ENTRY", "         },",
+            "         {", "             ANOTHER ENTRY", "         }", "       ],   this is the end of a loot table",
+            "       [    this is the start of another separate loot table", "         {", "             ENTRY",
+            "         },", "         {", "             ANOTHER ENTRY", "         }",
+            "       ]    this is the end of a loot table", "    ], this is the end of the list of loot tables",
+            "    \"-29\": [   this is the start of a list of loot tables for another dimension, and so on", "       [",
+            "         {", " }" };
+    @SerializedName("dimension_loot_tables")
+    private Map<String, ArrayList<ArrayList<AEJSONEntry>>> dimension_loot_tables = new HashMap<>();
 
-            final int dimensionID = object.has(JSON_DIMENSIONID) ? object.get(JSON_DIMENSIONID).getAsInt() : 0;
-            final int meta_data = object.has(JSON_META_DATA) ? object.get(JSON_META_DATA).getAsInt() : 0;
-            final int min_value = object.has(JSON_MIN_VALUE) ? object.get(JSON_MIN_VALUE).getAsInt() : 0;
-            final int max_value = object.has(JSON_MAX_VALUE) ? object.get(JSON_MAX_VALUE).getAsInt() : 1;
-            final int weight = object.has(JSON_WEIGHT) ? object.get(JSON_WEIGHT).getAsInt() : 1;
-            final int exclusiveGroupID = object.has(JSON_EXCLUSIVE_GROUP_ID) ? object.get(JSON_EXCLUSIVE_GROUP_ID).getAsInt() : -1;
+    private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
 
-            return new AEJSONEntry(item, meta_data, min_value, max_value, weight, exclusiveGroupID);
-        }
-    }).setPrettyPrinting().create();
+    public AEJSONConfig() {}
+
     public void toFile(File file) {
         try {
-            FileUtils.writeStringToFile(file, GSON.toJson(this), Charset.defaultCharset());
-        }
-        catch (Exception e) {
-            System.err.println("AE2: Could not write json config " + file.getAbsolutePath() + " | Error: Could not create JSON");
+            FileUtils.writeStringToFile(file, GSON.toJson(instance), Charset.defaultCharset());
+        } catch (Exception e) {
+            System.err.println(
+                    "AE2: Could not write json config " + file.getAbsolutePath() + " | Error: Could not create JSON");
         }
     }
 
-    public static AEJSONConfig fromFile(File file)
-    {
+    public AEJSONConfig fromFile(File file) {
         if (!file.exists()) {
             AEJSONConfig defaultConfig = createDefaultConfig();
+            AEJSONConfig.instance = defaultConfig;
             defaultConfig.toFile(file);
             return defaultConfig;
         }
         try {
-            return GSON.fromJson(FileUtils.readFileToString(file, Charset.defaultCharset()), AEJSONConfig.class);
+            AEJSONConfig loaded = GSON
+                    .fromJson(FileUtils.readFileToString(file, Charset.defaultCharset()), AEJSONConfig.class);
+            AEJSONConfig.instance = loaded;
+            return loaded;
+        } catch (Exception e) {
+            System.err.println(
+                    "AE2: Could not read json config " + file.getAbsolutePath()
+                            + " | Error: Could not pull JSON from file");
+            return new AEJSONConfig();
         }
-        catch (Exception e) {
-            System.err.println("AE2: Could not read json config " + file.getAbsolutePath() + " | Error: Could not pull JSON from file");
-        }
-        return new AEJSONConfig();
     }
 
     public static AEJSONConfig createDefaultConfig() {
         AEJSONConfig config = new AEJSONConfig();
-        AEJSONEntry calcProcessorPress;
-        AEJSONEntry engProcessorPress ;
-        AEJSONEntry logicProcessorPress;
-        AEJSONEntry siliconPress;
-        AEJSONEntry goldNugget = new AEJSONEntry("minecraft:gold_nugget", 0, 0, 12, 1, 1);
+        AEJSONEntry calcProcessorPress = new AEJSONEntry(
+                "appliedenergistics2:item.ItemMultiMaterial",
+                13,
+                1,
+                null,
+                3,
+                1);
+        AEJSONEntry engProcessorPress = new AEJSONEntry(
+                "appliedenergistics2:item.ItemMultiMaterial",
+                14,
+                1,
+                null,
+                3,
+                1);
+        AEJSONEntry logicProcessorPress = new AEJSONEntry(
+                "appliedenergistics2:item.ItemMultiMaterial",
+                15,
+                1,
+                null,
+                3,
+                1);
+        AEJSONEntry siliconPress = new AEJSONEntry("appliedenergistics2:item.ItemMultiMaterial", 19, 1, null, 3, 1);
 
-        config.dimension_loot_tables.put("0", Arrays.asList(goldNugget));
+        AEJSONEntry IronNugget = new AEJSONEntry("ore:nuggetIron", null, 1, 12, 3, null);
+        AEJSONEntry CopperNugget = new AEJSONEntry("ore:nuggetCopper", null, 1, 12, 3, 3);
+        AEJSONEntry TinNugget = new AEJSONEntry("ore:nuggetTin", null, 1, 12, 3, 4);
+        AEJSONEntry SilverNugget = new AEJSONEntry("ore:nuggetSilver", null, 1, 12, 3, 5);
+        AEJSONEntry LeadNugget = new AEJSONEntry("ore:nuggetLead", null, 1, 12, 3, 2);
+        AEJSONEntry PlatinumNugget = new AEJSONEntry("ore:nuggetPlatinum", null, 1, 12, 3, 3);
+        AEJSONEntry NickelNugget = new AEJSONEntry("ore:nuggetNickel", null, 1, 12, 3, 4);
+        AEJSONEntry AluminiumNugget = new AEJSONEntry("ore:nuggetAluminium", null, 1, 12, 3, 5);
+        AEJSONEntry ElectrumNugget = new AEJSONEntry("ore:nuggetElectrum", null, 1, 12, 3, 2);
+        AEJSONEntry GoldNugget = new AEJSONEntry("minecraft:gold_nugget", null, 1, 12, 3, null);
+        AEJSONEntry Skystone = new AEJSONEntry("appliedenergistics2:tile.BlockSkyStone", null, null, 12, null, null);
+        AEJSONEntry Diamond = new AEJSONEntry("minecraft:diamond", null, 2, 4, null, null);
+        config.dimension_loot_tables.put(
+                "0",
+                new ArrayList<>(
+                        Arrays.asList(
+                                new ArrayList<>(
+                                        Arrays.asList(
+                                                calcProcessorPress,
+                                                CopperNugget,
+                                                PlatinumNugget,
+                                                IronNugget,
+                                                GoldNugget,
+                                                Skystone)),
+                                new ArrayList<>(
+                                        Arrays.asList(
+                                                engProcessorPress,
+                                                TinNugget,
+                                                NickelNugget,
+                                                IronNugget,
+                                                GoldNugget,
+                                                Skystone)),
+                                new ArrayList<>(
+                                        Arrays.asList(
+                                                logicProcessorPress,
+                                                SilverNugget,
+                                                AluminiumNugget,
+                                                IronNugget,
+                                                GoldNugget,
+                                                Skystone)),
+                                new ArrayList<>(
+                                        Arrays.asList(
+                                                siliconPress,
+                                                LeadNugget,
+                                                ElectrumNugget,
+                                                IronNugget,
+                                                GoldNugget,
+                                                Skystone)))));
+        config.dimension_loot_tables.put(
+                "-29",
+                new ArrayList<>(
+                        Arrays.asList(
+                                new ArrayList<>(
+                                        Arrays.asList(
+                                                calcProcessorPress,
+                                                CopperNugget,
+                                                PlatinumNugget,
+                                                IronNugget,
+                                                GoldNugget,
+                                                Skystone,
+                                                Diamond)),
+                                new ArrayList<>(
+                                        Arrays.asList(
+                                                engProcessorPress,
+                                                TinNugget,
+                                                NickelNugget,
+                                                IronNugget,
+                                                GoldNugget,
+                                                Skystone,
+                                                Diamond)),
+                                new ArrayList<>(
+                                        Arrays.asList(
+                                                logicProcessorPress,
+                                                SilverNugget,
+                                                AluminiumNugget,
+                                                IronNugget,
+                                                GoldNugget,
+                                                Skystone,
+                                                Diamond)),
+                                new ArrayList<>(
+                                        Arrays.asList(
+                                                siliconPress,
+                                                LeadNugget,
+                                                ElectrumNugget,
+                                                IronNugget,
+                                                GoldNugget,
+                                                Skystone,
+                                                Diamond)))));
         return config;
     }
-    public static List<AEJSONEntry> getEntriesFromDimension(String dimensionID)
-    {
-        if(DimensionManager.isDimensionRegistered(Integer.parseInt(dimensionID))) {
-            return dimension_loot_tables.get(dimensionID);
-        }
-        else {
-            System.err.println("AE2: Failure While Getting Loot Tables for Dimension: " + dimensionID + " | Error: Dimension is not registered");
+
+    private ArrayList<ArrayList<AEJSONEntry>> getTablesForDimension(int dimensionID) {
+        if (DimensionManager.isDimensionRegistered(dimensionID)) {
+            if (dimension_loot_tables.containsKey(dimensionID + "")) {
+                return dimension_loot_tables.get(dimensionID + "");
+            } else if (dimension_loot_tables.containsKey("0")) {
+                return dimension_loot_tables.get("0");
+            } else {
+                System.err.println(
+                        "AE2: Configs for overworld and dimension: " + dimensionID
+                                + " are missing! | Error: Getting loot tables for dimension");
+                return createDefaultConfig().getTablesForDimension(0);
+            }
+        } else {
+            System.err.println(
+                    "AE2: Failure While Getting Loot Tables for Dimension: " + dimensionID
+                            + ". Using overworld configs. | Error: Dimension is not registered");
             return dimension_loot_tables.get("0");
         }
+    }
+
+    public ArrayList<AEJSONEntry> getWeightedLootTable(int dimID, Random rand) {
+        ArrayList<ArrayList<AEJSONEntry>> loot_tables = instance.getTablesForDimension(dimID);
+        if (loot_tables == null || loot_tables.isEmpty()) {
+            System.err.println(
+                    "AE2: No loot tables found for dimension, will use default loot table" + dimID
+                            + " | Error: Empty or missing loot tables.");
+            loot_tables = createDefaultConfig().getTablesForDimension(0);
+        }
+        int[] totalWeights = new int[loot_tables.size()];
+        int totalWeight = 0;
+        for (int i = 0; i < loot_tables.size(); i++) {
+            for (AEJSONEntry entry : loot_tables.get(i)) {
+                totalWeights[i] += entry.weight;
+                totalWeight += entry.weight;
+            }
+        }
+
+        int randomWeight = rand.nextInt(totalWeight);
+        int cumulitive = 0;
+        for (int i = 0; i < totalWeights.length; i++) {
+            cumulitive += totalWeights[i];
+            if (randomWeight <= cumulitive) {
+                return loot_tables.get(i);
+            }
+        }
+        System.err.println(
+                "AE2: Failed to pull a weighted random loot_table for dimension: " + dimID
+                        + ", pulling unweighted random loot_table. | Error: Weighted random failed. THIS IS LIKELY A BUG.");
+        return loot_tables.get(rand.nextInt(loot_tables.size()));
+
     }
 }
