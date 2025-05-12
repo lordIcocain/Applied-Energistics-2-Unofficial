@@ -18,8 +18,6 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Random;
 
-import appeng.core.AEJSONConfig;
-import appeng.core.AEJSONEntry;
 import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
@@ -35,6 +33,8 @@ import appeng.api.AEApi;
 import appeng.api.definitions.IBlockDefinition;
 import appeng.api.definitions.IBlocks;
 import appeng.core.AEConfig;
+import appeng.core.AEJSONConfig;
+import appeng.core.AEJSONEntry;
 import appeng.core.features.AEFeature;
 import appeng.core.worlddata.WorldData;
 import appeng.util.InventoryAdaptor;
@@ -48,7 +48,6 @@ import appeng.worldgen.meteorite.MeteoriteBlockPutter;
 import cpw.mods.fml.common.registry.GameRegistry;
 
 public final class MeteoritePlacer {
-
 
     private static final long SEED_OFFSET_CHEST_LOOT = 1;
     private static final long SEED_OFFSET_DECAY = 2;
@@ -327,10 +326,11 @@ public final class MeteoritePlacer {
                     InventoryAdaptor ap = InventoryAdaptor.getAdaptor(te, ForgeDirection.UP);
 
                     int dimID = w.getWorld().provider.dimensionId;
-                    ArrayList<AEJSONEntry> loot_table = new ArrayList<>(AEJSONConfig.instance.getWeightedLootTable(dimID, lootRng));
+                    ArrayList<AEJSONEntry> loot_table = new ArrayList<>(
+                            AEJSONConfig.instance.getWeightedLootTable(dimID, lootRng));
                     Map<Integer, ArrayList<AEJSONEntry>> exlcusion_table_map = new HashMap<>();
 
-                    int totalNormalWeight = 0; //Non-exclusive entries
+                    int totalNormalWeight = 0; // Non-exclusive entries
                     for (AEJSONEntry entry : loot_table) {
                         if (entry.exclusiveGroupID == -1) {
                             totalNormalWeight += entry.weight;
@@ -381,17 +381,21 @@ public final class MeteoritePlacer {
                     for (ItemStack items : loot) {
                         if (items != null) {
                             ap.addItems(items.copy());
-                        } else
-                            System.err.println("AE2: Item is null! | Error: Failed while adding item to loot chest in meteoritePlacer");
+                        } else System.err.println(
+                                "AE2: Item is null! | Error: Failed while adding item to loot chest in meteoritePlacer");
                     }
-                }
-                catch (Exception e)
-                {
-                    System.err.println("AE2: An unexpected error occurred! Check your JSON or report if issue is persistent! | Error: Runtime error while loading loot for meteorite. Printing info: \n" +
-                            "Stack Trace: " + Arrays.toString(e.getStackTrace()) + "\n" +
-                            "Stack Message: " + e.getMessage() + "\n" +
-                            "Class: " + e.getClass() + "\n"
-                    );
+                } catch (Exception e) {
+                    System.err.println(
+                            "AE2: An unexpected error occurred! Check your JSON or report if issue is persistent! | Error: Runtime error while loading loot for meteorite. Printing info: \n"
+                                    + "Stack Trace: "
+                                    + Arrays.toString(e.getStackTrace())
+                                    + "\n"
+                                    + "Stack Message: "
+                                    + e.getMessage()
+                                    + "\n"
+                                    + "Class: "
+                                    + e.getClass()
+                                    + "\n");
                 }
             }
         }
