@@ -62,7 +62,6 @@ import appeng.container.implementations.ContainerCrystalGrowthChamber;
 import appeng.container.implementations.ContainerDrive;
 import appeng.container.implementations.ContainerFormationPlane;
 import appeng.container.implementations.ContainerGrinder;
-import appeng.container.implementations.ContainerGrower;
 import appeng.container.implementations.ContainerIOPort;
 import appeng.container.implementations.ContainerInscriber;
 import appeng.container.implementations.ContainerInterface;

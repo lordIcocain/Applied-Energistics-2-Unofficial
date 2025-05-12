@@ -83,10 +83,10 @@ public class GuiSuperWirelessKit extends AEBaseGui implements IConfigManagerHost
     private baseUnit toAddToUnselected;
 
     private baseUnit toRemoveFromToBind;
-    private baseUnit toAddToToBind;
+    private baseUnit toAddToBind;
 
     private baseUnit toRemoveFromTarget;
-    private baseUnit toAddToTarget;
+    private baseUnit toAddTarget;
 
     private NBTTagCompound dataCache;
 
@@ -526,9 +526,9 @@ public class GuiSuperWirelessKit extends AEBaseGui implements IConfigManagerHost
             setScrollBar();
         }
 
-        if (toAddToToBind != null) {
-            toBind.add(toAddToToBind);
-            toAddToToBind = null;
+        if (toAddToBind != null) {
+            toBind.add(toAddToBind);
+            toAddToBind = null;
             setScrollBar();
         }
     }
@@ -552,9 +552,9 @@ public class GuiSuperWirelessKit extends AEBaseGui implements IConfigManagerHost
             setScrollBar();
         }
 
-        if (toAddToTarget != null) {
-            target.add(toAddToTarget);
-            toAddToTarget = null;
+        if (toAddTarget != null) {
+            target.add(toAddTarget);
+            toAddTarget = null;
             setScrollBar();
         }
     }
@@ -1008,14 +1008,14 @@ public class GuiSuperWirelessKit extends AEBaseGui implements IConfigManagerHost
                     if (button == 0) {
                         toAddToUnselected = this;
                     } else if (button == 1) {
-                        toAddToTarget = this;
+                        toAddTarget = this;
                         this.inTarget = true;
                     }
                 } else if (this.inTarget) {
                     toRemoveFromTarget = this;
                     this.inTarget = false;
                     if (button == 0) {
-                        toAddToToBind = this;
+                        toAddToBind = this;
                         this.inToBind = true;
                     } else if (button == 1) {
                         toAddToUnselected = this;
@@ -1023,11 +1023,11 @@ public class GuiSuperWirelessKit extends AEBaseGui implements IConfigManagerHost
                 } else {
                     if (button == 0) {
                         toRemoveFromUnselected = this;
-                        toAddToToBind = this;
+                        toAddToBind = this;
                         this.inToBind = true;
                     } else if (button == 1) {
                         toRemoveFromUnselected = this;
-                        toAddToTarget = this;
+                        toAddTarget = this;
                         this.inTarget = true;
                     }
                 }
