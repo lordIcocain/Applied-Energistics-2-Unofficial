@@ -87,7 +87,7 @@ public enum WirelessTextures {
     }
 
     public IIcon getOffIcon() {
-        return this.onIIcon;
+        return this.offIIcon;
     }
 
     public void registerIcon(final TextureMap map) {
