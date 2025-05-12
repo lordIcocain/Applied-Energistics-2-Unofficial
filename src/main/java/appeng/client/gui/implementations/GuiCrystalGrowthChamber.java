@@ -4,19 +4,19 @@ import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.util.StatCollector;
 
 import appeng.client.gui.AEBaseGui;
-import appeng.container.implementations.ContainerGrower;
+import appeng.container.implementations.ContainerCrystalGrowthChamber;
 import appeng.container.implementations.ContainerUpgradeable;
 import appeng.core.localization.GuiColors;
 import appeng.core.localization.GuiText;
-import appeng.tile.misc.TileGrower;
+import appeng.tile.misc.TileCrystalGrowthChamber;
 
-public class GuiGrower extends AEBaseGui {
+public class GuiCrystalGrowthChamber extends AEBaseGui {
 
-    private final ContainerGrower cg;
+    private final ContainerCrystalGrowthChamber cg;
 
-    public GuiGrower(final InventoryPlayer inventoryPlayer, final TileGrower te) {
-        super(new ContainerGrower(inventoryPlayer, te));
-        cg = (ContainerGrower) this.inventorySlots;
+    public GuiCrystalGrowthChamber(final InventoryPlayer inventoryPlayer, final TileCrystalGrowthChamber te) {
+        super(new ContainerCrystalGrowthChamber(inventoryPlayer, te));
+        cg = (ContainerCrystalGrowthChamber) this.inventorySlots;
         ySize = 166;
         xSize = hasToolbox() ? 246 : 211;
     }
@@ -28,7 +28,8 @@ public class GuiGrower extends AEBaseGui {
     @Override
     public void drawFG(final int offsetX, final int offsetY, final int mouseX, final int mouseY) {
         fontRendererObj.drawString(
-                getGuiDisplayName(StatCollector.translateToLocal("tile.appliedenergistics2.BlockGrower.name")),
+                getGuiDisplayName(
+                        StatCollector.translateToLocal("tile.appliedenergistics2.BlockCrystalGrowthChamber.name")),
                 8,
                 6,
                 GuiColors.ChestTitle.getColor());
@@ -38,7 +39,7 @@ public class GuiGrower extends AEBaseGui {
 
     @Override
     public void drawBG(final int offsetX, final int offsetY, final int mouseX, final int mouseY) {
-        bindTexture("guis/grower.png");
+        bindTexture("guis/crystalGrowthChamber.png");
 
         drawTexturedModalRect(offsetX, offsetY, 0, 0, 211 - 34, ySize);
 

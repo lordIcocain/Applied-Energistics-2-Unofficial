@@ -69,7 +69,7 @@ tile.appliedenergistics2.BlockSingularityCraftingStorage.name=Singularity Crafti
 tile.appliedenergistics2.BlockPaint.name=Paint
 tile.appliedenergistics2.BlockWirelessConnector.name=Wireless Connector
 tile.appliedenergistics2.BlockWirelessHub.name=Wireless Hub
-tile.appliedenergistics2.BlockGrower.name=Crystal Growth Chamber
+tile.appliedenergistics2.BlockCrystalGrowthChamber.name=Crystal Growth Chamber
 
 # Stairs
 tile.appliedenergistics2.ChiseledQuartzStairBlock.name=Chiseled Certus Quartz Stairs

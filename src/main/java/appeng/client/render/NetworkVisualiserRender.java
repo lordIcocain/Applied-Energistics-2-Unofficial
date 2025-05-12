@@ -1,9 +1,3 @@
-/*
- * Copyright (c) bdew, 2014 - 2015 https://github.com/bdew/ae2stuff This mod is distributed under the terms of the
- * Minecraft Mod Public License 1.0, or MMPL. Please check the contents of the license located in
- * http://bdew.net/minecraft-mod-public-license/
- */
-
 package appeng.client.render;
 
 import java.util.ArrayList;
@@ -53,15 +47,14 @@ public class NetworkVisualiserRender {
     private static final List<DimensionalCoord> hubConnections = new ArrayList<>();
     private static DimensionalCoord prevPos;
 
-    ArrayList<VisualisationModes> renderNodesModes = new ArrayList<>(
-            Arrays.asList(VisualisationModes.NODES, VisualisationModes.FULL, VisualisationModes.NONUM));
+    List<VisualisationModes> renderNodesModes = Arrays
+            .asList(VisualisationModes.NODES, VisualisationModes.FULL, VisualisationModes.NONUM);
 
-    ArrayList<VisualisationModes> renderLinksModes = new ArrayList<>(
-            Arrays.asList(
-                    VisualisationModes.CHANNELS,
-                    VisualisationModes.FULL,
-                    VisualisationModes.NONUM,
-                    VisualisationModes.P2P));
+    List<VisualisationModes> renderLinksModes = Arrays.asList(
+            VisualisationModes.CHANNELS,
+            VisualisationModes.FULL,
+            VisualisationModes.NONUM,
+            VisualisationModes.P2P);
 
     public static void networkVisualiser(ArrayList<VNode> vNodeSetNew, ArrayList<VLink> vLinkSetNew) {
         vNodeSet = vNodeSetNew;

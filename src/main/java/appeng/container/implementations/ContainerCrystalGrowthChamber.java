@@ -4,13 +4,13 @@ import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.item.ItemStack;
 
 import appeng.container.slot.AppEngSlot;
-import appeng.tile.misc.TileGrower;
+import appeng.tile.misc.TileCrystalGrowthChamber;
 
-public class ContainerGrower extends ContainerUpgradeable {
+public class ContainerCrystalGrowthChamber extends ContainerUpgradeable {
 
-    private final TileGrower ti;
+    private final TileCrystalGrowthChamber ti;
 
-    public ContainerGrower(final InventoryPlayer ip, final TileGrower te) {
+    public ContainerCrystalGrowthChamber(final InventoryPlayer ip, final TileCrystalGrowthChamber te) {
         super(ip, te);
         ti = te;
 

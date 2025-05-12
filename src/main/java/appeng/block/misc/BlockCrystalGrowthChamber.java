@@ -13,19 +13,19 @@ import net.minecraftforge.common.util.ForgeDirection;
 import appeng.block.AEBaseTileBlock;
 import appeng.core.features.AEFeature;
 import appeng.core.sync.GuiBridge;
-import appeng.tile.misc.TileGrower;
+import appeng.tile.misc.TileCrystalGrowthChamber;
 import appeng.util.Platform;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
-public class BlockGrower extends AEBaseTileBlock {
+public class BlockCrystalGrowthChamber extends AEBaseTileBlock {
 
     @SideOnly(Side.CLIENT)
     private IIcon off;
 
-    public BlockGrower() {
+    public BlockCrystalGrowthChamber() {
         super(Material.iron);
-        setTileEntity(TileGrower.class);
+        setTileEntity(TileCrystalGrowthChamber.class);
         setFeature(EnumSet.of(AEFeature.Core));
         setHardness(1);
     }
@@ -37,10 +37,10 @@ public class BlockGrower extends AEBaseTileBlock {
             return false;
         }
 
-        final TileGrower tg = getTileEntity(w, x, y, z);
+        final TileCrystalGrowthChamber tg = getTileEntity(w, x, y, z);
         if (tg != null) {
             if (Platform.isServer()) {
-                Platform.openGUI(p, tg, ForgeDirection.getOrientation(side), GuiBridge.GUI_GROWER);
+                Platform.openGUI(p, tg, ForgeDirection.getOrientation(side), GuiBridge.GUI_CRYSTAL_GROWTH_CHAMBER);
             }
             return true;
         }
@@ -49,7 +49,7 @@ public class BlockGrower extends AEBaseTileBlock {
 
     public void registerBlockIcons(final IIconRegister ir) {
         super.registerBlockIcons(ir);
-        off = ir.registerIcon("appliedenergistics2:Grower/main_off");
+        off = ir.registerIcon("appliedenergistics2:CrystalGrowthChamber/main_off");
     }
 
     @SideOnly(Side.CLIENT)
@@ -69,6 +69,6 @@ public class BlockGrower extends AEBaseTileBlock {
 
     @Override
     protected String getTextureName() {
-        return "appliedenergistics2:Grower/main_on";
+        return "appliedenergistics2:CrystalGrowthChamber/main_on";
     }
 }

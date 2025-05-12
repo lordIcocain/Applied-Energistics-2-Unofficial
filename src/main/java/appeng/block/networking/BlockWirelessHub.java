@@ -19,23 +19,23 @@ public class BlockWirelessHub extends BlockWirelessConnector {
     @Override
     public IIcon getIcon(int direction, int metadata) {
         return switch (metadata) {
-            case 1 -> WirelessTextures.WirelessHubOnWhite.getIcon();
-            case 2 -> WirelessTextures.WirelessHubOnOrange.getIcon();
-            case 3 -> WirelessTextures.WirelessHubOnMagenta.getIcon();
-            case 4 -> WirelessTextures.WirelessHubOnLightBlue.getIcon();
-            case 5 -> WirelessTextures.WirelessHubOnYellow.getIcon();
-            case 6 -> WirelessTextures.WirelessHubOnLime.getIcon();
-            case 7 -> WirelessTextures.WirelessHubOnPink.getIcon();
-            case 8 -> WirelessTextures.WirelessHubOnGrey.getIcon();
-            case 9 -> WirelessTextures.WirelessHubOnLightGrey.getIcon();
-            case 10 -> WirelessTextures.WirelessHubOnCyan.getIcon();
-            case 11 -> WirelessTextures.WirelessHubOnPurple.getIcon();
-            case 12 -> WirelessTextures.WirelessHubOnBlue.getIcon();
-            case 13 -> WirelessTextures.WirelessHubOnBrown.getIcon();
-            case 14 -> WirelessTextures.WirelessHubOnGreen.getIcon();
-            case 15 -> WirelessTextures.WirelessHubOnRed.getIcon();
-            case 16 -> WirelessTextures.WirelessHubOnBlack.getIcon();
-            default -> WirelessTextures.WirelessHubOnTransparent.getIcon();
+            case 1 -> WirelessTextures.WirelessHubWhite.getOnIcon();
+            case 2 -> WirelessTextures.WirelessHubOrange.getOnIcon();
+            case 3 -> WirelessTextures.WirelessHubMagenta.getOnIcon();
+            case 4 -> WirelessTextures.WirelessHubLightBlue.getOnIcon();
+            case 5 -> WirelessTextures.WirelessHubYellow.getOnIcon();
+            case 6 -> WirelessTextures.WirelessHubLime.getOnIcon();
+            case 7 -> WirelessTextures.WirelessHubPink.getOnIcon();
+            case 8 -> WirelessTextures.WirelessHubGrey.getOnIcon();
+            case 9 -> WirelessTextures.WirelessHubLightGrey.getOnIcon();
+            case 10 -> WirelessTextures.WirelessHubCyan.getOnIcon();
+            case 11 -> WirelessTextures.WirelessHubPurple.getOnIcon();
+            case 12 -> WirelessTextures.WirelessHubBlue.getOnIcon();
+            case 13 -> WirelessTextures.WirelessHubBrown.getOnIcon();
+            case 14 -> WirelessTextures.WirelessHubGreen.getOnIcon();
+            case 15 -> WirelessTextures.WirelessHubRed.getOnIcon();
+            case 16 -> WirelessTextures.WirelessHubBlack.getOnIcon();
+            default -> WirelessTextures.WirelessHubTransparent.getOnIcon();
         };
     }
 
@@ -44,43 +44,43 @@ public class BlockWirelessHub extends BlockWirelessConnector {
     public IIcon getIcon(IBlockAccess w, int x, int y, int z, int s) {
         if (w.getBlockMetadata(x, y, z) == 0) {
             return switch (((TileWirelessHub) w.getTileEntity(x, y, z)).getColor()) {
-                case White -> WirelessTextures.WirelessHubOffWhite.getIcon();
-                case Orange -> WirelessTextures.WirelessHubOffOrange.getIcon();
-                case Magenta -> WirelessTextures.WirelessHubOffMagenta.getIcon();
-                case LightBlue -> WirelessTextures.WirelessHubOffLightBlue.getIcon();
-                case Yellow -> WirelessTextures.WirelessHubOffYellow.getIcon();
-                case Lime -> WirelessTextures.WirelessHubOffLime.getIcon();
-                case Pink -> WirelessTextures.WirelessHubOffPink.getIcon();
-                case Gray -> WirelessTextures.WirelessHubOffGrey.getIcon();
-                case LightGray -> WirelessTextures.WirelessHubOffLightGrey.getIcon();
-                case Cyan -> WirelessTextures.WirelessHubOffCyan.getIcon();
-                case Purple -> WirelessTextures.WirelessHubOffPurple.getIcon();
-                case Blue -> WirelessTextures.WirelessHubOffBlue.getIcon();
-                case Brown -> WirelessTextures.WirelessHubOffBrown.getIcon();
-                case Green -> WirelessTextures.WirelessHubOffGreen.getIcon();
-                case Red -> WirelessTextures.WirelessHubOffRed.getIcon();
-                case Black -> WirelessTextures.WirelessHubOffBlack.getIcon();
-                default -> WirelessTextures.WirelessHubOffTransparent.getIcon();
+                case White -> WirelessTextures.WirelessHubWhite.getOffIcon();
+                case Orange -> WirelessTextures.WirelessHubOrange.getOffIcon();
+                case Magenta -> WirelessTextures.WirelessHubMagenta.getOffIcon();
+                case LightBlue -> WirelessTextures.WirelessHubLightBlue.getOffIcon();
+                case Yellow -> WirelessTextures.WirelessHubYellow.getOffIcon();
+                case Lime -> WirelessTextures.WirelessHubLime.getOffIcon();
+                case Pink -> WirelessTextures.WirelessHubPink.getOffIcon();
+                case Gray -> WirelessTextures.WirelessHubGrey.getOffIcon();
+                case LightGray -> WirelessTextures.WirelessHubLightGrey.getOffIcon();
+                case Cyan -> WirelessTextures.WirelessHubCyan.getOffIcon();
+                case Purple -> WirelessTextures.WirelessHubPurple.getOffIcon();
+                case Blue -> WirelessTextures.WirelessHubBlue.getOffIcon();
+                case Brown -> WirelessTextures.WirelessHubBrown.getOffIcon();
+                case Green -> WirelessTextures.WirelessHubGreen.getOffIcon();
+                case Red -> WirelessTextures.WirelessHubRed.getOffIcon();
+                case Black -> WirelessTextures.WirelessHubBlack.getOffIcon();
+                default -> WirelessTextures.WirelessHubTransparent.getOffIcon();
             };
         } else {
             return switch (((TileWirelessHub) w.getTileEntity(x, y, z)).getColor()) {
-                case White -> WirelessTextures.WirelessHubOnWhite.getIcon();
-                case Orange -> WirelessTextures.WirelessHubOnOrange.getIcon();
-                case Magenta -> WirelessTextures.WirelessHubOnMagenta.getIcon();
-                case LightBlue -> WirelessTextures.WirelessHubOnLightBlue.getIcon();
-                case Yellow -> WirelessTextures.WirelessHubOnYellow.getIcon();
-                case Lime -> WirelessTextures.WirelessHubOnLime.getIcon();
-                case Pink -> WirelessTextures.WirelessHubOnPink.getIcon();
-                case Gray -> WirelessTextures.WirelessHubOnGrey.getIcon();
-                case LightGray -> WirelessTextures.WirelessHubOnLightGrey.getIcon();
-                case Cyan -> WirelessTextures.WirelessHubOnCyan.getIcon();
-                case Purple -> WirelessTextures.WirelessHubOnPurple.getIcon();
-                case Blue -> WirelessTextures.WirelessHubOnBlue.getIcon();
-                case Brown -> WirelessTextures.WirelessHubOnBrown.getIcon();
-                case Green -> WirelessTextures.WirelessHubOnGreen.getIcon();
-                case Red -> WirelessTextures.WirelessHubOnRed.getIcon();
-                case Black -> WirelessTextures.WirelessHubOnBlack.getIcon();
-                default -> WirelessTextures.WirelessHubOnTransparent.getIcon();
+                case White -> WirelessTextures.WirelessHubWhite.getOnIcon();
+                case Orange -> WirelessTextures.WirelessHubOrange.getOnIcon();
+                case Magenta -> WirelessTextures.WirelessHubMagenta.getOnIcon();
+                case LightBlue -> WirelessTextures.WirelessHubLightBlue.getOnIcon();
+                case Yellow -> WirelessTextures.WirelessHubYellow.getOnIcon();
+                case Lime -> WirelessTextures.WirelessHubLime.getOnIcon();
+                case Pink -> WirelessTextures.WirelessHubPink.getOnIcon();
+                case Gray -> WirelessTextures.WirelessHubGrey.getOnIcon();
+                case LightGray -> WirelessTextures.WirelessHubLightGrey.getOnIcon();
+                case Cyan -> WirelessTextures.WirelessHubCyan.getOnIcon();
+                case Purple -> WirelessTextures.WirelessHubPurple.getOnIcon();
+                case Blue -> WirelessTextures.WirelessHubBlue.getOnIcon();
+                case Brown -> WirelessTextures.WirelessHubBrown.getOnIcon();
+                case Green -> WirelessTextures.WirelessHubGreen.getOnIcon();
+                case Red -> WirelessTextures.WirelessHubRed.getOnIcon();
+                case Black -> WirelessTextures.WirelessHubBlack.getOnIcon();
+                default -> WirelessTextures.WirelessHubTransparent.getOnIcon();
             };
         }
     }

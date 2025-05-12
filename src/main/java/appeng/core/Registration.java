@@ -765,7 +765,7 @@ public final class Registration {
         Upgrades.SPEED.registerItem(blocks.inscriber(), 3);
 
         // Grower
-        Upgrades.SPEED.registerItem(blocks.grower(), 3);
+        Upgrades.SPEED.registerItem(blocks.crystalGrowthChamber(), 3);
 
         // Terminals
         Upgrades.PATTERN_REFILLER.registerItem(parts.patternTerminal(), 1);

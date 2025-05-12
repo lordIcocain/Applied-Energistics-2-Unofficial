@@ -19,83 +19,50 @@ import cpw.mods.fml.relauncher.SideOnly;
 
 public enum WirelessTextures {
 
-    WirelessConnectorOnWhite("WirelessConnectorOnWhite"),
-    WirelessConnectorOnOrange("WirelessConnectorOnOrange"),
-    WirelessConnectorOnMagenta("WirelessConnectorOnMagenta"),
-    WirelessConnectorOnLightBlue("WirelessConnectorOnLightBlue"),
-    WirelessConnectorOnYellow("WirelessConnectorOnYellow"),
-    WirelessConnectorOnLime("WirelessConnectorOnLime"),
-    WirelessConnectorOnPink("WirelessConnectorOnPink"),
-    WirelessConnectorOnGrey("WirelessConnectorOnGrey"),
-    WirelessConnectorOnLightGrey("WirelessConnectorOnLightGrey"),
-    WirelessConnectorOnCyan("WirelessConnectorOnCyan"),
-    WirelessConnectorOnPurple("WirelessConnectorOnPurple"),
-    WirelessConnectorOnBlue("WirelessConnectorOnBlue"),
-    WirelessConnectorOnBrown("WirelessConnectorOnBrown"),
-    WirelessConnectorOnGreen("WirelessConnectorOnGreen"),
-    WirelessConnectorOnRed("WirelessConnectorOnRed"),
-    WirelessConnectorOnBlack("WirelessConnectorOnBlack"),
-    WirelessConnectorOnTransparent("WirelessConnectorOnTransparent"),
+    WirelessConnectorWhite("WirelessConnectorOnWhite", "WirelessConnectorOffWhite"),
+    WirelessConnectorOrange("WirelessConnectorOnOrange", "WirelessConnectorOffOrange"),
+    WirelessConnectorMagenta("WirelessConnectorOnMagenta", "WirelessConnectorOffMagenta"),
+    WirelessConnectorLightBlue("WirelessConnectorOnLightBlue", "WirelessConnectorOffLightBlue"),
+    WirelessConnectorYellow("WirelessConnectorOnYellow", "WirelessConnectorOffYellow"),
+    WirelessConnectorLime("WirelessConnectorOnLime", "WirelessConnectorOffLime"),
+    WirelessConnectorPink("WirelessConnectorOnPink", "WirelessConnectorOffPink"),
+    WirelessConnectorGrey("WirelessConnectorOnGrey", "WirelessConnectorOffGrey"),
+    WirelessConnectorLightGrey("WirelessConnectorOnLightGrey", "WirelessConnectorOffLightGrey"),
+    WirelessConnectorCyan("WirelessConnectorOnCyan", "WirelessConnectorOffCyan"),
+    WirelessConnectorPurple("WirelessConnectorOnPurple", "WirelessConnectorOffPurple"),
+    WirelessConnectorBlue("WirelessConnectorOnBlue", "WirelessConnectorOffBlue"),
+    WirelessConnectorBrown("WirelessConnectorOnBrown", "WirelessConnectorOffBrown"),
+    WirelessConnectorGreen("WirelessConnectorOnGreen", "WirelessConnectorOffGreen"),
+    WirelessConnectorRed("WirelessConnectorOnRed", "WirelessConnectorOffRed"),
+    WirelessConnectorBlack("WirelessConnectorOnBlack", "WirelessConnectorOffBlack"),
+    WirelessConnectorTransparent("WirelessConnectorOnTransparent", "WirelessConnectorOffTransparent"),
 
-    WirelessConnectorOffWhite("WirelessConnectorOffWhite"),
-    WirelessConnectorOffOrange("WirelessConnectorOffOrange"),
-    WirelessConnectorOffMagenta("WirelessConnectorOffMagenta"),
-    WirelessConnectorOffLightBlue("WirelessConnectorOffLightBlue"),
-    WirelessConnectorOffYellow("WirelessConnectorOffYellow"),
-    WirelessConnectorOffLime("WirelessConnectorOffLime"),
-    WirelessConnectorOffPink("WirelessConnectorOffPink"),
-    WirelessConnectorOffGrey("WirelessConnectorOffGrey"),
-    WirelessConnectorOffLightGrey("WirelessConnectorOffLightGrey"),
-    WirelessConnectorOffCyan("WirelessConnectorOffCyan"),
-    WirelessConnectorOffPurple("WirelessConnectorOffPurple"),
-    WirelessConnectorOffBlue("WirelessConnectorOffBlue"),
-    WirelessConnectorOffBrown("WirelessConnectorOffBrown"),
-    WirelessConnectorOffGreen("WirelessConnectorOffGreen"),
-    WirelessConnectorOffRed("WirelessConnectorOffRed"),
-    WirelessConnectorOffBlack("WirelessConnectorOffBlack"),
-    WirelessConnectorOffTransparent("WirelessConnectorOffTransparent"),
+    WirelessHubWhite("WirelessHubOnWhite", "WirelessHubOffWhite"),
+    WirelessHubOrange("WirelessHubOnOrange", "WirelessHubOffOrange"),
+    WirelessHubMagenta("WirelessHubOnMagenta", "WirelessHubOffMagenta"),
+    WirelessHubLightBlue("WirelessHubOnLightBlue", "WirelessHubOffLightBlue"),
+    WirelessHubYellow("WirelessHubOnYellow", "WirelessHubOffYellow"),
+    WirelessHubLime("WirelessHubOnLime", "WirelessHubOffLime"),
+    WirelessHubPink("WirelessHubOnPink", "WirelessHubOffPink"),
+    WirelessHubGrey("WirelessHubOnGrey", "WirelessHubOffGrey"),
+    WirelessHubLightGrey("WirelessHubOnLightGrey", "WirelessHubOffLightGrey"),
+    WirelessHubCyan("WirelessHubOnCyan", "WirelessHubOffCyan"),
+    WirelessHubPurple("WirelessHubOnPurple", "WirelessHubOffPurple"),
+    WirelessHubBlue("WirelessHubOnBlue", "WirelessHubOffBlue"),
+    WirelessHubBrown("WirelessHubOnBrown", "WirelessHubOffBrown"),
+    WirelessHubGreen("WirelessHubOnGreen", "WirelessHubOffGreen"),
+    WirelessHubRed("WirelessHubOnRed", "WirelessHubOffRed"),
+    WirelessHubBlack("WirelessHubOnBlack", "WirelessHubOffBlack"),
+    WirelessHubTransparent("WirelessHubOnTransparent", "WirelessHubOffTransparent");
 
-    WirelessHubOnWhite("WirelessHubOnWhite"),
-    WirelessHubOnOrange("WirelessHubOnOrange"),
-    WirelessHubOnMagenta("WirelessHubOnMagenta"),
-    WirelessHubOnLightBlue("WirelessHubOnLightBlue"),
-    WirelessHubOnYellow("WirelessHubOnYellow"),
-    WirelessHubOnLime("WirelessHubOnLime"),
-    WirelessHubOnPink("WirelessHubOnPink"),
-    WirelessHubOnGrey("WirelessHubOnGrey"),
-    WirelessHubOnLightGrey("WirelessHubOnLightGrey"),
-    WirelessHubOnCyan("WirelessHubOnCyan"),
-    WirelessHubOnPurple("WirelessHubOnPurple"),
-    WirelessHubOnBlue("WirelessHubOnBlue"),
-    WirelessHubOnBrown("WirelessHubOnBrown"),
-    WirelessHubOnGreen("WirelessHubOnGreen"),
-    WirelessHubOnRed("WirelessHubOnRed"),
-    WirelessHubOnBlack("WirelessHubOnBlack"),
-    WirelessHubOnTransparent("WirelessHubOnTransparent"),
+    private final String onName;
+    private final String offName;
+    public IIcon onIIcon;
+    public IIcon offIIcon;
 
-    WirelessHubOffWhite("WirelessHubOffWhite"),
-    WirelessHubOffOrange("WirelessHubOffOrange"),
-    WirelessHubOffMagenta("WirelessHubOffMagenta"),
-    WirelessHubOffLightBlue("WirelessHubOffLightBlue"),
-    WirelessHubOffYellow("WirelessHubOffYellow"),
-    WirelessHubOffLime("WirelessHubOffLime"),
-    WirelessHubOffPink("WirelessHubOffPink"),
-    WirelessHubOffGrey("WirelessHubOffGrey"),
-    WirelessHubOffLightGrey("WirelessHubOffLightGrey"),
-    WirelessHubOffCyan("WirelessHubOffCyan"),
-    WirelessHubOffPurple("WirelessHubOffPurple"),
-    WirelessHubOffBlue("WirelessHubOffBlue"),
-    WirelessHubOffBrown("WirelessHubOffBrown"),
-    WirelessHubOffGreen("WirelessHubOffGreen"),
-    WirelessHubOffRed("WirelessHubOffRed"),
-    WirelessHubOffBlack("WirelessHubOffBlack"),
-    WirelessHubOffTransparent("WirelessHubOffTransparent");
-
-    private final String name;
-    public IIcon IIcon;
-
-    WirelessTextures(final String name) {
-        this.name = name;
+    WirelessTextures(final String onName, final String offName) {
+        this.onName = onName;
+        this.offName = offName;
     }
 
     public static ResourceLocation GuiTexture(final String string) {
@@ -107,15 +74,24 @@ public enum WirelessTextures {
         return TextureUtils.getMissingBlock();
     }
 
-    public String getName() {
-        return this.name;
+    public String getOnName() {
+        return this.onName;
     }
 
-    public IIcon getIcon() {
-        return this.IIcon;
+    public String getOffName() {
+        return this.offName;
+    }
+
+    public IIcon getOnIcon() {
+        return this.onIIcon;
+    }
+
+    public IIcon getOffIcon() {
+        return this.onIIcon;
     }
 
     public void registerIcon(final TextureMap map) {
-        this.IIcon = map.registerIcon("appliedenergistics2:Wireless/Block" + this.name);
+        this.onIIcon = map.registerIcon("appliedenergistics2:Wireless/Block" + this.onName);
+        this.offIIcon = map.registerIcon("appliedenergistics2:Wireless/Block" + this.offName);
     }
 }
