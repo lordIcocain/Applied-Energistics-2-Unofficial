@@ -35,6 +35,7 @@ import appeng.api.definitions.IBlocks;
 import appeng.core.AEConfig;
 import appeng.core.AEJSONConfig;
 import appeng.core.AEJSONEntry;
+import appeng.core.AELog;
 import appeng.core.features.AEFeature;
 import appeng.core.worlddata.WorldData;
 import appeng.util.InventoryAdaptor;
@@ -96,7 +97,7 @@ public final class MeteoritePlacer {
                 try {
                     String[] parts = block.split(":");
                     if (parts.length != 2) {
-                        System.err.println(
+                        AELog.error(
                                 "AE2: Invalid Block ID Format for validSpawnBlockWhiteList: " + block
                                         + " | Error: Too Many Semicolons");
                     }
@@ -104,12 +105,13 @@ public final class MeteoritePlacer {
                     if (blk != null) {
                         validSpawn.add(blk);
                     } else {
-                        System.err.println(
+                        AELog.error(
                                 "AE2: Could not find block in registry for validSpawnBlockWhiteList: " + block
                                         + " | Error: Block not found");
                     }
                 } catch (Exception e) {
-                    System.err.println(
+                    AELog.error(
+                            e,
                             "AE2: errored while whitelisting meteorite block spawns: " + e.getLocalizedMessage()
                                     + " | Error: Unknown | Stacktrace: "
                                     + Arrays.toString(e.getStackTrace()));
@@ -326,12 +328,12 @@ public final class MeteoritePlacer {
                     InventoryAdaptor ap = InventoryAdaptor.getAdaptor(te, ForgeDirection.UP);
 
                     int dimID = w.getWorld().provider.dimensionId;
-                    ArrayList<AEJSONEntry> loot_table = new ArrayList<>(
+                    ArrayList<AEJSONEntry> lootTable = new ArrayList<>(
                             AEJSONConfig.instance.getWeightedLootTable(dimID, lootRng));
-                    Map<Integer, ArrayList<AEJSONEntry>> exlcusion_table_map = new HashMap<>();
+                    Map<Integer, ArrayList<AEJSONEntry>> exclusionTableMap = new HashMap<>();
 
                     int totalNormalWeight = 0; // Non-exclusive entries
-                    for (AEJSONEntry entry : loot_table) {
+                    for (AEJSONEntry entry : lootTable) {
                         if (entry.exclusiveGroupID == -1) {
                             totalNormalWeight += entry.weight;
                         }
@@ -340,30 +342,29 @@ public final class MeteoritePlacer {
 
                     int curWeight = 0;
                     int randWeight = (totalNormalWeight != 0 ? lootRng.nextInt(totalNormalWeight) : 0);
-                    for (AEJSONEntry entry : loot_table) {
+                    for (AEJSONEntry entry : lootTable) {
                         if (entry.exclusiveGroupID == -1) {
                             curWeight += entry.weight;
                             if (randWeight <= curWeight) {
                                 loot.add(entry.getItemStack(lootRng));
                             }
                         } else {
-                            if (exlcusion_table_map.containsKey(entry.exclusiveGroupID)) {
-                                ArrayList<AEJSONEntry> temp = exlcusion_table_map.get(entry.exclusiveGroupID);
+                            if (exclusionTableMap.containsKey(entry.exclusiveGroupID)) {
+                                ArrayList<AEJSONEntry> temp = exclusionTableMap.get(entry.exclusiveGroupID);
                                 temp.add(entry);
-                                exlcusion_table_map.put(entry.exclusiveGroupID, temp);
-                            } else
-                                exlcusion_table_map.put(entry.exclusiveGroupID, new ArrayList<>(Arrays.asList(entry)));
+                                exclusionTableMap.put(entry.exclusiveGroupID, temp);
+                            } else exclusionTableMap.put(entry.exclusiveGroupID, new ArrayList<>(Arrays.asList(entry)));
                         }
                     }
-                    for (Integer key : exlcusion_table_map.keySet()) {
-                        if (exlcusion_table_map.get(key).size() > 1) {
+                    for (Integer key : exclusionTableMap.keySet()) {
+                        if (exclusionTableMap.get(key).size() > 1) {
                             int totalExclusiveWeight = 0;
-                            for (AEJSONEntry entry : exlcusion_table_map.get(key)) {
+                            for (AEJSONEntry entry : exclusionTableMap.get(key)) {
                                 totalExclusiveWeight += entry.weight;
                             }
                             randWeight = (totalExclusiveWeight != 0 ? lootRng.nextInt(totalExclusiveWeight) : 0);
                             curWeight = 0;
-                            for (AEJSONEntry entry : exlcusion_table_map.get(key)) {
+                            for (AEJSONEntry entry : exclusionTableMap.get(key)) {
                                 curWeight += entry.weight;
                                 if (randWeight <= curWeight) {
                                     loot.add(entry.getItemStack(lootRng));
@@ -371,7 +372,7 @@ public final class MeteoritePlacer {
                                 }
                             }
                         } else {
-                            AEJSONEntry entry = exlcusion_table_map.get(key).get(0);
+                            AEJSONEntry entry = exclusionTableMap.get(key).get(0);
                             if (entry.weight > 0) {
                                 loot.add(entry.getItemStack(lootRng));
                             }
@@ -381,11 +382,12 @@ public final class MeteoritePlacer {
                     for (ItemStack items : loot) {
                         if (items != null) {
                             ap.addItems(items.copy());
-                        } else System.err.println(
+                        } else AELog.error(
                                 "AE2: Item is null! | Error: Failed while adding item to loot chest in meteoritePlacer");
                     }
                 } catch (Exception e) {
-                    System.err.println(
+                    AELog.error(
+                            e,
                             "AE2: An unexpected error occurred! Check your JSON or report if issue is persistent! | Error: Runtime error while loading loot for meteorite. Printing info: \n"
                                     + "Stack Trace: "
                                     + Arrays.toString(e.getStackTrace())

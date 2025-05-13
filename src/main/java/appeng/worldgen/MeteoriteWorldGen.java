@@ -28,13 +28,18 @@ import cpw.mods.fml.common.IWorldGenerator;
 
 public final class MeteoriteWorldGen implements IWorldGenerator {
 
+    private static final int DEFAULTVALUE = -3124; // This is the value which is assigned for cellSize and
+                                                   // spawnSurfaceMeteorite. These variables should be reassigned unless
+                                                   // something goes wrong.
+
     @Override
     public void generate(final Random rng, final int chunkX, final int chunkZ, final World world,
             final IChunkProvider chunkGenerator, final IChunkProvider chunkProvider) {
+
         if (WorldGenRegistry.INSTANCE.isWorldGenEnabled(WorldGenType.Meteorites, world)) {
             // Find the meteorite grid cell corresponding to this chunk
-            int defaultGridCellSize = -3124;
-            int gridCellSize = -3124;
+            int defaultGridCellSize = DEFAULTVALUE;
+            int gridCellSize = DEFAULTVALUE;
             for (String distance : AEConfig.instance.minMeteoriteDistance) {
                 String[] split = distance.split("=");
                 if (split[0].equals(String.valueOf(world.provider.dimensionId))) {
@@ -44,8 +49,8 @@ public final class MeteoriteWorldGen implements IWorldGenerator {
                     defaultGridCellSize = Integer.parseInt(split[1]);
                 }
             }
-            if (gridCellSize == -3124) {
-                if (defaultGridCellSize != -3124) {
+            if (gridCellSize == DEFAULTVALUE) {
+                if (defaultGridCellSize != DEFAULTVALUE) {
                     gridCellSize = defaultGridCellSize;
                 } else {
                     throw new RuntimeException("AE2: MISSING VALUE minMeteoriteDistance FOR OVERWORLD");
@@ -57,8 +62,8 @@ public final class MeteoriteWorldGen implements IWorldGenerator {
             // Override chunk-based seed with grid-based seed, constructed in the same way as the FML-provided seed
             Platform.seedFromGrid(rng, world.getSeed(), gridX, gridZ);
             // Calculate a deterministic position of the meteorite in the grid cell
-            int defaultSpawnSurfaceMeteor = -1;
-            int check = -1;
+            int defaultSpawnSurfaceMeteor = DEFAULTVALUE;
+            int check = DEFAULTVALUE;
             for (String chance : AEConfig.instance.meteoriteSpawnChance) {
                 String[] split = chance.split("=");
                 if (split[0].equals(String.valueOf(world.provider.dimensionId))) {
@@ -68,8 +73,8 @@ public final class MeteoriteWorldGen implements IWorldGenerator {
                     defaultSpawnSurfaceMeteor = (rng.nextDouble() < Double.parseDouble(split[1]) ? 1 : 0);
                 }
             }
-            if (check == -1) {
-                if (defaultSpawnSurfaceMeteor != -1) {
+            if (check == DEFAULTVALUE) {
+                if (defaultSpawnSurfaceMeteor != DEFAULTVALUE) {
                     check = defaultSpawnSurfaceMeteor;
                 } else {
                     throw new RuntimeException("AE2: MISSING VALUE meteoriteSpawnChance FOR OVERWORLD");

@@ -10,6 +10,8 @@
 
 package appeng.core;
 
+import static net.minecraft.init.Blocks.air;
+
 import java.io.File;
 
 import javax.annotation.Nonnull;
@@ -119,6 +121,8 @@ public final class Registration {
 
     private final RecipeHandler recipeHandler;
     private final DefinitionConverter converter;
+    private static final int DEFAULTDIM = -32727;// -1*Short.MAX_VALUE-50, this value represents failure to find the
+                                                 // dimension in the config
     private BiomeGenBase storageBiome;
 
     Registration() {
@@ -851,21 +855,21 @@ public final class Registration {
         for (String dimension : AEConfig.instance.meteoriteDimensionWhitelist) {
             String[] entry = dimension.replaceAll(" ", "").split(",");
             if (entry.length != 6) {
-                System.err.println(
+                AELog.error(
                         "AE2: Error while whitelisting dimension from string: " + dimension
                                 + " | Error: Too Many or Few Parameters!");
             } else {
-                int dimID = -32727; // -1*Short.MAX_VALUE-50, this value represents failure to find the dimension in
-                                    // config
+                int dimID = DEFAULTDIM; // -1*Short.MAX_VALUE-50, this value represents failure to find the dimension in
+                // config
                 try {
                     dimID = Integer.parseInt(entry[0]);
                     registries.worldgen().enableWorldGenForDimension(WorldGenType.Meteorites, dimID);
                 } catch (Exception e) {
-                    System.err.println(
+                    AELog.error(
                             "AE2: Error while whitelisting dimension from string: " + dimension
                                     + " | Error: First Parameter Needs To Be An Integer!");
                 }
-                if (dimID != -32727) {
+                if (dimID != DEFAULTDIM) {
                     registries.worldgen().enableWorldGenForDimension(WorldGenType.Meteorites, dimID);
                 }
                 Block[] blockList = new Block[5];
@@ -877,7 +881,7 @@ public final class Registration {
                             String[] split = entry[i].split(":");
                             metaList[i - 1] = (split.length == 2 ? 0 : Integer.parseInt(split[2]));
                         } catch (NumberFormatException e) {
-                            System.err.println(
+                            AELog.error(
                                     "AE2: Error getting block from string: " + entry
                                             + " | Error: Metadata invalid, must be an integer!");
                             metaList[i - 1] = 0;
@@ -888,7 +892,7 @@ public final class Registration {
                     }
 
                 }
-                if (dimID != -32727) {
+                if (dimID != DEFAULTDIM) {
                     Fallout.addDebrisToDimension(dimID, blockList, metaList);
                 }
             }
@@ -915,23 +919,22 @@ public final class Registration {
     @Nonnull
     public static Block getBlockFromString(String entry) {
         if (entry == null) {
-            System.err.println("AE2: Error getting block from string | Error: String is null!");
-            return net.minecraft.init.Blocks.air; // Air represents failure to find block
+            AELog.error("AE2: Error getting block from string | Error: String is null!");
+            return air; // Air represents failure to find block
         }
         String[] parts = entry.replaceAll(" ", "").split(":");
         if (parts.length < 2 || parts.length > 3) {
-            System.err.println(
+            AELog.error(
                     "AE2: Error getting block from string: " + entry
                             + " | Error: Invalid format! Expected modId:blockID or modID:blockID:meta");
-            return net.minecraft.init.Blocks.air;
+            return air;
         }
         String modID = parts[0];
         String blockID = parts[1];
         Block block = GameRegistry.findBlock(modID, blockID);
         if (block == null) {
-            System.err.println(
-                    "AE2: Error getting block from string: " + entry + " | Error: Block not found in Registry!");
-            return net.minecraft.init.Blocks.air;
+            AELog.error("AE2: Error getting block from string: " + entry + " | Error: Block not found in Registry!");
+            return air;
         }
         return block;
     }

@@ -31,8 +31,9 @@ public class AEJSONEntry {
     public AEJSONEntry(String item, Integer meta_data, Integer min_value, Integer max_value, Integer weight,
             Integer exclusiveGroupID) {
         if (item == null) {
-            System.err.println("AE2: itemName is required! | Error: While loading JSON");
-            throw new NullPointerException();
+            NullPointerException e = new NullPointerException();
+            AELog.error(new NullPointerException(), "AE2: itemName is required! | Error: While loading JSON");
+            throw e;
         }
         this.item = item;
         if (meta_data != null) this.meta_data = meta_data;
@@ -47,28 +48,42 @@ public class AEJSONEntry {
 
     private ItemStack getItemStack(int amount, Random rand) {
         String[] temp = item.split(":");
-        if (!temp[0].equals("ore")) {
-            if (GameRegistry.findItem(temp[0], temp[1]) == null) {
-                System.err.println(
-                        "AE2: NO SUCH ITEM FOUND IN REGISTRY. CONFIRM YOU ENTERED IT CORRECTLY. USING GLOWSTONE DUST | Error while loading Entry: "
-                                + this);
-                return new ItemStack(Items.glowstone_dust);
+        switch (temp.length) {
+            case 2: {
+                if (GameRegistry.findItem(temp[0], temp[1]) == null) {
+                    AELog.error(
+                            "AE2: NO SUCH ITEM FOUND IN REGISTRY. CONFIRM YOU ENTERED IT CORRECTLY. USING GLOWSTONE DUST | Error Getting ItemStack for Meteorite Loot from entry: "
+                                    + this);
+                    return new ItemStack(Items.glowstone_dust);
+                }
+                return new ItemStack(GameRegistry.findItem(temp[0], temp[1]), amount, meta_data);
             }
-            return new ItemStack(GameRegistry.findItem(temp[0], temp[1]), amount, meta_data);
-        }
-        ArrayList<ItemStack> oreDictLoot = OreDictionary.getOres(temp[1]);
-        if (oreDictLoot.size() > 0) {
-            ItemStack stack = oreDictLoot.get(rand.nextInt(oreDictLoot.size()));
-            if (stack != null) {
-                stack = stack.copy();
-                stack.stackSize = amount;
-                return stack;
+            case 1: {
+                if (temp[0].startsWith("ore#")) {
+                    ArrayList<ItemStack> oreDictLoot = OreDictionary.getOres(temp[0].substring(4));
+                    if (!oreDictLoot.isEmpty()) {
+                        ItemStack stack = oreDictLoot.get(rand.nextInt(oreDictLoot.size()));
+                        if (stack != null) {
+                            stack = stack.copy();
+                            stack.stackSize = amount;
+                            return stack;
+                        }
+                    }
+                    AELog.error(
+                            "AE2: NO SUCH ORE DICTIONARY OBJECT FOUND: " + this
+                                    + " USING GLOWSTONE DUST | ERROR: Getting ItemStack for Meteorite Loot");
+                    return new ItemStack(Items.glowstone_dust);
+                }
+            }
+            default: {
+                IllegalArgumentException e = new IllegalArgumentException();
+                AELog.error(
+                        e,
+                        "AE2: INCORRECT ENTRY FORMAT " + this
+                                + " MAKE SURE TO USE CORRECT ITEMID FORMAT: modid:item or ore#oreDictName | ERROR: Getting ItemStack for Meteorite Loot");
+                throw e;
             }
         }
-        System.err.println(
-                "AE2: NO SUCH ORE DICTIONARY OBJECT FOUND: " + this
-                        + " USING GLOWSTONE DUST | ERROR: Getting ItemStack for Meteorite Loot");
-        return new ItemStack(Items.glowstone_dust);
     }
 
     public ItemStack getItemStack(Random rand) {
