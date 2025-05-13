@@ -57,6 +57,7 @@ public class ItemEncodedPattern extends AEBaseItem implements ICraftingPatternIt
     private static Item FLUID_DROP_ITEM;
     private static boolean checkedCache = false;
     private static final boolean isGTLoaded = IntegrationRegistry.INSTANCE.isEnabled(IntegrationType.GT);
+    private static final Locale locale = Locale.getDefault();
 
     public ItemEncodedPattern() {
         this.setFeature(EnumSet.of(AEFeature.Patterns));
@@ -241,7 +242,7 @@ public class ItemEncodedPattern extends AEBaseItem implements ICraftingPatternIt
                 isFluid = false;
             }
 
-            String itemCountText = NumberFormat.getNumberInstance(Locale.US).format(itemCount);
+            String itemCountText = NumberFormat.getNumberInstance(locale).format(itemCount);
             String itemText;
             if (isGTLoaded) {
                 itemText = isFluid ? Platform.getItemDisplayName(item).replace("drop of", "")
