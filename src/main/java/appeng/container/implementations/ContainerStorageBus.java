@@ -164,14 +164,14 @@ public class ContainerStorageBus extends ContainerUpgradeable {
                 }
                 for (ICrafting crafter : this.crafters) {
                     boolean isChangingQuantityOnly = false;
-                    if (crafter instanceof EntityPlayerMP && ((EntityPlayerMP) crafter).isChangingQuantityOnly) {
+                    if (crafter instanceof EntityPlayerMP playerMP && playerMP.isChangingQuantityOnly) {
                         isChangingQuantityOnly = true;
-                        ((EntityPlayerMP) crafter).isChangingQuantityOnly = false; // necessary to ensure that the
-                                                                                   // package is sent correctly
+                        // necessary to ensure that the package is sent correctly
+                        playerMP.isChangingQuantityOnly = false;
                     }
                     crafter.sendSlotContents(this, from, stack);
-                    if (isChangingQuantityOnly) {
-                        ((EntityPlayerMP) crafter).isChangingQuantityOnly = true;
+                    if (isChangingQuantityOnly && crafter instanceof EntityPlayerMP playerMP) {
+                        playerMP.isChangingQuantityOnly = true;
                     }
                 }
             }
