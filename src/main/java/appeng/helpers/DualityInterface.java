@@ -446,12 +446,6 @@ public class DualityInterface implements IGridTickable, IStorageMonitorable, IIn
             {
                 this.requireWork[slot] = req.copy();
                 return;
-
-                /*
-                 * Checks if a fuzzy-matched item exists, and sets the config slot stack to that item; and if it doesnt
-                 * exist, it sets the variable for it equal to an IAEItemStack version of the ItemStack in the storage
-                 * slot. This ensures fast and accurate adjustment of the stack size stocked in the storage slot.
-                 */
             } else if ((fuzzyItemStack != null)
                     || ((fuzzyItemStack == null) && (this.getInstalledUpgrades(Upgrades.FUZZY) == 1))) {
                         if (fuzzyItemStack == null) {
@@ -762,12 +756,8 @@ public class DualityInterface implements IGridTickable, IStorageMonitorable, IIn
                     if (fzlist.iterator().hasNext()) {
                         fuzzyItemStack = fzlist.iterator().next();
 
-                        // Checks if the fuzzy-matched item can be merged with the ItemStack currently in the storage
-                        // slot
                         if ((fuzzyItemStack.isSameType(stored)) || (stored == null)) {
                             fuzzyItemStack.setStackSize(itemStack.getStackSize());
-
-                            // To prevent duping...
                         } else fuzzyItemStack.setStackSize(0);
 
                         acquired = Platform
