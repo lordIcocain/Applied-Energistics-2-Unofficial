@@ -10,8 +10,10 @@
 
 package appeng.container.implementations;
 
+import java.util.HashMap;
 import java.util.Iterator;
 
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
@@ -33,7 +35,6 @@ import appeng.container.guisync.GuiSync;
 import appeng.container.slot.OptionalSlotFakeTypeOnly;
 import appeng.container.slot.SlotRestrictedInput;
 import appeng.parts.misc.PartStorageBus;
-import appeng.util.ConfigManager;
 import appeng.util.IConfigManagerHost;
 import appeng.util.IterationCounter;
 import appeng.util.Platform;
@@ -51,9 +52,15 @@ public class ContainerStorageBus extends ContainerUpgradeable implements IConfig
     @GuiSync(7)
     public YesNo stickyMode = YesNo.NO;
 
+    private static final HashMap<EntityPlayer, IteratorState> PartitionIteratorMap = new HashMap<>();
+
+    @GuiSync(8)
+    public ActionItems partitionMode;
+
     public ContainerStorageBus(final InventoryPlayer ip, final PartStorageBus te) {
         super(ip, te);
         this.storageBus = te;
+        partitionMode = PartitionIteratorMap.containsKey(ip.player) ? ActionItems.CELL_RESTRICTION : ActionItems.WRENCH;
     }
 
     @Override
@@ -151,34 +158,23 @@ public class ContainerStorageBus extends ContainerUpgradeable implements IConfig
         return upgrades > (idx - 2);
     }
 
-    private static Iterator<IAEItemStack> PartitionIterator = null;
-    private static final ConfigManager PartitionAction; // TODO: find a way to synchronize the client and server
-    private  static boolean HasNext = false;
-    static {
-        PartitionAction = new ConfigManager((manager, settingName, newValue) -> {});
-        PartitionAction.registerSetting(Settings.ACTIONS, ActionItems.WRENCH);
-    }
-
     public void clear() {
         final IInventory inv = this.getUpgradeable().getInventoryByName("config");
         for (int x = 0; x < inv.getSizeInventory(); x++) {
             inv.setInventorySlotContents(x, null);
         }
-        clearPartitionIterator();
         this.detectAndSendChanges();
     }
 
-    private static void clearPartitionIterator() {
-        if (PartitionIterator != null) {
-            PartitionIterator = null;
-            HasNext = false;
-            PartitionAction.putSetting(Settings.ACTIONS, ActionItems.WRENCH);
-        }
+    private void clearPartitionIterator(EntityPlayer player) {
+        PartitionIteratorMap.remove(player);
+        partitionMode = ActionItems.WRENCH;
     }
 
     public void partition(boolean clearIterator) {
+        EntityPlayer player = this.getInventoryPlayer().player;
         if (clearIterator) {
-            clearPartitionIterator();
+            clearPartitionIterator(player);
             return;
         }
         final IInventory inv = this.getUpgradeable().getInventoryByName("config");
@@ -186,40 +182,43 @@ public class ContainerStorageBus extends ContainerUpgradeable implements IConfig
         final IMEInventory<IAEItemStack> cellInv = this.storageBus.getInternalHandler();
 
         if (cellInv == null) {
-            clearPartitionIterator();
-            PartitionAction.putSetting(Settings.ACTIONS, ActionItems.WRENCH);
+            clearPartitionIterator(player);
             return;
         }
-
-        if (PartitionIterator == null) {
+        IteratorState it;
+        if (!PartitionIteratorMap.containsKey(player)) {
             final IItemList<IAEItemStack> list = cellInv
                     .getAvailableItems(AEApi.instance().storage().createItemList(), IterationCounter.fetchNewId());
-            PartitionIterator = list.iterator();
-            PartitionAction.putSetting(Settings.ACTIONS, ActionItems.CELL_RESTRICTION);
-            HasNext = PartitionIterator.hasNext(); // cache HasNext, call next internally
+            it = new IteratorState(list.iterator());
+            PartitionIteratorMap.put(player, it);
+            partitionMode = ActionItems.CELL_RESTRICTION;
+        } else {
+            it = PartitionIteratorMap.get(player);
         }
-
+        boolean skip = false;
         for (int x = 0; x < inv.getSizeInventory(); x++) {
-            if (PartitionIterator == null) {
+            if (skip) {
                 inv.setInventorySlotContents(x, null);
                 continue;
             }
-            // invPartitionIteratorHasnext = invPartitionIteratorHasnext || invPartitionIterator.hasNext();
             if (this.isSlotEnabled(x / 9)) {
-                if (HasNext) {
-                    final ItemStack is = PartitionIterator.next().getItemStack();
+                IAEItemStack AEis = it.next();
+                if (AEis != null) {
+                    final ItemStack is = AEis.getItemStack();
                     is.stackSize = 1;
-                    HasNext = PartitionIterator.hasNext();
                     inv.setInventorySlotContents(x, is);
                 } else {
-                    clearPartitionIterator();
+                    clearPartitionIterator(player);
+                    skip = true;
                     inv.setInventorySlotContents(x, null);
                 }
-            } else inv.setInventorySlotContents(x, null);
+            } else {
+                skip = true;
+                inv.setInventorySlotContents(x, null);
+            }
 
         }
-        if (!HasNext)
-            clearPartitionIterator();
+        if (!it.hasNext) clearPartitionIterator(player);
         this.detectAndSendChanges();
     }
 
@@ -232,12 +231,12 @@ public class ContainerStorageBus extends ContainerUpgradeable implements IConfig
     }
 
     public ActionItems getPartitionMode() {
-        return (ActionItems) PartitionAction.getSetting(Settings.ACTIONS);
+        return this.partitionMode;
     }
 
-//    public void setPartitionMode(final ActionItems action) {
-//        PartitionAction.putSetting(Settings.ACTIONS, action);
-//    }
+    public void setPartitionMode(final ActionItems action) {
+        partitionMode = action;
+    }
 
     private void setStorageFilter(final StorageFilter storageFilter) {
         this.storageFilter = storageFilter;
@@ -258,5 +257,25 @@ public class ContainerStorageBus extends ContainerUpgradeable implements IConfig
     @Override
     public void updateSetting(IConfigManager manager, Enum settingName, Enum newValue) {
 
+    }
+
+    private static class IteratorState {
+
+        private final Iterator<IAEItemStack> it;
+        private boolean hasNext; // cache hasNext(), call next of internal iterator
+
+        public IteratorState(Iterator<IAEItemStack> it) {
+            this.it = it;
+            this.hasNext = it.hasNext();
+        }
+
+        public IAEItemStack next() {
+            if (this.hasNext) {
+                IAEItemStack is = it.next();
+                hasNext = it.hasNext();
+                return is;
+            }
+            return null;
+        }
     }
 }
