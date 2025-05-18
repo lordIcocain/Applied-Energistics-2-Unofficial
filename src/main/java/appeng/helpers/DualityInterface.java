@@ -751,9 +751,11 @@ public class DualityInterface implements IGridTickable, IStorageMonitorable, IIn
                 }
 
                 if ((this.getInstalledUpgrades(Upgrades.FUZZY)) == 1 && (destination instanceof NetworkMonitor<?>)) {
-                    
-                    /* This returns a NetworkInventoryHandler object. getSortedFuzzyItems has an Override definition in
-                     * there. */
+
+                    /*
+                     * This returns a NetworkInventoryHandler object. getSortedFuzzyItems has an Override definition in
+                     * there.
+                     */
                     final Collection<IAEItemStack> fzlist = ((NetworkMonitor<IAEItemStack>) destination).getHandler()
                             .getSortedFuzzyItems(
                                     new ArrayList<>(),
@@ -764,12 +766,15 @@ public class DualityInterface implements IGridTickable, IStorageMonitorable, IIn
                     if (fzlist.iterator().hasNext()) {
                         fuzzyItemStack = fzlist.iterator().next();
 
-                        /* Checks if the fuzzy-matched item can be merged with the ItemStack currently in the storage
-                         * slot. */
+                        /*
+                         * Checks if the fuzzy-matched item can be merged with the ItemStack currently in the storage
+                         * slot.
+                         */
                         if ((fuzzyItemStack.isSameType(stored)) || (stored == null)) {
                             fuzzyItemStack.setStackSize(itemStack.getStackSize());
 
-                            // To prevent duping in case fuzzy-matched item cannot be merged with stack in storage slot...
+                            // To prevent duping in case fuzzy-matched item cannot be merged with stack in storage
+                            // slot...
                         } else fuzzyItemStack.setStackSize(0);
 
                         acquired = Platform
