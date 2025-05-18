@@ -39,7 +39,7 @@ import appeng.util.IConfigManagerHost;
 import appeng.util.IterationCounter;
 import appeng.util.Platform;
 
-public class ContainerStorageBus extends ContainerUpgradeable implements IConfigManagerHost {
+public class ContainerStorageBus extends ContainerUpgradeable {
 
     private final PartStorageBus storageBus;
 
@@ -252,11 +252,6 @@ public class ContainerStorageBus extends ContainerUpgradeable implements IConfig
 
     private void setReadWriteMode(final AccessRestriction rwMode) {
         this.rwMode = rwMode;
-    }
-
-    @Override
-    public void updateSetting(IConfigManager manager, Enum settingName, Enum newValue) {
-
     }
 
     private static class IteratorState {
