@@ -26,6 +26,7 @@ import appeng.api.networking.crafting.ICraftingPatternDetails;
 import appeng.api.networking.security.IActionHost;
 import appeng.api.storage.ITerminalHost;
 import appeng.api.storage.data.IAEItemStack;
+import appeng.api.storage.data.IAEStack;
 import appeng.api.util.IInterfaceViewable;
 import appeng.container.AEBaseContainer;
 import appeng.core.AELog;
@@ -242,8 +243,8 @@ public class ContainerOptimizePatterns extends AEBaseContainer {
             requestedCrafts += task.getTotalCraftsDone();
         }
 
-        private long getCraftAmountForItem(IAEItemStack stack) {
-            IAEItemStack s = Arrays.stream(patternDetails.stream().findFirst().get().getCondensedOutputs())
+        private long getCraftAmountForItem(IAEStack<?> stack) {
+            IAEStack<?> s = Arrays.stream(patternDetails.stream().findFirst().get().getCondensedAEOutputs())
                     .filter(i -> i.isSameType(stack)).findFirst().orElse(null);
             if (s != null) return s.getStackSize();
             else return 0;

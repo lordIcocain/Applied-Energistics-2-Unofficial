@@ -1,8 +1,5 @@
 package appeng.crafting.v2.resolvers;
 
-import static appeng.util.Platform.convertStack;
-import static appeng.util.Platform.stackConvert;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -115,19 +112,8 @@ public class CraftableItemResolver<StackType extends IAEStack<StackType>>
             this.allowSimulation = allowSimulation;
             this.isComplex = isComplex;
 
-            IAEItemStack[] pInputs = pattern.getCondensedInputs();
-            IAEStack<?>[] patternInputs = new IAEStack[pInputs.length];
-
-            for (int i = 0; i < pInputs.length; i++) {
-                patternInputs[i] = convertStack(pInputs[i]);
-            }
-
-            IAEItemStack[] pOutputs = pattern.getCondensedOutputs();
-            IAEStack<?>[] patternOutputs = new IAEStack[pOutputs.length];
-
-            for (int i = 0; i < pOutputs.length; i++) {
-                patternOutputs[i] = convertStack(pOutputs[i]);
-            }
+            IAEStack<?>[] patternInputs = pattern.getCondensedAEInputs();
+            IAEStack<?>[] patternOutputs = pattern.getCondensedAEOutputs();
 
             if (!hasRecursiveInputs(patternInputs, patternOutputs)) {
                 this.patternInputs = patternInputs;
@@ -170,19 +156,8 @@ public class CraftableItemResolver<StackType extends IAEStack<StackType>>
             this.craftingMachine = serializer.readItemStack();
             this.totalCraftsDone = buffer.readLong();
 
-            IAEItemStack[] pInputs = pattern.getCondensedInputs();
-            IAEStack<?>[] patternInputs = new IAEStack[pInputs.length];
-
-            for (int i = 0; i < pInputs.length; i++) {
-                patternInputs[i] = convertStack(pInputs[i]);
-            }
-
-            IAEItemStack[] pOutputs = pattern.getCondensedOutputs();
-            IAEStack<?>[] patternOutputs = new IAEStack[pOutputs.length];
-
-            for (int i = 0; i < pOutputs.length; i++) {
-                patternOutputs[i] = convertStack(pOutputs[i]);
-            }
+            IAEStack<?>[] patternInputs = pattern.getCondensedAEInputs();;
+            IAEStack<?>[] patternOutputs = pattern.getCondensedAEOutputs();
 
             if (!hasRecursiveInputs(patternInputs, patternOutputs)) {
                 this.patternInputs = patternInputs;
@@ -311,10 +286,10 @@ public class CraftableItemResolver<StackType extends IAEStack<StackType>>
             if (!pattern.isCraftable()) {
                 return true;
             }
-            IAEItemStack[] rawInputs = pattern.getInputs();
+            IAEStack<?>[] rawInputs = pattern.getAEInputs();
             for (int slot = 0; slot < rawInputs.length; slot++) {
-                if (rawInputs[slot] != null && rawInputs[slot].isSameType((IAEItemStack) reference)) {
-                    return pattern.isValidItemForSlot(slot, ((IAEItemStack) stack).getItemStack(), world);
+                if (rawInputs[slot] != null && rawInputs[slot].isSameType(reference)) {
+                    return pattern.isValidItemForSlot(slot, stack, world);
                 }
             }
             return true;
@@ -446,7 +421,7 @@ public class CraftableItemResolver<StackType extends IAEStack<StackType>>
                     if (toCraft > 1) {
                         throw new IllegalStateException();
                     }
-                    final IAEStack<?>[] slotInputs = pattern.getInputs();
+                    final IAEStack<?>[] slotInputs = pattern.getAEInputs();
                     for (int slot = 0; slot < slotInputs.length; slot++) {
                         final IAEStack<?> input = slotInputs[slot];
                         if (input == null) {
@@ -641,13 +616,13 @@ public class CraftableItemResolver<StackType extends IAEStack<StackType>>
     private void logComplexPattrn(ICraftingPatternDetails pattern, long count) {
         if (AEConfig.instance != null && AEConfig.instance.isFeatureEnabled(AEFeature.ComplexPatternLog)) {
             StringBuilder outputs = new StringBuilder();
-            for (IAEItemStack stack : pattern.getOutputs()) {
+            for (IAEStack<?> stack : pattern.getOutputs()) {
                 if (stack != null) {
                     outputs.append(stack);
                     if (stack instanceof AEItemStack) {
                         outputs.append(" <");
                         try {
-                            outputs.append(((AEItemStack) stack).getDisplayName());
+                            outputs.append(stack.getDisplayName());
                         } catch (Exception e) {
                             outputs.append("? " + e.getMessage());
                         }
@@ -664,15 +639,15 @@ public class CraftableItemResolver<StackType extends IAEStack<StackType>>
     @Override
     public List<CraftingTask> provideCraftingRequestResolvers(@Nonnull CraftingRequest<StackType> request,
             @Nonnull CraftingContext context) {
-        IAEItemStack reqStack = stackConvert(request.stack);
         final ArrayList<CraftingTask> tasks = new ArrayList<>();
         final Set<ICraftingPatternDetails> denyList = request.patternParents;
-        final List<ICraftingPatternDetails> patterns = new ArrayList<>(context.getPrecisePatternsFor(reqStack));
+        final List<ICraftingPatternDetails> patterns = new ArrayList<>(context.getPrecisePatternsFor(request.stack));
         patterns.removeAll(denyList);
         patterns.sort(Comparator.comparing(ICraftingPatternDetails::getPriority).reversed());
         // If fuzzy patterns are allowed,
         if (request.substitutionMode == SubstitutionMode.ACCEPT_FUZZY) {
-            final List<ICraftingPatternDetails> fuzzyPatterns = new ArrayList<>(context.getFuzzyPatternsFor(reqStack));
+            final List<ICraftingPatternDetails> fuzzyPatterns = new ArrayList<>(
+                    context.getFuzzyPatternsFor(request.stack));
             fuzzyPatterns.removeAll(denyList);
             fuzzyPatterns.sort(Comparator.comparing(ICraftingPatternDetails::getPriority).reversed());
             patterns.addAll(fuzzyPatterns);

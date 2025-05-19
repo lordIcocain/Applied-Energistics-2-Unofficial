@@ -658,4 +658,12 @@ public final class AEItemStack extends AEStack<IAEItemStack> implements IAEItemS
         this.def = def;
         return def;
     }
+
+    @Override
+    public void setTagCompound(NBTTagCompound tagCompound) {
+        if (tagCompound != null) {
+            this.getDefinition()
+                    .setTagCompound((AESharedNBT) AESharedNBT.getSharedTagCompound(tagCompound, getItemStack()));
+        }
+    }
 }

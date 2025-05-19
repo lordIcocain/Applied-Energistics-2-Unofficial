@@ -1,8 +1,5 @@
 package appeng.crafting.v2;
 
-import static appeng.util.Platform.convertStack;
-import static appeng.util.Platform.stackConvert;
-
 import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -14,14 +11,12 @@ import net.minecraft.world.World;
 
 import org.apache.logging.log4j.Level;
 
-import appeng.api.AEApi;
 import appeng.api.config.CraftingMode;
 import appeng.api.networking.IGrid;
 import appeng.api.networking.crafting.ICraftingCPU;
 import appeng.api.networking.crafting.ICraftingCallback;
 import appeng.api.networking.crafting.ICraftingJob;
 import appeng.api.networking.security.BaseActionSource;
-import appeng.api.storage.data.IAEItemStack;
 import appeng.api.storage.data.IAEStack;
 import appeng.api.storage.data.IItemList;
 import appeng.core.AELog;
@@ -39,7 +34,8 @@ import io.netty.buffer.Unpooled;
  * A new, self-contained implementation of the crafting calculator. Does an iterative search on the crafting recipe
  * tree.
  */
-public class CraftingJobV2 implements ICraftingJob, Future<ICraftingJob>, ITreeSerializable {
+public class CraftingJobV2<StackType extends IAEStack<StackType>>
+        implements ICraftingJob<StackType>, Future<ICraftingJob<StackType>>, ITreeSerializable {
 
     protected volatile long totalByteCost = -1; // -1 means it needs to be recalculated
 
@@ -61,19 +57,15 @@ public class CraftingJobV2 implements ICraftingJob, Future<ICraftingJob>, ITreeS
     protected State state = State.RUNNING;
 
     public CraftingJobV2(final World world, final IGrid meGrid, final BaseActionSource actionSource,
-            final IAEItemStack what, final ICraftingCallback callback) {
+            final StackType what, final ICraftingCallback callback) {
         this(world, meGrid, actionSource, what, CraftingMode.STANDARD, callback);
     }
 
     public CraftingJobV2(final World world, final IGrid meGrid, final BaseActionSource actionSource,
-            final IAEItemStack what, final CraftingMode craftingMode, final ICraftingCallback callback) {
+            final StackType what, final CraftingMode craftingMode, final ICraftingCallback callback) {
         this.context = new CraftingContext(world, meGrid, actionSource);
         this.callback = callback;
-        this.originalRequest = new CraftingRequest<>(
-                convertStack(what),
-                SubstitutionMode.PRECISE_FRESH,
-                true,
-                craftingMode);
+        this.originalRequest = new CraftingRequest<>(what, SubstitutionMode.PRECISE_FRESH, true, craftingMode);
         this.context.addRequest(this.originalRequest);
         this.context.itemModel.ignore(what);
     }
@@ -164,20 +156,9 @@ public class CraftingJobV2 implements ICraftingJob, Future<ICraftingJob>, ITreeS
     }
 
     @Override
-    public void populatePlan(IItemList<IAEItemStack> plan) {
-        IItemList<IAEStack<?>> aeList = AEApi.instance().storage().createAEStackList();
+    public void populatePlan(IItemList<IAEStack<?>> plan) {
         for (CraftingTask<?> task : context.getResolvedTasks()) {
-            task.populatePlan(aeList);
-        }
-        for (IAEStack<?> aeStack : aeList) {
-            if (aeStack instanceof IAEItemStack ais) {
-                plan.add(ais);
-            } else {
-                plan.add(
-                        stackConvert(aeStack.copy().setStackSize(1)).setStackSize(aeStack.getStackSize())
-                                .setCountRequestable(aeStack.getCountRequestable())
-                                .setCountRequestableCrafts(aeStack.getCountRequestableCrafts()));
-            }
+            task.populatePlan(plan);
         }
     }
 
@@ -206,8 +187,8 @@ public class CraftingJobV2 implements ICraftingJob, Future<ICraftingJob>, ITreeS
     }
 
     @Override
-    public IAEItemStack getOutput() {
-        return stackConvert(originalRequest.stack);
+    public StackType getOutput() {
+        return (StackType) originalRequest.stack;
     }
 
     @Override
@@ -249,7 +230,7 @@ public class CraftingJobV2 implements ICraftingJob, Future<ICraftingJob>, ITreeS
     }
 
     @Override
-    public Future<ICraftingJob> schedule() {
+    public Future<ICraftingJob<StackType>> schedule() {
         TickHandler.INSTANCE.registerCraftingSimulation(this.context.world, this);
         return this;
     }

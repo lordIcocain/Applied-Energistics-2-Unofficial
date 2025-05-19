@@ -266,7 +266,8 @@ public class CraftingRequest<StackType extends IAEStack<StackType>> implements I
             throw new IllegalArgumentException(
                     "Can't fulfill crafting request with too many of " + input + " : " + this);
         }
-        this.untransformedByteCost += input.getStackSize();
+        this.untransformedByteCost += stackTypeClass == IAEFluidStack.class ? Math.min(input.getStackSize() / 1000, 1)
+                : input.getStackSize();
         this.byteCost = CraftingCalculations.adjustByteCost(this, untransformedByteCost);
         this.remainingToProcess -= input.getStackSize();
         this.usedResolvers.add(new UsedResolverEntry(this, origin, input.copy()));
@@ -307,7 +308,8 @@ public class CraftingRequest<StackType extends IAEStack<StackType>> implements I
 
         this.stack.setStackSize(newlyRequested);
         this.remainingToProcess = newlyRemainingToProcess;
-        this.untransformedByteCost -= refundedAmount;
+        this.untransformedByteCost -= stackTypeClass == IAEFluidStack.class ? Math.min(refundedAmount / 1000, 1)
+                : refundedAmount;
         this.byteCost = CraftingCalculations.adjustByteCost(this, untransformedByteCost);
         if (this.remainingToProcess < 0) {
             throw new IllegalArgumentException("Refunded more items than were resolved for request " + this);

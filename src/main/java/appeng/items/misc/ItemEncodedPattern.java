@@ -10,6 +10,8 @@
 
 package appeng.items.misc;
 
+import static appeng.util.Platform.stackConvertPacket;
+
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -37,7 +39,8 @@ import net.minecraftforge.event.ForgeEventFactory;
 import appeng.api.AEApi;
 import appeng.api.implementations.ICraftingPatternItem;
 import appeng.api.networking.crafting.ICraftingPatternDetails;
-import appeng.api.storage.data.IAEItemStack;
+import appeng.api.storage.data.IAEFluidStack;
+import appeng.api.storage.data.IAEStack;
 import appeng.client.render.items.ItemEncodedPatternRenderer;
 import appeng.core.CommonHelper;
 import appeng.core.features.AEFeature;
@@ -45,7 +48,6 @@ import appeng.core.localization.GuiText;
 import appeng.helpers.PatternHelper;
 import appeng.items.AEBaseItem;
 import appeng.util.Platform;
-import cpw.mods.fml.common.registry.GameRegistry;
 
 public class ItemEncodedPattern extends AEBaseItem implements ICraftingPatternItem {
 
@@ -114,8 +116,8 @@ public class ItemEncodedPattern extends AEBaseItem implements ICraftingPatternIt
         final boolean substitute = encodedValue.getBoolean("substitute");
         final boolean beSubstitute = encodedValue.getBoolean("beSubstitute");
         final String author = encodedValue.getString("author");
-        IAEItemStack[] inItems;
-        IAEItemStack[] outItems;
+        IAEStack<?>[] inItems;
+        IAEStack<?>[] outItems;
 
         if (details == null) {
             final ItemStack unknownItem = new ItemStack(Blocks.fire);
@@ -126,8 +128,8 @@ public class ItemEncodedPattern extends AEBaseItem implements ICraftingPatternIt
             outItems = PatternHelper.convertToCondensedList(
                     PatternHelper.loadIAEItemStackFromNBT(encodedValue.getTagList("out", 10), false, unknownItem));
         } else {
-            inItems = details.getCondensedInputs();
-            outItems = details.getCondensedOutputs();
+            inItems = details.getCondensedAEInputs();
+            outItems = details.getCondensedAEOutputs();
         }
 
         boolean recipeIsBroken = details == null;
@@ -204,30 +206,27 @@ public class ItemEncodedPattern extends AEBaseItem implements ICraftingPatternIt
             return null;
         }
 
-        SIMPLE_CACHE.put(item, out = details.getCondensedOutputs()[0].getItemStack());
+        SIMPLE_CACHE.put(item, out = stackConvertPacket(details.getCondensedAEOutputs()[0]).getItemStack());
         return out;
     }
 
-    private boolean addInformation(final EntityPlayer player, final IAEItemStack[] items, final List<String> lines,
+    private boolean addInformation(final EntityPlayer player, final IAEStack<?>[] items, final List<String> lines,
             String label, final boolean displayMoreInfo, EnumChatFormatting color) {
         final ItemStack unknownItem = new ItemStack(Blocks.fire);
         boolean recipeIsBroken = false;
         boolean first = true;
-        List<IAEItemStack> itemsList = Arrays.asList(items);
-        List<IAEItemStack> sortedItems = itemsList.stream()
-                .sorted(Comparator.comparingLong(IAEItemStack::getStackSize).reversed()).collect(Collectors.toList());
-        boolean isFluid = false;
+        List<IAEStack<?>> itemsList = Arrays.asList(items);
+        List<IAEStack<?>> sortedItems = itemsList.stream().sorted(Comparator.comparingLong(IAEStack::getStackSize))
+                .collect(Collectors.toList());
+        boolean isFluid;
         EnumChatFormatting oldColor = color;
-        final Item fluidDropItem = getFluidDropItem();
 
-        for (final IAEItemStack item : sortedItems) {
-            Long itemCount = item.getStackSize();
-
+        for (final IAEStack<?> item : sortedItems) {
             if (!recipeIsBroken && item.equals(unknownItem)) {
                 recipeIsBroken = true;
             }
 
-            if (fluidDropItem != null && item.getItemStack().getItem() == fluidDropItem) {
+            if (item instanceof IAEFluidStack) {
                 label = EnumChatFormatting.GOLD + label;
                 color = EnumChatFormatting.GOLD;
                 isFluid = true;
@@ -241,39 +240,29 @@ public class ItemEncodedPattern extends AEBaseItem implements ICraftingPatternIt
                 lines.add(label);
                 lines.add(
                         "   " + EnumChatFormatting.WHITE
-                                + NumberFormat.getNumberInstance(Locale.US).format(itemCount)
+                                + NumberFormat.getNumberInstance(Locale.US).format(item.getStackSize())
                                 + EnumChatFormatting.RESET
                                 + (isFluid ? EnumChatFormatting.WHITE + "L" : " ")
                                 + EnumChatFormatting.RESET
                                 + color
-                                + (isFluid ? Platform.getItemDisplayName(item).replace("drop of", "")
-                                        : Platform.getItemDisplayName(item)));
+                                + " "
+                                + item.getDisplayName());
             }
             if (!first) {
                 lines.add(
                         "   " + EnumChatFormatting.WHITE
-                                + NumberFormat.getNumberInstance(Locale.US).format(itemCount)
+                                + NumberFormat.getNumberInstance(Locale.US).format(item.getStackSize())
                                 + EnumChatFormatting.RESET
                                 + (isFluid ? EnumChatFormatting.WHITE + "L" : " ")
                                 + EnumChatFormatting.RESET
                                 + color
-                                + (isFluid ? Platform.getItemDisplayName(item).replace("drop of", "")
-                                        : Platform.getItemDisplayName(item)));
+                                + " "
+                                + item.getDisplayName());
             }
 
             first = false;
         }
 
         return recipeIsBroken;
-    }
-
-    private static Item getFluidDropItem() {
-        // Use a checked cache variable instead of relying on the item lookup for cache since
-        // we don't want to recheck every time if AE2FC is not installed
-        if (!checkedCache) {
-            FLUID_DROP_ITEM = GameRegistry.findItem("ae2fc", "fluid_drop");
-            checkedCache = true;
-        }
-        return FLUID_DROP_ITEM;
     }
 }

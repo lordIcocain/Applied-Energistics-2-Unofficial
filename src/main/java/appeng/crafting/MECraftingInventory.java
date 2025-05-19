@@ -11,6 +11,7 @@
 package appeng.crafting;
 
 import static appeng.util.Platform.convertStack;
+import static appeng.util.Platform.isAE2FCLoaded;
 import static appeng.util.Platform.stackConvert;
 import static appeng.util.Platform.writeAEStackListNBT;
 
@@ -192,7 +193,7 @@ public class MECraftingInventory {
             if (mode == Actionable.MODULATE) {
                 boolean convert = false;
                 if (input instanceof IAEItemStack ais) {
-                    if (ais.getItem() instanceof ItemFluidDrop) {
+                    if (isAE2FCLoaded && ais.getItem() instanceof ItemFluidDrop) {
                         this.localFluidCache.add((IAEFluidStack) convertStack(ais));
                         convert = true;
                     } else {
@@ -213,7 +214,7 @@ public class MECraftingInventory {
         IAEStack<?> list;
         boolean convert = false;
         if (request instanceof IAEItemStack ais) {
-            if (ais.getItem() instanceof ItemFluidDrop) {
+            if (isAE2FCLoaded && ais.getItem() instanceof ItemFluidDrop) {
                 list = this.localFluidCache.findPrecise((IAEFluidStack) convertStack(ais));
                 convert = true;
             } else list = this.localItemCache.findPrecise(ais);
@@ -268,7 +269,7 @@ public class MECraftingInventory {
         IItemList<?> list;
         boolean convert = false;
         if (request instanceof IAEItemStack ais) {
-            if (ais.getItem() instanceof ItemFluidDrop) {
+            if (isAE2FCLoaded && ais.getItem() instanceof ItemFluidDrop) {
                 list = localFluidCache;
                 convert = true;
             } else {
@@ -297,7 +298,7 @@ public class MECraftingInventory {
             final FuzzyMode fuzzy) {
         if (filter == null) return null;
         if (filter instanceof IAEItemStack ais) {
-            if (ais.getItem() instanceof ItemFluidDrop) {
+            if (isAE2FCLoaded && ais.getItem() instanceof ItemFluidDrop) {
                 return Collections.singletonList((StackType) findPrecise(ais));
             } else {
                 return (Collection<StackType>) localItemCache.findFuzzy(ais, fuzzy);
@@ -311,7 +312,7 @@ public class MECraftingInventory {
         if (is == null) return null;
 
         if (is instanceof IAEItemStack ais) {
-            if (ais.getItem() instanceof ItemFluidDrop) {
+            if (isAE2FCLoaded && ais.getItem() instanceof ItemFluidDrop) {
                 return (StackType) stackConvert(localFluidCache.findPrecise((IAEFluidStack) convertStack(ais)));
             } else {
                 return (StackType) localItemCache.findPrecise((IAEItemStack) is);

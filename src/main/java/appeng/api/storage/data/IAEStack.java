@@ -23,9 +23,9 @@ import io.netty.buffer.ByteBuf;
 
 public interface IAEStack<StackType extends IAEStack> {
 
-    public static final byte ST_NULL = 0;
-    public static final byte ST_ITEM = 1;
-    public static final byte ST_FLUID = 2;
+    byte ST_NULL = 0;
+    byte ST_ITEM = 1;
+    byte ST_FLUID = 2;
 
     /**
      * add two stacks together
@@ -236,4 +236,8 @@ public interface IAEStack<StackType extends IAEStack> {
     String getUnlocalizedName();
 
     String getDisplayName();
+
+    void setTagCompound(NBTTagCompound tag);
+
+    boolean hasTagCompound();
 }

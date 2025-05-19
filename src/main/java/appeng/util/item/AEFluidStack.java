@@ -50,6 +50,8 @@ public final class AEFluidStack extends AEStack<IAEFluidStack> implements IAEFlu
         this.setCountRequestableCrafts(is.getCountRequestableCrafts());
         this.setUsedPercent(is.getUsedPercent());
 
+        this.tagCompound = is.tagCompound;
+
         this.myHash = is.myHash;
     }
 
@@ -381,4 +383,7 @@ public final class AEFluidStack extends AEStack<IAEFluidStack> implements IAEFlu
     public String getUnlocalizedName() {
         return fluid.getUnlocalizedName();
     }
+
+    @Override
+    public void setTagCompound(NBTTagCompound tagCompound) {}
 }

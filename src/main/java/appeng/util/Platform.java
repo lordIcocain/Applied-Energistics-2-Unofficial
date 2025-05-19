@@ -172,6 +172,7 @@ public class Platform {
     private static final double[] BYTE_LIMIT;
     private static final int DIVISION_BASE = 1000;
     private static final DecimalFormat df = new DecimalFormat("#.##");
+    public static final boolean isAE2FCLoaded = Loader.isModLoaded("ae2fc");
 
     static {
         BYTE_LIMIT = new double[10];
@@ -1954,9 +1955,11 @@ public class Platform {
     public static NBTTagCompound writeStackNBT(IAEStack<?> stack, NBTTagCompound tag) {
         if (stack != null) {
             if (stack instanceof AEItemStack) {
-                tag.setByte("StackType", ST_ITEM);
+                // tag.setByte("StackType", ST_ITEM);
             } else if (stack instanceof AEFluidStack) {
-                tag.setByte("StackType", ST_FLUID);
+                // tag.setByte("StackType", ST_FLUID);
+                stackConvert(stack).writeToNBT(tag);
+                return tag;
             } else {
                 throw new UnsupportedOperationException("Can't serialize a stack of type " + stack.getClass());
             }
@@ -1972,7 +1975,7 @@ public class Platform {
     public static NBTTagList writeAEStackListNBT(final IItemList<?> myList, NBTTagList out) {
         for (final IAEStack<?> ais : myList) {
             NBTTagCompound tag = new NBTTagCompound();
-            Platform.writeStackNBT(ais, tag);
+            writeStackNBT(ais, tag);
             out.appendTag(tag);
         }
 
@@ -2013,14 +2016,27 @@ public class Platform {
 
     public static IAEItemStack stackConvert(IAEStack stack) {
         if (stack == null) return null;
-        if (stack instanceof IAEFluidStack ifs) {
-            return ItemFluidDrop.newAeStack(ifs);
+        if (isAE2FCLoaded && stack instanceof IAEFluidStack ifs) {
+            IAEItemStack ais;
+            if (ifs.getStackSize() <= 0) {
+                ais = ItemFluidDrop.newAeStack(ifs.copy().setStackSize(1)).setStackSize(ifs.getStackSize());
+            } else {
+                ais = ItemFluidDrop.newAeStack(ifs);
+            }
+
+            if (ais == null) {
+                return null;
+            }
+            ais.setCraftable(stack.isCraftable());
+            ais.setCountRequestable(stack.getCountRequestable());
+            ais.setCountRequestableCrafts(stack.getCountRequestableCrafts());
+            return ais;
         }
         return (IAEItemStack) stack;
     }
 
     public static IAEStack convertStack(IAEItemStack stack) {
-        if (stack != null && stack.getItem() instanceof ItemFluidDrop) {
+        if (isAE2FCLoaded && stack != null && stack.getItem() instanceof ItemFluidDrop) {
             return ItemFluidDrop.getAeFluidStack(stack);
         }
         return stack;
@@ -2028,17 +2044,20 @@ public class Platform {
 
     public static IAEItemStack stackConvertPacket(IAEStack<?> stack) {
         if (stack == null) return null;
-        if (stack instanceof IAEItemStack ais && ais.getItem() instanceof ItemFluidDrop) {
-            stack = ItemFluidDrop.getAeFluidStack(ais);
+        if (isAE2FCLoaded) {
+            if (stack instanceof IAEItemStack ais && ais.getItem() instanceof ItemFluidDrop) {
+                stack = ItemFluidDrop.getAeFluidStack(ais);
+            }
+            if (stack instanceof IAEFluidStack ifs) {
+                return ItemFluidPacket.newAeStack(ifs.getFluidStack());
+            }
         }
-        if (stack instanceof IAEFluidStack ifs) {
-            return ItemFluidPacket.newAeStack(ifs.getFluidStack());
-        }
+
         return (IAEItemStack) stack;
     }
 
     public static IAEStack<?> convertStackPacket(ItemStack stack) {
-        if (stack != null && stack.getItem() instanceof ItemFluidPacket) {
+        if (isAE2FCLoaded && stack != null && stack.getItem() instanceof ItemFluidPacket) {
             return AEFluidStack.create(ItemFluidPacket.getFluidStack(stack));
         }
         return AEItemStack.create(stack);
