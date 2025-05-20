@@ -1223,7 +1223,8 @@ public final class CraftingCPUCluster implements IAECluster, ICraftingCPU {
                 }
             }
             case STORAGE -> {
-                for (IAEItemStack ais : inventory.getAvailableItems(AEApi.instance().storage().createItemList())) {
+                for (IAEItemStack ais : inventory
+                        .getAvailableItems(AEApi.instance().storage().createItemList(), false)) {
                     list.add(ais);
                 }
                 for (IAEFluidStack ifs : inventory.getAvailableFluids(AEApi.instance().storage().createFluidList())) {
@@ -1232,7 +1233,8 @@ public final class CraftingCPUCluster implements IAECluster, ICraftingCPU {
             }
 
             default -> {
-                for (IAEItemStack ais : inventory.getAvailableItems(AEApi.instance().storage().createItemList())) {
+                for (IAEItemStack ais : inventory
+                        .getAvailableItems(AEApi.instance().storage().createItemList(), false)) {
                     list.add(ais);
                 }
                 for (IAEFluidStack ifs : inventory.getAvailableFluids(AEApi.instance().storage().createFluidList())) {

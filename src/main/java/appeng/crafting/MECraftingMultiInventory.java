@@ -34,7 +34,9 @@ import appeng.api.config.Actionable;
 import appeng.api.config.FuzzyMode;
 import appeng.api.networking.security.BaseActionSource;
 import appeng.api.networking.security.PlayerSource;
+import appeng.api.storage.IMEInventory;
 import appeng.api.storage.IStorageMonitorable;
+import appeng.api.storage.StorageChannel;
 import appeng.api.storage.data.IAEFluidStack;
 import appeng.api.storage.data.IAEItemStack;
 import appeng.api.storage.data.IAEStack;
@@ -43,7 +45,7 @@ import appeng.core.AELog;
 import appeng.core.localization.PlayerMessages;
 import appeng.util.Platform;
 
-public class MECraftingMultiInventory {
+public class MECraftingMultiInventory implements IMEInventory<IAEStack> {
 
     private final MECraftingMultiInventory par;
 
@@ -101,7 +103,7 @@ public class MECraftingMultiInventory {
             this.injectedCache = null;
         }
 
-        this.localItemCache = parent.getAvailableItems(AEApi.instance().storage().createItemList());
+        this.localItemCache = parent.getAvailableItems(AEApi.instance().storage().createItemList(), false);
         this.localFluidCache = parent.getAvailableFluids(AEApi.instance().storage().createFluidList());
 
         this.par = parent;
@@ -247,7 +249,19 @@ public class MECraftingMultiInventory {
         return ret;
     }
 
-    public IItemList<IAEItemStack> getAvailableItems(final IItemList<IAEItemStack> out) {
+    public IItemList<IAEStack> getAvailableItems(final IItemList<IAEStack> out) {
+        for (final IAEItemStack is : this.localItemCache) {
+            out.add(is);
+        }
+
+        for (final IAEFluidStack is : this.localFluidCache) {
+            out.add(is);
+        }
+
+        return out;
+    }
+
+    public IItemList<IAEItemStack> getAvailableItems(final IItemList<IAEItemStack> out, boolean ignore) {
         for (final IAEItemStack is : this.localItemCache) {
             out.add(is);
         }
@@ -263,7 +277,7 @@ public class MECraftingMultiInventory {
         return out;
     }
 
-    public <StackType extends IAEStack<StackType>> StackType getAvailableItem(@Nonnull StackType request) {
+    public IAEStack getAvailableItem(@Nonnull IAEStack request) {
         long count = 0;
 
         IItemList<?> list;
@@ -518,5 +532,21 @@ public class MECraftingMultiInventory {
         } catch (Exception ex) {
             AELog.error(ex, "Could not notify player of crafting failure");
         }
+    }
+
+    @Override
+    public IAEStack injectItems(IAEStack input, Actionable type, BaseActionSource src) {
+        injectItems(input, type);
+        return null;
+    }
+
+    @Override
+    public IAEStack extractItems(IAEStack request, Actionable mode, BaseActionSource src) {
+        return extractItems(request, mode);
+    }
+
+    @Override
+    public StorageChannel getChannel() {
+        return StorageChannel.ITEMS;
     }
 }

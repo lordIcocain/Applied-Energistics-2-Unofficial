@@ -273,7 +273,7 @@ public class TileCraftingTile extends AENetworkTile implements IAEMultiBlock, IP
                         this.cluster + " does not contain any kind of blocks, which were destroyed.");
             }
 
-            for (IAEItemStack ais : inv.getAvailableItems(AEApi.instance().storage().createItemList())) {
+            for (IAEItemStack ais : inv.getAvailableItems(AEApi.instance().storage().createItemList(), false)) {
                 ais = ais.copy();
                 ais.setStackSize(ais.getItemStack().getMaxStackSize());
                 while (!places.isEmpty()) {
