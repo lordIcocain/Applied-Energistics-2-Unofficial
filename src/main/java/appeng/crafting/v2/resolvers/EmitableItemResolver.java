@@ -11,7 +11,7 @@ import javax.annotation.Nonnull;
 import appeng.api.storage.data.IAEStack;
 import appeng.api.storage.data.IItemList;
 import appeng.core.localization.GuiText;
-import appeng.crafting.MECraftingMultiInventory;
+import appeng.crafting.MECraftingInventory;
 import appeng.crafting.v2.CraftingContext;
 import appeng.crafting.v2.CraftingRequest;
 import appeng.crafting.v2.CraftingTreeSerializer;
@@ -79,7 +79,7 @@ public class EmitableItemResolver<StackType extends IAEStack<StackType>> impleme
 
         @Override
         public void startOnCpu(CraftingContext context, CraftingCPUCluster cpuCluster,
-                MECraftingMultiInventory craftingInv) {
+                MECraftingInventory craftingInv) {
             cpuCluster.addEmitable(this.request.stack.copy());
         }
 

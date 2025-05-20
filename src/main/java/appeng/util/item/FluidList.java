@@ -161,4 +161,9 @@ public final class FluidList implements IItemList<IAEFluidStack> {
     private void putFluidRecord(final IAEFluidStack fluid) {
         this.records.add(fluid);
     }
+
+    @Override
+    public Class<?> getStackTypeClass() {
+        return IAEFluidStack.class;
+    }
 }

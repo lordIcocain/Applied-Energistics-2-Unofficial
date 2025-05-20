@@ -114,7 +114,7 @@ import appeng.core.localization.PlayerMessages;
 import appeng.crafting.CraftBranchFailure;
 import appeng.crafting.CraftingLink;
 import appeng.crafting.CraftingWatcher;
-import appeng.crafting.MECraftingMultiInventory;
+import appeng.crafting.MECraftingInventory;
 import appeng.helpers.DualityInterface;
 import appeng.me.cache.CraftingGridCache;
 import appeng.me.cluster.IAECluster;
@@ -151,7 +151,7 @@ public final class CraftingCPUCluster implements IAECluster, ICraftingCPU {
     /**
      * crafting job info
      */
-    private MECraftingMultiInventory inventory = new MECraftingMultiInventory();
+    private MECraftingInventory inventory = new MECraftingInventory();
 
     private IAEStack finalOutput;
     private boolean waiting = false;
@@ -278,7 +278,7 @@ public final class CraftingCPUCluster implements IAECluster, ICraftingCPU {
         this.listeners.remove(l);
     }
 
-    public MECraftingMultiInventory getInventory() {
+    public MECraftingInventory getInventory() {
         return this.inventory;
     }
 
@@ -962,7 +962,7 @@ public final class CraftingCPUCluster implements IAECluster, ICraftingCPU {
         }
 
         if (this.inventory.isEmpty()) {
-            this.inventory = new MECraftingMultiInventory();
+            this.inventory = new MECraftingInventory();
         }
 
         this.markDirty();
@@ -993,7 +993,7 @@ public final class CraftingCPUCluster implements IAECluster, ICraftingCPU {
         }
         this.providers.clear();
         final IStorageGrid sg = g.getCache(IStorageGrid.class);
-        final MECraftingMultiInventory ci = new MECraftingMultiInventory(sg, true, false, false);
+        final MECraftingInventory ci = new MECraftingInventory(sg, true, false, false);
         this.isMissingMode = job.getCraftingMode() == CraftingMode.IGNORE_MISSING;
         ci.setMissingMode(this.isMissingMode);
         ci.setCpuInventory(this.inventory);
@@ -1104,7 +1104,7 @@ public final class CraftingCPUCluster implements IAECluster, ICraftingCPU {
 
     public ICraftingLink mergeJob(final IGrid g, final ICraftingJob job, final BaseActionSource src) {
         final IStorageGrid sg = g.getCache(IStorageGrid.class);
-        final MECraftingMultiInventory ci = new MECraftingMultiInventory(sg, true, false, false);
+        final MECraftingInventory ci = new MECraftingInventory(sg, true, false, false);
 
         try {
             job.startCrafting(ci, this, src);
@@ -1223,21 +1223,23 @@ public final class CraftingCPUCluster implements IAECluster, ICraftingCPU {
                 }
             }
             case STORAGE -> {
-                for (IAEItemStack ais : inventory
-                        .getAvailableItems(AEApi.instance().storage().createItemList(), false)) {
+                for (IAEItemStack ais : (IItemList<IAEItemStack>) inventory
+                        .getAvailableItems(AEApi.instance().storage().createItemList())) {
                     list.add(ais);
                 }
-                for (IAEFluidStack ifs : inventory.getAvailableFluids(AEApi.instance().storage().createFluidList())) {
+                for (IAEFluidStack ifs : (IItemList<IAEFluidStack>) inventory
+                        .getAvailableItems(AEApi.instance().storage().createFluidList())) {
                     list.add(ifs);
                 }
             }
 
             default -> {
-                for (IAEItemStack ais : inventory
-                        .getAvailableItems(AEApi.instance().storage().createItemList(), false)) {
+                for (IAEItemStack ais : (IItemList<IAEItemStack>) inventory
+                        .getAvailableItems(AEApi.instance().storage().createItemList())) {
                     list.add(ais);
                 }
-                for (IAEFluidStack ifs : inventory.getAvailableFluids(AEApi.instance().storage().createFluidList())) {
+                for (IAEFluidStack ifs : (IItemList<IAEFluidStack>) inventory
+                        .getAvailableItems(AEApi.instance().storage().createFluidList())) {
                     list.add(ifs);
                 }
                 for (final IAEStack<?> ais : this.waitingFor) {

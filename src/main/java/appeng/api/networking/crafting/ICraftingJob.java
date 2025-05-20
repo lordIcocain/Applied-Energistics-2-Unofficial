@@ -19,7 +19,7 @@ import appeng.api.config.CraftingMode;
 import appeng.api.networking.security.BaseActionSource;
 import appeng.api.storage.data.IAEStack;
 import appeng.api.storage.data.IItemList;
-import appeng.crafting.MECraftingMultiInventory;
+import appeng.crafting.MECraftingInventory;
 
 public interface ICraftingJob<StackType extends IAEStack<StackType>> {
 
@@ -71,6 +71,6 @@ public interface ICraftingJob<StackType extends IAEStack<StackType>> {
     /**
      * Begins crafting on a CPU cluster
      */
-    default void startCrafting(final MECraftingMultiInventory storage, final ICraftingCPU craftingCPUCluster,
+    default void startCrafting(final MECraftingInventory storage, final ICraftingCPU craftingCPUCluster,
             final BaseActionSource src) {}
 }

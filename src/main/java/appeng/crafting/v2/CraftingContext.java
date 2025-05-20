@@ -38,7 +38,7 @@ import appeng.api.storage.data.IAEStack;
 import appeng.api.storage.data.IItemList;
 import appeng.container.ContainerNull;
 import appeng.core.AEConfig;
-import appeng.crafting.MECraftingMultiInventory;
+import appeng.crafting.MECraftingInventory;
 import appeng.crafting.v2.resolvers.CraftingTask;
 import appeng.crafting.v2.resolvers.CraftingTask.State;
 import appeng.me.cache.CraftingGridCache;
@@ -63,7 +63,7 @@ public final class CraftingContext {
      * A working copy of the AE system's item list used for modelling what happens as crafting requests get resolved.
      * Only extract, inject into {@link CraftingContext#byproductsInventory}.
      */
-    public final MECraftingMultiInventory itemModel;
+    public final MECraftingInventory itemModel;
     /**
      * An initially blank inventory for keeping all crafting byproduct outputs in. Extract from here before extracting
      * from {@link CraftingContext#itemModel}.
@@ -77,11 +77,11 @@ public final class CraftingContext {
      * @see appeng.crafting.v2.resolvers.ExtractItemResolver ExtractItemResolver - separates the items extracted from AE
      *      vs from byproducts for the crafting plan
      */
-    public final MECraftingMultiInventory byproductsInventory;
+    public final MECraftingInventory byproductsInventory;
     /**
      * A cache of how many items were present at the beginning of the crafting request, do not modify
      */
-    public final MECraftingMultiInventory availableCache;
+    public final MECraftingInventory availableCache;
 
     public boolean wasSimulated = false;
 
@@ -117,9 +117,9 @@ public final class CraftingContext {
         this.craftingGrid = meGrid.getCache(ICraftingGrid.class);
         this.actionSource = actionSource;
         final IStorageGrid sg = meGrid.getCache(IStorageGrid.class);
-        this.itemModel = new MECraftingMultiInventory(sg, this.actionSource, true, false, true);
-        this.byproductsInventory = new MECraftingMultiInventory();
-        this.availableCache = new MECraftingMultiInventory(sg, this.actionSource, false, false, false);
+        this.itemModel = new MECraftingInventory(sg, this.actionSource, true, false, true);
+        this.byproductsInventory = new MECraftingInventory();
+        this.availableCache = new MECraftingInventory(sg, this.actionSource, false, false, false);
         this.availablePatterns = craftingGrid.getCraftingMultiPatterns();
     }
 
@@ -406,7 +406,7 @@ public final class CraftingContext {
 
         @Override
         public void startOnCpu(CraftingContext context, CraftingCPUCluster cpuCluster,
-                MECraftingMultiInventory craftingInv) {
+                MECraftingInventory craftingInv) {
             // no-op
         }
 

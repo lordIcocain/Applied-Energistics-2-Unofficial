@@ -105,4 +105,9 @@ public final class LazyItemList<StackType extends IAEStack<StackType>> implement
     public Spliterator<StackType> spliterator() {
         return getCachedOrCompute().spliterator();
     }
+
+    @Override
+    public Class<?> getStackTypeClass() {
+        return getCachedOrCompute().getStackTypeClass();
+    }
 }

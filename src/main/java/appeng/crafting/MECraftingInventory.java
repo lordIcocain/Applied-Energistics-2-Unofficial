@@ -45,9 +45,9 @@ import appeng.core.AELog;
 import appeng.core.localization.PlayerMessages;
 import appeng.util.Platform;
 
-public class MECraftingMultiInventory implements IMEInventory<IAEStack> {
+public class MECraftingInventory implements IMEInventory<IAEStack> {
 
-    private final MECraftingMultiInventory par;
+    private final MECraftingInventory par;
 
     private final IStorageMonitorable target;
     private final IItemList<IAEItemStack> localItemCache;
@@ -63,10 +63,10 @@ public class MECraftingMultiInventory implements IMEInventory<IAEStack> {
     private final IItemList<IAEStack<?>> missingCache;
 
     private final IItemList<IAEStack<?>> failedToExtract = AEApi.instance().storage().createAEStackList();
-    private MECraftingMultiInventory cpuinv;
+    private MECraftingInventory cpuinv;
     private boolean isMissingMode;
 
-    public MECraftingMultiInventory() {
+    public MECraftingInventory() {
         this.localItemCache = AEApi.instance().storage().createItemList();
         this.localFluidCache = AEApi.instance().storage().createFluidList();
         this.extractedCache = null;
@@ -79,7 +79,7 @@ public class MECraftingMultiInventory implements IMEInventory<IAEStack> {
         this.par = null;
     }
 
-    public MECraftingMultiInventory(final MECraftingMultiInventory parent) {
+    public MECraftingInventory(final MECraftingInventory parent) {
         this.target = parent.target;
         this.logExtracted = parent.logExtracted;
         this.logInjections = parent.logInjections;
@@ -103,19 +103,19 @@ public class MECraftingMultiInventory implements IMEInventory<IAEStack> {
             this.injectedCache = null;
         }
 
-        this.localItemCache = parent.getAvailableItems(AEApi.instance().storage().createItemList(), false);
-        this.localFluidCache = parent.getAvailableFluids(AEApi.instance().storage().createFluidList());
+        this.localItemCache = parent.getAvailableItems(AEApi.instance().storage().createItemList());
+        this.localFluidCache = parent.getAvailableItems(AEApi.instance().storage().createFluidList());
 
         this.par = parent;
     }
 
-    public MECraftingMultiInventory(final MECraftingMultiInventory target, final boolean logExtracted,
+    public MECraftingInventory(final MECraftingInventory target, final boolean logExtracted,
             final boolean logInjections, final boolean logMissing) {
         this(target.target, logExtracted, logInjections, logMissing);
     }
 
-    public MECraftingMultiInventory(final IStorageMonitorable target, final BaseActionSource src,
-            final boolean logExtracted, final boolean logInjections, final boolean logMissing) {
+    public MECraftingInventory(final IStorageMonitorable target, final BaseActionSource src, final boolean logExtracted,
+            final boolean logInjections, final boolean logMissing) {
         this.target = target;
         this.logExtracted = logExtracted;
         this.logInjections = logInjections;
@@ -152,7 +152,7 @@ public class MECraftingMultiInventory implements IMEInventory<IAEStack> {
         this.par = null;
     }
 
-    public MECraftingMultiInventory(final IStorageMonitorable target, final boolean logExtracted,
+    public MECraftingInventory(final IStorageMonitorable target, final boolean logExtracted,
             final boolean logInjections, final boolean logMissing) {
         this.target = target;
         this.logExtracted = logExtracted;
@@ -249,29 +249,18 @@ public class MECraftingMultiInventory implements IMEInventory<IAEStack> {
         return ret;
     }
 
-    public IItemList<IAEStack> getAvailableItems(final IItemList<IAEStack> out) {
-        for (final IAEItemStack is : this.localItemCache) {
-            out.add(is);
+    public IItemList getAvailableItems(final IItemList out) {
+        Class<?> listClass = out.getStackTypeClass();
+        if (listClass == IAEItemStack.class || listClass == IAEStack.class) {
+            for (final IAEItemStack is : this.localItemCache) {
+                out.add(is);
+            }
         }
 
-        for (final IAEFluidStack is : this.localFluidCache) {
-            out.add(is);
-        }
-
-        return out;
-    }
-
-    public IItemList<IAEItemStack> getAvailableItems(final IItemList<IAEItemStack> out, boolean ignore) {
-        for (final IAEItemStack is : this.localItemCache) {
-            out.add(is);
-        }
-
-        return out;
-    }
-
-    public IItemList<IAEFluidStack> getAvailableFluids(final IItemList<IAEFluidStack> out) {
-        for (final IAEFluidStack is : this.localFluidCache) {
-            out.add(is);
+        if (listClass == IAEFluidStack.class || listClass == IAEStack.class) {
+            for (final IAEFluidStack is : this.localFluidCache) {
+                out.add(is);
+            }
         }
 
         return out;
@@ -344,7 +333,7 @@ public class MECraftingMultiInventory implements IMEInventory<IAEStack> {
         this.isMissingMode = b;
     }
 
-    public void setCpuInventory(MECraftingMultiInventory cp) {
+    public void setCpuInventory(MECraftingInventory cp) {
         this.cpuinv = cp;
     }
 

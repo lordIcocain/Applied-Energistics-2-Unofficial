@@ -9,7 +9,7 @@ import javax.annotation.Nonnull;
 import appeng.api.storage.data.IAEStack;
 import appeng.api.storage.data.IItemList;
 import appeng.core.localization.GuiText;
-import appeng.crafting.MECraftingMultiInventory;
+import appeng.crafting.MECraftingInventory;
 import appeng.crafting.v2.CraftingContext;
 import appeng.crafting.v2.CraftingRequest;
 import appeng.crafting.v2.CraftingTreeSerializer;
@@ -80,7 +80,7 @@ public class SimulateMissingItemResolver<StackType extends IAEStack<StackType>>
 
         @Override
         public void startOnCpu(CraftingContext context, CraftingCPUCluster cpuCluster,
-                MECraftingMultiInventory craftingInv) {
+                MECraftingInventory craftingInv) {
             throw new IllegalStateException("Trying to start crafting a schedule with simulated items");
         }
 

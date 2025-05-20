@@ -30,7 +30,7 @@ import appeng.core.AEConfig;
 import appeng.core.AELog;
 import appeng.core.features.AEFeature;
 import appeng.core.localization.GuiText;
-import appeng.crafting.MECraftingMultiInventory;
+import appeng.crafting.MECraftingInventory;
 import appeng.crafting.v2.CraftingContext;
 import appeng.crafting.v2.CraftingRequest;
 import appeng.crafting.v2.CraftingRequest.SubstitutionMode;
@@ -575,7 +575,7 @@ public class CraftableItemResolver<StackType extends IAEStack<StackType>>
 
         @Override
         public void startOnCpu(CraftingContext context, CraftingCPUCluster cpuCluster,
-                MECraftingMultiInventory craftingInv) {
+                MECraftingInventory craftingInv) {
             cpuCluster.addCrafting(pattern, totalCraftsDone);
         }
 

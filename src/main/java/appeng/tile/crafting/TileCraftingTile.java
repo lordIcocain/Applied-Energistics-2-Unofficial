@@ -35,10 +35,11 @@ import appeng.api.networking.events.MENetworkPowerStatusChange;
 import appeng.api.parts.ISimplifiedBundle;
 import appeng.api.storage.data.IAEFluidStack;
 import appeng.api.storage.data.IAEItemStack;
+import appeng.api.storage.data.IItemList;
 import appeng.api.util.WorldCoord;
 import appeng.block.crafting.BlockAdvancedCraftingUnit;
 import appeng.core.AEConfig;
-import appeng.crafting.MECraftingMultiInventory;
+import appeng.crafting.MECraftingInventory;
 import appeng.me.cluster.IAECluster;
 import appeng.me.cluster.IAEMultiBlock;
 import appeng.me.cluster.implementations.CraftingCPUCalculator;
@@ -244,7 +245,7 @@ public class TileCraftingTile extends AENetworkTile implements IAEMultiBlock, IP
     public void breakCluster() {
         if (this.cluster != null) {
             this.cluster.cancel();
-            final MECraftingMultiInventory inv = this.cluster.getInventory();
+            final MECraftingInventory inv = this.cluster.getInventory();
 
             final LinkedList<WorldCoord> places = new LinkedList<>();
 
@@ -273,7 +274,8 @@ public class TileCraftingTile extends AENetworkTile implements IAEMultiBlock, IP
                         this.cluster + " does not contain any kind of blocks, which were destroyed.");
             }
 
-            for (IAEItemStack ais : inv.getAvailableItems(AEApi.instance().storage().createItemList(), false)) {
+            for (IAEItemStack ais : (IItemList<IAEItemStack>) inv
+                    .getAvailableItems(AEApi.instance().storage().createItemList())) {
                 ais = ais.copy();
                 ais.setStackSize(ais.getItemStack().getMaxStackSize());
                 while (!places.isEmpty()) {
@@ -294,7 +296,8 @@ public class TileCraftingTile extends AENetworkTile implements IAEMultiBlock, IP
                 }
             }
 
-            for (IAEFluidStack ifs : inv.getAvailableFluids(AEApi.instance().storage().createFluidList())) {
+            for (IAEFluidStack ifs : (IItemList<IAEFluidStack>) inv
+                    .getAvailableItems(AEApi.instance().storage().createFluidList())) {
                 while (!places.isEmpty()) {
                     final IAEItemStack g = stackConvertPacket(inv.extractItems(ifs, Actionable.MODULATE));
                     if (g == null) {

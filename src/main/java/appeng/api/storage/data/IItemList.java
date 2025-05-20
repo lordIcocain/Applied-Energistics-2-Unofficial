@@ -81,4 +81,6 @@ public interface IItemList<StackType extends IAEStack> extends IItemContainer<St
 
         return i != prevSize ? Arrays.copyOf(output, i) : output;
     }
+
+    Class<?> getStackTypeClass();
 }

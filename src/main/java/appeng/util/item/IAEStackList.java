@@ -159,4 +159,9 @@ public final class IAEStackList implements IItemList<IAEStack<?>> {
 
         return records.subMap(low, true, high, true).descendingMap().values();
     }
+
+    @Override
+    public Class<?> getStackTypeClass() {
+        return IAEStack.class;
+    }
 }
