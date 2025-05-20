@@ -38,7 +38,7 @@ import appeng.api.storage.data.IAEItemStack;
 import appeng.api.util.WorldCoord;
 import appeng.block.crafting.BlockAdvancedCraftingUnit;
 import appeng.core.AEConfig;
-import appeng.crafting.MECraftingInventory;
+import appeng.crafting.MECraftingMultiInventory;
 import appeng.me.cluster.IAECluster;
 import appeng.me.cluster.IAEMultiBlock;
 import appeng.me.cluster.implementations.CraftingCPUCalculator;
@@ -244,7 +244,7 @@ public class TileCraftingTile extends AENetworkTile implements IAEMultiBlock, IP
     public void breakCluster() {
         if (this.cluster != null) {
             this.cluster.cancel();
-            final MECraftingInventory inv = this.cluster.getInventory();
+            final MECraftingMultiInventory inv = this.cluster.getInventory();
 
             final LinkedList<WorldCoord> places = new LinkedList<>();
 

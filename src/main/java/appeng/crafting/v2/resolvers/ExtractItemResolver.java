@@ -15,7 +15,7 @@ import appeng.api.storage.data.IAEStack;
 import appeng.api.storage.data.IItemList;
 import appeng.core.localization.GuiText;
 import appeng.crafting.CraftBranchFailure;
-import appeng.crafting.MECraftingInventory;
+import appeng.crafting.MECraftingMultiInventory;
 import appeng.crafting.v2.CraftingContext;
 import appeng.crafting.v2.CraftingRequest;
 import appeng.crafting.v2.CraftingTreeSerializer;
@@ -74,7 +74,8 @@ public class ExtractItemResolver<StackType extends IAEStack<StackType>> implemen
             return new StepOutput(Collections.emptyList());
         }
 
-        private void extractExact(CraftingContext context, MECraftingInventory source, List<IAEStack<?>> removedList) {
+        private void extractExact(CraftingContext context, MECraftingMultiInventory source,
+                List<IAEStack<?>> removedList) {
             StackType exactMatching = source.extractItems(request.stack, Actionable.SIMULATE);
             if (exactMatching != null) {
                 final long requestSize = Math.min(request.remainingToProcess, exactMatching.getStackSize());
@@ -88,7 +89,8 @@ public class ExtractItemResolver<StackType extends IAEStack<StackType>> implemen
             }
         }
 
-        private void extractFuzzy(CraftingContext context, MECraftingInventory source, List<IAEStack<?>> removedList) {
+        private void extractFuzzy(CraftingContext context, MECraftingMultiInventory source,
+                List<IAEStack<?>> removedList) {
             Collection<StackType> fuzzyMatching = source.findFuzzy(request.stack, FuzzyMode.IGNORE_ALL);
             for (final StackType candidate : fuzzyMatching) {
                 if (candidate == null) {
@@ -122,7 +124,7 @@ public class ExtractItemResolver<StackType extends IAEStack<StackType>> implemen
         }
 
         private long partialRefundFrom(CraftingContext context, long amount, List<IAEStack<?>> source,
-                MECraftingInventory target) {
+                MECraftingMultiInventory target) {
             final Iterator<IAEStack<?>> removedIt = source.iterator();
             while (removedIt.hasNext() && amount > 0) {
                 final IAEStack<?> available = removedIt.next();
@@ -160,7 +162,7 @@ public class ExtractItemResolver<StackType extends IAEStack<StackType>> implemen
 
         @Override
         public void startOnCpu(CraftingContext context, CraftingCPUCluster cpuCluster,
-                MECraftingInventory craftingInv) {
+                MECraftingMultiInventory craftingInv) {
             for (IAEStack stack : removedFromSystem) {
                 if (stack.getStackSize() > 0) {
                     IAEStack<?> extracted = craftingInv.extractItems(stack, Actionable.MODULATE);

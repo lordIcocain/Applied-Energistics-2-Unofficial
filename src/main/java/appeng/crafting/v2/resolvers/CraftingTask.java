@@ -9,7 +9,7 @@ import javax.annotation.Nonnull;
 
 import appeng.api.storage.data.IAEStack;
 import appeng.api.storage.data.IItemList;
-import appeng.crafting.MECraftingInventory;
+import appeng.crafting.MECraftingMultiInventory;
 import appeng.crafting.v2.CraftingContext;
 import appeng.crafting.v2.CraftingRequest;
 import appeng.crafting.v2.CraftingRequest.UsedResolverEntry;
@@ -83,7 +83,7 @@ public abstract class CraftingTask<RequestStackType extends IAEStack<RequestStac
     public abstract void populatePlan(IItemList<IAEStack<?>> targetPlan);
 
     public abstract void startOnCpu(CraftingContext context, CraftingCPUCluster cpuCluster,
-            MECraftingInventory craftingInv);
+            MECraftingMultiInventory craftingInv);
 
     protected CraftingTask(CraftingRequest<RequestStackType> request, int priority) {
         this.request = request;

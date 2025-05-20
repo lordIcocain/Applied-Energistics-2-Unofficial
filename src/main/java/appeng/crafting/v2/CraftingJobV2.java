@@ -20,7 +20,7 @@ import appeng.api.networking.security.BaseActionSource;
 import appeng.api.storage.data.IAEStack;
 import appeng.api.storage.data.IItemList;
 import appeng.core.AELog;
-import appeng.crafting.MECraftingInventory;
+import appeng.crafting.MECraftingMultiInventory;
 import appeng.crafting.v2.CraftingContext.RequestInProcessing;
 import appeng.crafting.v2.CraftingRequest.SubstitutionMode;
 import appeng.crafting.v2.resolvers.CraftingTask;
@@ -241,7 +241,7 @@ public class CraftingJobV2<StackType extends IAEStack<StackType>>
     }
 
     @Override
-    public void startCrafting(MECraftingInventory storage, ICraftingCPU rawCluster, BaseActionSource src) {
+    public void startCrafting(MECraftingMultiInventory storage, ICraftingCPU rawCluster, BaseActionSource src) {
         if (this.state == State.RUNNING) {
             throw new IllegalStateException(
                     "Trying to start crafting a not fully calculated job for " + originalRequest.toString());
