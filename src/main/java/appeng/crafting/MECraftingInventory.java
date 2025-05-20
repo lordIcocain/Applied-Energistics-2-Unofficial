@@ -31,6 +31,7 @@ import appeng.core.AELog;
 import appeng.core.localization.PlayerMessages;
 import appeng.util.IterationCounter;
 
+@Deprecated
 public class MECraftingInventory implements IMEInventory<IAEItemStack> {
 
     private final MECraftingInventory par;
