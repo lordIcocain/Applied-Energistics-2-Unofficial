@@ -226,7 +226,7 @@ public final class ItemList implements IItemList<IAEItemStack> {
     }
 
     @Override
-    public Class<IAEItemStack> getStackTypeClass() {
-        return IAEItemStack.class;
+    public byte getStackType() {
+        return LIST_ITEM;
     }
 }

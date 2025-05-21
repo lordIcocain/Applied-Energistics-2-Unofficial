@@ -86,7 +86,7 @@ public class ItemListIgnoreCrafting<T extends IAEStack> implements IItemList<T> 
     }
 
     @Override
-    public Class<?> getStackTypeClass() {
-        return target.getStackTypeClass();
+    public byte getStackType() {
+        return target.getStackType();
     }
 }

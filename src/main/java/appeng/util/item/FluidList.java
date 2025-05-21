@@ -163,7 +163,7 @@ public final class FluidList implements IItemList<IAEFluidStack> {
     }
 
     @Override
-    public Class<?> getStackTypeClass() {
-        return IAEFluidStack.class;
+    public byte getStackType() {
+        return LIST_FLUID;
     }
 }

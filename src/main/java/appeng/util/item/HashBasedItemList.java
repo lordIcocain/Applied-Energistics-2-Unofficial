@@ -154,7 +154,7 @@ public final class HashBasedItemList implements IItemList<IAEItemStack> {
     }
 
     @Override
-    public Class<?> getStackTypeClass() {
-        return IAEItemStack.class;
+    public byte getStackType() {
+        return LIST_ITEM;
     }
 }

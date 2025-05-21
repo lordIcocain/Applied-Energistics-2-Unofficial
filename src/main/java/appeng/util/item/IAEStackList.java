@@ -161,7 +161,7 @@ public final class IAEStackList implements IItemList<IAEStack<?>> {
     }
 
     @Override
-    public Class<?> getStackTypeClass() {
-        return IAEStack.class;
+    public byte getStackType() {
+        return LIST_MIXED;
     }
 }

@@ -27,7 +27,6 @@ import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.init.Blocks;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumChatFormatting;
@@ -40,21 +39,25 @@ import appeng.api.AEApi;
 import appeng.api.implementations.ICraftingPatternItem;
 import appeng.api.networking.crafting.ICraftingPatternDetails;
 import appeng.api.storage.data.IAEFluidStack;
+import appeng.api.storage.data.IAEItemStack;
 import appeng.api.storage.data.IAEStack;
 import appeng.client.render.items.ItemEncodedPatternRenderer;
 import appeng.core.CommonHelper;
 import appeng.core.features.AEFeature;
 import appeng.core.localization.GuiText;
 import appeng.helpers.PatternHelper;
+import appeng.integration.IntegrationRegistry;
+import appeng.integration.IntegrationType;
 import appeng.items.AEBaseItem;
 import appeng.util.Platform;
+import gregtech.common.items.ItemIntegratedCircuit;
 
 public class ItemEncodedPattern extends AEBaseItem implements ICraftingPatternItem {
 
     // rather simple client side caching.
     private static final Map<ItemStack, ItemStack> SIMPLE_CACHE = new WeakHashMap<>();
-    private static Item FLUID_DROP_ITEM;
-    private static boolean checkedCache = false;
+    private static final boolean isGTLoaded = IntegrationRegistry.INSTANCE.isEnabled(IntegrationType.GT);
+    private static final Locale locale = Locale.getDefault();
 
     public ItemEncodedPattern() {
         this.setFeature(EnumSet.of(AEFeature.Patterns));
@@ -221,7 +224,9 @@ public class ItemEncodedPattern extends AEBaseItem implements ICraftingPatternIt
         boolean isFluid;
         EnumChatFormatting oldColor = color;
 
-        for (final IAEStack<?> item : sortedItems) {
+        for (int i = sortedItems.size() - 1; i >= 0; i--) {
+            IAEStack<?> item = sortedItems.get(i);
+
             if (!recipeIsBroken && item.equals(unknownItem)) {
                 recipeIsBroken = true;
             }
@@ -236,28 +241,31 @@ public class ItemEncodedPattern extends AEBaseItem implements ICraftingPatternIt
                 isFluid = false;
             }
 
+            String itemCountText = NumberFormat.getNumberInstance(locale).format(item.getStackSize());
+            String itemText;
+            if (isGTLoaded) {
+                itemText = isFluid ? item.getDisplayName()
+                        : ((IAEItemStack) item).getItem() instanceof ItemIntegratedCircuit
+                                ? Platform.getItemDisplayName(item) + " "
+                                        + ((IAEItemStack) item).getItemStack().getItemDamage()
+                                : Platform.getItemDisplayName(item);
+            } else {
+                itemText = isFluid ? item.getDisplayName() : Platform.getItemDisplayName(item);
+            }
+            String fullText = "   " + EnumChatFormatting.WHITE
+                    + itemCountText
+                    + EnumChatFormatting.RESET
+                    + (isFluid ? EnumChatFormatting.WHITE + "L" : " ")
+                    + EnumChatFormatting.RESET
+                    + color
+                    + itemText;
+
             if (first) {
                 lines.add(label);
-                lines.add(
-                        "   " + EnumChatFormatting.WHITE
-                                + NumberFormat.getNumberInstance(Locale.US).format(item.getStackSize())
-                                + EnumChatFormatting.RESET
-                                + (isFluid ? EnumChatFormatting.WHITE + "L" : " ")
-                                + EnumChatFormatting.RESET
-                                + color
-                                + " "
-                                + item.getDisplayName());
+                lines.add(fullText);
             }
             if (!first) {
-                lines.add(
-                        "   " + EnumChatFormatting.WHITE
-                                + NumberFormat.getNumberInstance(Locale.US).format(item.getStackSize())
-                                + EnumChatFormatting.RESET
-                                + (isFluid ? EnumChatFormatting.WHITE + "L" : " ")
-                                + EnumChatFormatting.RESET
-                                + color
-                                + " "
-                                + item.getDisplayName());
+                lines.add(fullText);
             }
 
             first = false;

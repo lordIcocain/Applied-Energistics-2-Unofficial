@@ -107,7 +107,7 @@ public final class LazyItemList<StackType extends IAEStack<StackType>> implement
     }
 
     @Override
-    public Class<?> getStackTypeClass() {
-        return getCachedOrCompute().getStackTypeClass();
+    public byte getStackType() {
+        return getCachedOrCompute().getStackType();
     }
 }

@@ -10,6 +10,9 @@
 
 package appeng.crafting;
 
+import static appeng.api.storage.data.IItemList.LIST_FLUID;
+import static appeng.api.storage.data.IItemList.LIST_ITEM;
+import static appeng.api.storage.data.IItemList.LIST_MIXED;
 import static appeng.util.Platform.convertStack;
 import static appeng.util.Platform.isAE2FCLoaded;
 import static appeng.util.Platform.stackConvert;
@@ -250,14 +253,14 @@ public class MECraftingInventory implements IMEInventory<IAEStack> {
     }
 
     public IItemList getAvailableItems(final IItemList out) {
-        Class<?> listClass = out.getStackTypeClass();
-        if (listClass == IAEItemStack.class || listClass == IAEStack.class) {
+        byte listType = out.getStackType();
+        if (listType == LIST_ITEM || listType == LIST_MIXED) {
             for (final IAEItemStack is : this.localItemCache) {
                 out.add(is);
             }
         }
 
-        if (listClass == IAEFluidStack.class || listClass == IAEStack.class) {
+        if (listType == LIST_FLUID || listType == LIST_MIXED) {
             for (final IAEFluidStack is : this.localFluidCache) {
                 out.add(is);
             }
