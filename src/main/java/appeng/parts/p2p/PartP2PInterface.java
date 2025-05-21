@@ -129,6 +129,39 @@ public class PartP2PInterface extends PartP2PTunnelStatic<PartP2PInterface>
         }
 
         @Override
+        public void addDrops(final List<ItemStack> drops) {
+            if (!isOutput()) {
+                super.addDrops(drops);
+                try {
+                    for (PartP2PInterface p2p : getOutputs()) p2p.duality.addDrops(drops);
+                } catch (GridAccessException e) {
+                    
+                }
+            } else {
+                if (this.waitingToSend != null) {
+                    for (final ItemStack is : this.waitingToSend) {
+                    if (is != null) {
+                        drops.add(is);
+                        }
+                    }
+                }
+
+                for (final ItemStack is : this.upgrades) {
+                    if (is != null) {
+                        drops.add(is);
+                    }
+                }
+
+                for (final ItemStack is : this.patterns) {
+                    if (is != null) {
+                        drops.add(is);
+                    }
+                }
+
+            }
+        }
+
+        @Override
         public int getInstalledUpgrades(Upgrades u) {
             if (isOutput() && u == Upgrades.PATTERN_CAPACITY) return -1;
             return super.getInstalledUpgrades(u);

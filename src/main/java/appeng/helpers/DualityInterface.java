@@ -124,7 +124,7 @@ public class DualityInterface implements IGridTickable, IStorageMonitorable, IIn
     private final ConfigManager cm = new ConfigManager(this);
     public final AppEngInternalAEInventory config = new AppEngInternalAEInventory(this, NUMBER_OF_CONFIG_SLOTS);
     public AppEngInternalInventory storage = new AppEngInternalInventory(this, NUMBER_OF_STORAGE_SLOTS);
-    private final AppEngInternalInventory patterns = new AppEngInternalInventory(this, NUMBER_OF_PATTERN_SLOTS * 4);
+    public final AppEngInternalInventory patterns = new AppEngInternalInventory(this, NUMBER_OF_PATTERN_SLOTS * 4);
     private final WrapperInvSlot slotInv = new WrapperInvSlot(this.storage);
     private final MEMonitorPassThrough<IAEItemStack> items = new MEMonitorPassThrough<>(
             new NullInventory<IAEItemStack>(),
@@ -132,12 +132,12 @@ public class DualityInterface implements IGridTickable, IStorageMonitorable, IIn
     private final MEMonitorPassThrough<IAEFluidStack> fluids = new MEMonitorPassThrough<>(
             new NullInventory<IAEFluidStack>(),
             StorageChannel.FLUIDS);
-    private final UpgradeInventory upgrades;
+    public final UpgradeInventory upgrades;
     private ItemStack stored = null;
     public boolean hasConfig = false;
     private int priority;
     public List<ICraftingPatternDetails> craftingList = null;
-    private List<ItemStack> waitingToSend = null;
+    public List<ItemStack> waitingToSend = null;
     private IMEInventory<IAEItemStack> destination;
     private boolean isWorking = false;
     protected static final boolean EIO = Loader.isModLoaded("EnderIO");
