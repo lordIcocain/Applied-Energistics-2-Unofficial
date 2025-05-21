@@ -779,8 +779,6 @@ public class DualityInterface implements IGridTickable, IStorageMonitorable, IIn
 
                         acquired = Platform
                                 .poweredExtraction(src, this.destination, fuzzyItemStack, this.interfaceRequestSource);
-                    } else {
-                        changed = true;
                     }
                 } else if ((this.getInstalledUpgrades(Upgrades.FUZZY)) == 0) {
                     acquired = Platform
@@ -793,7 +791,9 @@ public class DualityInterface implements IGridTickable, IStorageMonitorable, IIn
                     if (issue != null) {
                         throw new IllegalStateException("bad attempt at managing inventory. ( addItems )");
                     }
-                } else {
+                } else if (this.getInstalledUpgrades(Upgrades.FUZZY) == 1) {
+                    changed = true;
+                } else if (this.getInstalledUpgrades(Upgrades.CRAFTING) > 0) {
                     changed = this.handleCrafting(x, adaptor, itemStack);
                 }
             }
