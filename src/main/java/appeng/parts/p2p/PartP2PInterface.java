@@ -90,6 +90,45 @@ public class PartP2PInterface extends PartP2PTunnelStatic<PartP2PInterface>
         }
 
         @Override
+        public boolean updateStorage() {
+            if (!isOutput()) {
+                super.updateStorage();
+                try {
+                    for (PartP2PInterface p2p : getOutputs()) p2p.duality.updateStorage();
+                } catch (GridAccessException e) {
+
+                }
+            } else {
+                PartP2PInterface p2p = getInput();
+                if ((p2p != null)) this.storage = p2p.duality.storage;
+                this.readConfig();
+            }
+            return true;
+        }
+
+        @Override
+        public void readConfig() {
+            if (!isOutput()) {
+                super.readConfig();
+                try {
+                    for (PartP2PInterface p2p : getOutputs()) p2p.duality.readConfig();
+                } catch (GridAccessException e) {
+
+                }
+            } else {
+                PartP2PInterface p2p = getInput();
+                this.hasConfig = false;
+
+                if (p2p != null) {
+                    if (!p2p.duality.config.isEmpty()) {
+                        this.hasConfig = p2p.duality.hasConfig;
+                    }
+                    this.notifyNeighbors();
+                }
+            }
+        }
+
+        @Override
         public int getInstalledUpgrades(Upgrades u) {
             if (isOutput() && u == Upgrades.PATTERN_CAPACITY) return -1;
             return super.getInstalledUpgrades(u);

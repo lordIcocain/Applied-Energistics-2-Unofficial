@@ -122,8 +122,8 @@ public class DualityInterface implements IGridTickable, IStorageMonitorable, IIn
     private final BaseActionSource mySource;
     private final BaseActionSource interfaceRequestSource;
     private final ConfigManager cm = new ConfigManager(this);
-    private final AppEngInternalAEInventory config = new AppEngInternalAEInventory(this, NUMBER_OF_CONFIG_SLOTS);
-    private final AppEngInternalInventory storage = new AppEngInternalInventory(this, NUMBER_OF_STORAGE_SLOTS);
+    public final AppEngInternalAEInventory config = new AppEngInternalAEInventory(this, NUMBER_OF_CONFIG_SLOTS);
+    public AppEngInternalInventory storage = new AppEngInternalInventory(this, NUMBER_OF_STORAGE_SLOTS);
     private final AppEngInternalInventory patterns = new AppEngInternalInventory(this, NUMBER_OF_PATTERN_SLOTS * 4);
     private final WrapperInvSlot slotInv = new WrapperInvSlot(this.storage);
     private final MEMonitorPassThrough<IAEItemStack> items = new MEMonitorPassThrough<>(
@@ -134,7 +134,7 @@ public class DualityInterface implements IGridTickable, IStorageMonitorable, IIn
             StorageChannel.FLUIDS);
     private final UpgradeInventory upgrades;
     private ItemStack stored = null;
-    private boolean hasConfig = false;
+    public boolean hasConfig = false;
     private int priority;
     public List<ICraftingPatternDetails> craftingList = null;
     private List<ItemStack> waitingToSend = null;
@@ -340,7 +340,7 @@ public class DualityInterface implements IGridTickable, IStorageMonitorable, IIn
         }
     }
 
-    private void readConfig() {
+    public void readConfig() {
         this.hasConfig = false;
 
         for (final ItemStack p : this.config) {
@@ -686,7 +686,7 @@ public class DualityInterface implements IGridTickable, IStorageMonitorable, IIn
         return sentSomething;
     }
 
-    private boolean updateStorage() {
+    public boolean updateStorage() {
         boolean didSomething = false;
 
         for (int x = 0; x < NUMBER_OF_STORAGE_SLOTS; x++) {
