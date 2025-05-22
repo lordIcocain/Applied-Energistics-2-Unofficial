@@ -78,7 +78,6 @@ public class PartP2PInterface extends PartP2PTunnelStatic<PartP2PInterface>
                 PartP2PInterface p2p = getInput();
                 if (p2p != null) {
                     this.craftingList = p2p.duality.craftingList;
-
                     try {
                         this.gridProxy.getGrid()
                                 .postEvent(new MENetworkCraftingPatternChange(this, this.gridProxy.getNode()));
@@ -120,9 +119,7 @@ public class PartP2PInterface extends PartP2PTunnelStatic<PartP2PInterface>
                 this.hasConfig = false;
 
                 if (p2p != null) {
-                    if (!p2p.duality.config.isEmpty()) {
-                        this.hasConfig = p2p.duality.hasConfig;
-                    }
+                    if (!p2p.duality.config.isEmpty()) this.hasConfig = p2p.duality.hasConfig;
                     this.notifyNeighbors();
                 }
             }
@@ -135,7 +132,7 @@ public class PartP2PInterface extends PartP2PTunnelStatic<PartP2PInterface>
                 try {
                     for (PartP2PInterface p2p : getOutputs()) p2p.duality.addDrops(drops);
                 } catch (GridAccessException e) {
-                    
+
                 }
             } else {
                 if (this.waitingToSend != null) {
@@ -157,7 +154,6 @@ public class PartP2PInterface extends PartP2PTunnelStatic<PartP2PInterface>
                         drops.add(is);
                     }
                 }
-
             }
         }
 
