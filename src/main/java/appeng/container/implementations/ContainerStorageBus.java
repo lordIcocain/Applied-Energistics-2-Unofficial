@@ -185,8 +185,9 @@ public class ContainerStorageBus extends ContainerUpgradeable {
         }
         IteratorState it;
         if (!PartitionIteratorMap.containsKey(player)) {
+            clear();
             final IItemList<IAEItemStack> list = cellInv
-                    .getAvailableItems(AEApi.instance().storage().createItemList(), IterationCounter.fetchNewId());
+                    .getAvailableItems(AEApi.instance().storage().createItemFilterList(), IterationCounter.fetchNewId());
             it = new IteratorState(list.iterator());
             PartitionIteratorMap.put(player, it);
             partitionMode = ActionItems.CELL_RESTRICTION;
