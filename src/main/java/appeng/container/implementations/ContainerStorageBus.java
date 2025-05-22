@@ -13,8 +13,6 @@ package appeng.container.implementations;
 import java.util.HashMap;
 import java.util.Iterator;
 
-import appeng.me.storage.MEInventoryHandler;
-import appeng.util.prioitylist.PrecisePriorityList;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.IInventory;
@@ -29,15 +27,16 @@ import appeng.api.config.Settings;
 import appeng.api.config.StorageFilter;
 import appeng.api.config.Upgrades;
 import appeng.api.config.YesNo;
-import appeng.api.storage.IMEInventory;
 import appeng.api.storage.data.IAEItemStack;
 import appeng.api.storage.data.IItemList;
 import appeng.container.guisync.GuiSync;
 import appeng.container.slot.OptionalSlotFakeTypeOnly;
 import appeng.container.slot.SlotRestrictedInput;
+import appeng.me.storage.MEInventoryHandler;
 import appeng.parts.misc.PartStorageBus;
 import appeng.util.IterationCounter;
 import appeng.util.Platform;
+import appeng.util.prioitylist.PrecisePriorityList;
 
 public class ContainerStorageBus extends ContainerUpgradeable {
 
@@ -188,8 +187,9 @@ public class ContainerStorageBus extends ContainerUpgradeable {
         IteratorState it;
         if (!PartitionIteratorMap.containsKey(player)) {
             cellInv.setPartitionList(new PrecisePriorityList<>(AEApi.instance().storage().createItemList()));
-            final IItemList<IAEItemStack> list = cellInv
-                    .getAvailableItems(AEApi.instance().storage().createItemFilterList(), IterationCounter.fetchNewId());
+            final IItemList<IAEItemStack> list = cellInv.getAvailableItems(
+                    AEApi.instance().storage().createItemFilterList(),
+                    IterationCounter.fetchNewId());
             it = new IteratorState(list.iterator());
             PartitionIteratorMap.put(player, it);
             partitionMode = ActionItems.CELL_RESTRICTION;
