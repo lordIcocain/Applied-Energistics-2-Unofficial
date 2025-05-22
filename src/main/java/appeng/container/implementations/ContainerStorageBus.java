@@ -13,6 +13,8 @@ package appeng.container.implementations;
 import java.util.HashMap;
 import java.util.Iterator;
 
+import appeng.me.storage.MEInventoryHandler;
+import appeng.util.prioitylist.PrecisePriorityList;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.IInventory;
@@ -177,7 +179,7 @@ public class ContainerStorageBus extends ContainerUpgradeable {
         }
         final IInventory inv = this.getUpgradeable().getInventoryByName("config");
 
-        final IMEInventory<IAEItemStack> cellInv = this.storageBus.getInternalHandler();
+        final MEInventoryHandler<IAEItemStack> cellInv = this.storageBus.getInternalHandler();
 
         if (cellInv == null) {
             clearPartitionIterator(player);
@@ -185,7 +187,7 @@ public class ContainerStorageBus extends ContainerUpgradeable {
         }
         IteratorState it;
         if (!PartitionIteratorMap.containsKey(player)) {
-            clear();
+            cellInv.setPartitionList(new PrecisePriorityList<>(AEApi.instance().storage().createItemList()));
             final IItemList<IAEItemStack> list = cellInv
                     .getAvailableItems(AEApi.instance().storage().createItemFilterList(), IterationCounter.fetchNewId());
             it = new IteratorState(list.iterator());
