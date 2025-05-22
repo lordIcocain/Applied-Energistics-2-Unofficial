@@ -137,8 +137,8 @@ public class PartP2PInterface extends PartP2PTunnelStatic<PartP2PInterface>
             } else {
                 if (this.waitingToSend != null) {
                     for (final ItemStack is : this.waitingToSend) {
-                    if (is != null) {
-                        drops.add(is);
+                        if (is != null) {
+                            drops.add(is);
                         }
                     }
                 }
