@@ -30,12 +30,10 @@ import appeng.api.config.YesNo;
 import appeng.api.storage.IMEInventory;
 import appeng.api.storage.data.IAEItemStack;
 import appeng.api.storage.data.IItemList;
-import appeng.api.util.IConfigManager;
 import appeng.container.guisync.GuiSync;
 import appeng.container.slot.OptionalSlotFakeTypeOnly;
 import appeng.container.slot.SlotRestrictedInput;
 import appeng.parts.misc.PartStorageBus;
-import appeng.util.IConfigManagerHost;
 import appeng.util.IterationCounter;
 import appeng.util.Platform;
 
