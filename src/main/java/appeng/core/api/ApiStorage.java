@@ -33,6 +33,7 @@ import appeng.util.item.AEItemStack;
 import appeng.util.item.FluidList;
 import appeng.util.item.HashBasedItemList;
 import appeng.util.item.IAEStackList;
+import appeng.util.item.ItemFilterList;
 import appeng.util.item.ItemList;
 import io.netty.buffer.ByteBuf;
 
@@ -56,6 +57,11 @@ public class ApiStorage implements IStorageHelper {
     @Override
     public IItemList<IAEItemStack> createItemList() {
         return new ItemList();
+    }
+
+    @Override
+    public IItemList<IAEItemStack> createItemFilterList() {
+        return new ItemFilterList();
     }
 
     @Override
