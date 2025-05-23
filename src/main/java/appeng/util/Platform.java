@@ -74,10 +74,9 @@ import net.minecraftforge.oredict.OreDictionary;
 
 import org.lwjgl.input.Keyboard;
 
-import com.gtnewhorizon.gtnhlib.keybind.SyncedKeybind;
-
 import com.glodblock.github.common.item.ItemFluidDrop;
 import com.glodblock.github.common.item.ItemFluidPacket;
+import com.gtnewhorizon.gtnhlib.keybind.SyncedKeybind;
 import com.mojang.authlib.GameProfile;
 
 import appeng.api.AEApi;

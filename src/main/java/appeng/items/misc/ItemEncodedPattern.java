@@ -27,6 +27,7 @@ import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.init.Blocks;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumChatFormatting;
@@ -50,7 +51,6 @@ import appeng.integration.IntegrationRegistry;
 import appeng.integration.IntegrationType;
 import appeng.items.AEBaseItem;
 import appeng.util.Platform;
-import cpw.mods.fml.common.registry.GameRegistry;
 import gregtech.common.items.ItemIntegratedCircuit;
 
 public class ItemEncodedPattern extends AEBaseItem implements ICraftingPatternItem {
@@ -247,13 +247,14 @@ public class ItemEncodedPattern extends AEBaseItem implements ICraftingPatternIt
             String itemCountText = NumberFormat.getNumberInstance(locale).format(item.getStackSize());
             String itemText;
             if (isGTLoaded) {
-                itemText = isFluid ? item.getDisplayName()
+                itemText = isFluid ? Platform.getItemDisplayName(item).replace("drop of", "")
                         : ((IAEItemStack) item).getItem() instanceof ItemIntegratedCircuit
                                 ? Platform.getItemDisplayName(item) + " "
                                         + ((IAEItemStack) item).getItemStack().getItemDamage()
                                 : Platform.getItemDisplayName(item);
             } else {
-                itemText = isFluid ? item.getDisplayName() : Platform.getItemDisplayName(item);
+                itemText = isFluid ? Platform.getItemDisplayName(item).replace("drop of", "")
+                        : Platform.getItemDisplayName(item);
             }
             String fullText = "   " + EnumChatFormatting.WHITE
                     + itemCountText

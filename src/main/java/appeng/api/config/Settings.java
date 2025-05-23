@@ -102,7 +102,6 @@ public enum Settings {
 
     SUPER_WIRELESS_TOOL_HIDE_BOUNDED(EnumSet.of(YesNo.YES, YesNo.NO));
 
-
     private final EnumSet<? extends Enum<?>> values;
 
     Settings(@Nonnull final EnumSet<? extends Enum<?>> possibleOptions) {
