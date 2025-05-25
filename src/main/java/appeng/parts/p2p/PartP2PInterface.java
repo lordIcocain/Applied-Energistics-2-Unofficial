@@ -78,7 +78,6 @@ public class PartP2PInterface extends PartP2PTunnelStatic<PartP2PInterface>
                 PartP2PInterface p2p = getInput();
                 if (p2p != null) {
                     this.craftingList = p2p.duality.craftingList;
-
                     try {
                         this.gridProxy.getGrid()
                                 .postEvent(new MENetworkCraftingPatternChange(this, this.gridProxy.getNode()));
@@ -90,9 +89,84 @@ public class PartP2PInterface extends PartP2PTunnelStatic<PartP2PInterface>
         }
 
         @Override
+        public boolean updateStorage() {
+            if (!isOutput()) {
+                super.updateStorage();
+                try {
+                    for (PartP2PInterface p2p : getOutputs()) p2p.duality.updateStorage();
+                } catch (GridAccessException e) {
+
+                }
+            } else {
+                PartP2PInterface p2p = getInput();
+                if ((p2p != null)) this.storage = p2p.duality.storage;
+                this.readConfig();
+            }
+            return true;
+        }
+
+        @Override
+        public void readConfig() {
+            if (!isOutput()) {
+                super.readConfig();
+                try {
+                    for (PartP2PInterface p2p : getOutputs()) p2p.duality.readConfig();
+                } catch (GridAccessException e) {
+
+                }
+            } else {
+                PartP2PInterface p2p = getInput();
+                this.hasConfig = false;
+
+                if (p2p != null) {
+                    if (!p2p.duality.config.isEmpty()) this.hasConfig = p2p.duality.hasConfig;
+                    this.notifyNeighbors();
+                }
+            }
+        }
+
+        @Override
+        public void addDrops(final List<ItemStack> drops) {
+            if (!isOutput()) {
+                super.addDrops(drops);
+                try {
+                    for (PartP2PInterface p2p : getOutputs()) p2p.duality.addDrops(drops);
+                } catch (GridAccessException e) {
+
+                }
+            } else {
+                if (this.waitingToSend != null) {
+                    for (final ItemStack is : this.waitingToSend) {
+                        if (is != null) {
+                            drops.add(is);
+                        }
+                    }
+                }
+
+                for (final ItemStack is : this.upgrades) {
+                    if (is != null) {
+                        drops.add(is);
+                    }
+                }
+
+                for (final ItemStack is : this.patterns) {
+                    if (is != null) {
+                        drops.add(is);
+                    }
+                }
+            }
+        }
+
+        @Override
         public int getInstalledUpgrades(Upgrades u) {
             if (isOutput() && u == Upgrades.PATTERN_CAPACITY) return -1;
             return super.getInstalledUpgrades(u);
+        }
+
+        @Override
+        public int getConfigSize() {
+            if (isOutput()) return -1;
+            return super.getConfigSize();
         }
     };
 
