@@ -18,6 +18,7 @@ import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 
+import appeng.api.AEApi;
 import appeng.api.config.Settings;
 import appeng.api.config.SuperWirelessToolGroupBy;
 import appeng.api.config.YesNo;
@@ -43,7 +44,6 @@ import appeng.core.sync.packets.PacketSuperWirelessToolCommand;
 import appeng.helpers.SuperWirelessToolDataObject;
 import appeng.items.contents.SuperWirelessKitObject;
 import appeng.util.IConfigManagerHost;
-import cpw.mods.fml.common.registry.GameRegistry;
 
 public class GuiSuperWirelessKit extends AEBaseGui implements IConfigManagerHost {
 
@@ -148,19 +148,19 @@ public class GuiSuperWirelessKit extends AEBaseGui implements IConfigManagerHost
         ArrayList<ItemStack> list = new ArrayList<>();
 
         for (int i = 0; i < 16; i++) {
-            final ItemStack is = GameRegistry.findItemStack("appliedenergistics2", "tile.BlockWirelessConnector", 1);
+            final ItemStack is = AEApi.instance().definitions().blocks().wirelessConnector().maybeStack(1).orNull();
             is.setItemDamage(i + 1);
             list.add(is);
         }
-        final ItemStack iss = GameRegistry.findItemStack("appliedenergistics2", "tile.BlockWirelessConnector", 1);
+        final ItemStack iss = AEApi.instance().definitions().blocks().wirelessConnector().maybeStack(1).orNull();
         list.add(iss);
 
         for (int i = 0; i < 16; i++) {
-            final ItemStack is = GameRegistry.findItemStack("appliedenergistics2", "tile.BlockWirelessHub", 1);
+            final ItemStack is = AEApi.instance().definitions().blocks().wirelessHub().maybeStack(1).orNull();
             is.setItemDamage(i + 1);
             list.add(is);
         }
-        final ItemStack is = GameRegistry.findItemStack("appliedenergistics2", "tile.BlockWirelessHub", 1);
+        final ItemStack is = AEApi.instance().definitions().blocks().wirelessHub().maybeStack(1).orNull();
         list.add(is);
         return list;
     }
