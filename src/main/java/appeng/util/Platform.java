@@ -1958,13 +1958,19 @@ public class Platform {
     }
 
     public static NBTTagCompound writeStackNBT(IAEStack<?> stack, NBTTagCompound tag) {
+        return writeStackNBT(stack, tag, false);
+    }
+
+    public static NBTTagCompound writeStackNBT(IAEStack<?> stack, NBTTagCompound tag, boolean isModern) {
         if (stack != null) {
             if (stack instanceof AEItemStack) {
-                // tag.setByte("StackType", ST_ITEM);
+                if (isModern) tag.setByte("StackType", ST_ITEM);
             } else if (stack instanceof AEFluidStack) {
-                // tag.setByte("StackType", ST_FLUID);
-                stackConvert(stack).writeToNBT(tag);
-                return tag;
+                if (isModern) tag.setByte("StackType", ST_FLUID);
+                else {
+                    stackConvert(stack).writeToNBT(tag);
+                    return tag;
+                }
             } else {
                 throw new UnsupportedOperationException("Can't serialize a stack of type " + stack.getClass());
             }
