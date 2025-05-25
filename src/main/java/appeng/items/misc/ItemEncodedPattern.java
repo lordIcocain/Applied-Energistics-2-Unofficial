@@ -255,7 +255,7 @@ public class ItemEncodedPattern extends AEBaseItem implements ICraftingPatternIt
             String fullText = "   " + EnumChatFormatting.WHITE
                     + itemCountText
                     + EnumChatFormatting.RESET
-                    + (isFluid ? EnumChatFormatting.WHITE + "L" : " ")
+                    + (isFluid ? EnumChatFormatting.WHITE + "L " : " ")
                     + EnumChatFormatting.RESET
                     + color
                     + itemText;
