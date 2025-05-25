@@ -162,6 +162,12 @@ public class PartP2PInterface extends PartP2PTunnelStatic<PartP2PInterface>
             if (isOutput() && u == Upgrades.PATTERN_CAPACITY) return -1;
             return super.getInstalledUpgrades(u);
         }
+
+        @Override
+        public int getConfigSize() {
+            if (isOutput()) return -1;
+            return super.getConfigSize();
+        }
     };
 
     @MENetworkEventSubscribe

@@ -543,6 +543,10 @@ public class DualityInterface implements IGridTickable, IStorageMonitorable, IIn
         return this.config;
     }
 
+    public int getConfigSize() {
+        return this.config.getSizeInventory();
+    }
+
     public IInventory getPatterns() {
         return this.patterns;
     }
@@ -856,7 +860,7 @@ public class DualityInterface implements IGridTickable, IStorageMonitorable, IIn
         return this.items;
     }
 
-    private boolean hasConfig() {
+    public boolean hasConfig() {
         return this.hasConfig;
     }
 
