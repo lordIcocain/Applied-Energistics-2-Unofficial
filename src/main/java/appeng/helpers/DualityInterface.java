@@ -133,10 +133,10 @@ public class DualityInterface implements IGridTickable, IStorageMonitorable, IIn
     private final MEMonitorPassThrough<IAEFluidStack> fluids = new MEMonitorPassThrough<>(
             new NullInventory<IAEFluidStack>(),
             StorageChannel.FLUIDS);
-    private final UpgradeInventory upgrades;
+    public final UpgradeInventory upgrades;
     private ItemStack stored;
     private IAEItemStack fuzzyItemStack;
-    private boolean hasConfig = false;
+    public boolean hasConfig = false;
     private int priority;
     public List<ICraftingPatternDetails> craftingList = null;
     public List<ItemStack> waitingToSend = null;
