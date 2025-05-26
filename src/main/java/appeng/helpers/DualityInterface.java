@@ -116,16 +116,16 @@ public class DualityInterface implements IGridTickable, IStorageMonitorable, IIn
     private static final Collection<Block> BAD_BLOCKS = new HashSet<>(100);
     private final int[] sides = { 0, 1, 2, 3, 4, 5, 6, 7, 8 };
     private final IAEItemStack[] requireWork = { null, null, null, null, null, null, null, null, null };
-    private final boolean[] hasFuzzyConfig = { false, false, false, false, false, false, false, false, false, };
+    private final boolean[] hasFuzzyConfig = { false, false, false, false, false, false, false, false, false };
     private final MultiCraftingTracker craftingTracker;
     protected final AENetworkProxy gridProxy;
     private final IInterfaceHost iHost;
     private final BaseActionSource mySource;
     private final BaseActionSource interfaceRequestSource;
     private final ConfigManager cm = new ConfigManager(this);
-    public final AppEngInternalAEInventory config = new AppEngInternalAEInventory(this, NUMBER_OF_CONFIG_SLOTS);
-    public AppEngInternalInventory storage = new AppEngInternalInventory(this, NUMBER_OF_STORAGE_SLOTS);
-    public final AppEngInternalInventory patterns = new AppEngInternalInventory(this, NUMBER_OF_PATTERN_SLOTS * 4);
+    private final AppEngInternalAEInventory config = new AppEngInternalAEInventory(this, NUMBER_OF_CONFIG_SLOTS);
+    private AppEngInternalInventory storage = new AppEngInternalInventory(this, NUMBER_OF_STORAGE_SLOTS);
+    private final AppEngInternalInventory patterns = new AppEngInternalInventory(this, NUMBER_OF_PATTERN_SLOTS * 4);
     private final WrapperInvSlot slotInv = new WrapperInvSlot(this.storage);
     private final MEMonitorPassThrough<IAEItemStack> items = new MEMonitorPassThrough<>(
             new NullInventory<IAEItemStack>(),
@@ -133,13 +133,13 @@ public class DualityInterface implements IGridTickable, IStorageMonitorable, IIn
     private final MEMonitorPassThrough<IAEFluidStack> fluids = new MEMonitorPassThrough<>(
             new NullInventory<IAEFluidStack>(),
             StorageChannel.FLUIDS);
-    public final UpgradeInventory upgrades;
+    private final UpgradeInventory upgrades;
     private ItemStack stored;
     private IAEItemStack fuzzyItemStack;
-    public boolean hasConfig = false;
+    private boolean hasConfig = false;
     private int priority;
     public List<ICraftingPatternDetails> craftingList = null;
-    public List<ItemStack> waitingToSend = null;
+    private List<ItemStack> waitingToSend = null;
     private IMEInventory<IAEItemStack> destination;
     private boolean isWorking = false;
     protected static final boolean EIO = Loader.isModLoaded("EnderIO");
@@ -590,16 +590,30 @@ public class DualityInterface implements IGridTickable, IStorageMonitorable, IIn
         // return after.stackSize != stack.stackSize;
     }
 
-    public IInventory getConfig() {
+    public AppEngInternalAEInventory getConfig() {
         return this.config;
+    }
+
+    public AppEngInternalInventory getPatterns() {
+        return this.patterns;
+    }
+
+    public AppEngInternalInventory getUpgrades() {
+        return this.upgrades;
+    }
+
+    public AppEngInternalInventory setStorage(final AppEngInternalInventory inv) {
+        this.storage = inv;
+        return this.storage;
+    }
+
+    public boolean setHasConfig(final boolean ifHasConfig) {
+        this.hasConfig = ifHasConfig;
+        return this.hasConfig;
     }
 
     public int getConfigSize() {
         return this.config.getSizeInventory();
-    }
-
-    public IInventory getPatterns() {
-        return this.patterns;
     }
 
     public void gridChanged() {
@@ -990,7 +1004,7 @@ public class DualityInterface implements IGridTickable, IStorageMonitorable, IIn
         return null;
     }
 
-    public IInventory getStorage() {
+    public AppEngInternalInventory getStorage() {
         return this.storage;
     }
 
