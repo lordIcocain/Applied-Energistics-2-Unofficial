@@ -686,9 +686,11 @@ public class DualityInterface implements IGridTickable, IStorageMonitorable, IIn
 
                 // To prevent duping in case fuzzy-matched item cannot be merged with stack in storage
                 // slot...
-            } else fuzzyItemStack.setStackSize(0);
+            } else fuzzyItemStack = null;
 
-            pe = Platform.poweredExtraction(energy, cell, fuzzyItemStack, src);
+            if (fuzzyItemStack != null) {
+                pe = Platform.poweredExtraction(energy, cell, fuzzyItemStack, src);
+            }
         }
         return new IAEItemStack[] { pe, fuzzyItemStack };
 
