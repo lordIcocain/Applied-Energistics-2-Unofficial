@@ -99,7 +99,7 @@ public class PartP2PInterface extends PartP2PTunnelStatic<PartP2PInterface>
                 }
             } else {
                 PartP2PInterface p2p = getInput();
-                if ((p2p != null)) this.storage = p2p.duality.storage;
+                if ((p2p != null)) this.setStorage(p2p.duality.getStorage());
                 this.readConfig();
             }
             return true;
@@ -116,10 +116,10 @@ public class PartP2PInterface extends PartP2PTunnelStatic<PartP2PInterface>
                 }
             } else {
                 PartP2PInterface p2p = getInput();
-                this.hasConfig = false;
+                this.setHasConfig(false);
 
                 if (p2p != null) {
-                    if (!p2p.duality.config.isEmpty()) this.hasConfig = p2p.duality.hasConfig;
+                    if (!p2p.duality.getConfig().isEmpty()) this.setHasConfig(p2p.duality.hasConfig());
                     this.notifyNeighbors();
                 }
             }
@@ -135,21 +135,21 @@ public class PartP2PInterface extends PartP2PTunnelStatic<PartP2PInterface>
 
                 }
             } else {
-                if (this.waitingToSend != null) {
-                    for (final ItemStack is : this.waitingToSend) {
+                if (this.getWaitingToSend() != null) {
+                    for (final ItemStack is : this.getWaitingToSend()) {
                         if (is != null) {
                             drops.add(is);
                         }
                     }
                 }
 
-                for (final ItemStack is : this.upgrades) {
+                for (final ItemStack is : this.getUpgrades()) {
                     if (is != null) {
                         drops.add(is);
                     }
                 }
 
-                for (final ItemStack is : this.patterns) {
+                for (final ItemStack is : this.getPatterns()) {
                     if (is != null) {
                         drops.add(is);
                     }
