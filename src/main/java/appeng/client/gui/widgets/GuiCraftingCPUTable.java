@@ -256,6 +256,9 @@ public class GuiCraftingCPUTable {
                 tooltip.append(" / ");
                 tooltip.append(NumberFormat.getInstance().format(hoveredCpu.getTotalItems()));
                 tooltip.append('\n');
+
+                tooltip.append(GuiText.TimeUsed.getLocal());
+                tooltip.append(": ");
                 tooltip.append(elapsedTimeText);
                 tooltip.append('\n');
             }
