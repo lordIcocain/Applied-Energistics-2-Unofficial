@@ -287,7 +287,8 @@ public class MECraftingInventory implements IMEInventory<IAEStack> {
 
         for (final IAEStack is : list) {
             if (is != null && is.getStackSize() > 0
-                    && (convert ? is.isSameType(convertStack((IAEItemStack) request)) : is.isSameType(request))) {
+                    && (convert ? is.isSameType((Object) convertStack((IAEItemStack) request))
+                            : is.isSameType((Object) request))) {
                 count += is.getStackSize();
                 if (count < 0) {
                     // overflow

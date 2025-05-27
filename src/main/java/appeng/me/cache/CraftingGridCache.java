@@ -538,7 +538,7 @@ public class CraftingGridCache
                 boolean canOrder = false;
                 // This cpu can be merge
                 canOrder |= (cpu.isActive() && cpu.isBusy()
-                        && job.getOutput().isSameType(cpu.getFinalMultiOutput())
+                        && job.getOutput().isSameType((Object) cpu.getFinalMultiOutput())
                         && cpu.getAvailableStorage() >= cpu.getUsedStorage() + job.getByteTotal());
                 // Or this cpu is idle
                 canOrder |= (cpu.isActive() && !cpu.isBusy() && cpu.getAvailableStorage() >= job.getByteTotal());
