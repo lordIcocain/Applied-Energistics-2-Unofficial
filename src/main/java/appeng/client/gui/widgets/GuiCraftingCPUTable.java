@@ -246,6 +246,8 @@ public class GuiCraftingCPUTable {
                 final String elapsedTimeText = DurationFormatUtils
                         .formatDuration(elapsedInMilliseconds, GuiText.ETAFormat.getLocal());
 
+                double craftingPercentage = 100
+                        - (double) (hoveredCpu.getRemainingItems()) / (double) hoveredCpu.getTotalItems() * 100;
                 tooltip.append(GuiText.Crafting.getLocal());
                 tooltip.append(": ");
                 tooltip.append(NumberFormat.getInstance().format(crafting.getStackSize()));
@@ -255,11 +257,7 @@ public class GuiCraftingCPUTable {
                 tooltip.append(NumberFormat.getInstance().format(hoveredCpu.getRemainingItems()));
                 tooltip.append(" / ");
                 tooltip.append(NumberFormat.getInstance().format(hoveredCpu.getTotalItems()));
-
-                double craftingPercentage = 100
-                        - (double) (hoveredCpu.getRemainingItems()) / (double) hoveredCpu.getTotalItems() * 100;
                 tooltip.append(String.format(" %02.2f %%", craftingPercentage));
-
                 tooltip.append('\n');
 
                 tooltip.append(GuiText.TimeUsed.getLocal());
