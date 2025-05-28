@@ -2,10 +2,14 @@ package appeng.container.implementations;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.annotation.Nonnull;
 
+import net.bdew.ae2stuff.machines.wireless.TileWireless;
+import net.bdew.lib.block.BlockRef;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.ICrafting;
@@ -16,6 +20,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 
+import appeng.api.AEApi;
 import appeng.api.config.Settings;
 import appeng.api.config.SuperWirelessToolGroupBy;
 import appeng.api.config.YesNo;
@@ -37,6 +42,7 @@ import appeng.tile.networking.TileWirelessHub;
 import appeng.util.ConfigManager;
 import appeng.util.IConfigManagerHost;
 import appeng.util.Platform;
+import cpw.mods.fml.common.Loader;
 
 public class ContainerSuperWirelessKit extends AEBaseContainer implements IConfigManagerHost, IConfigurableObject {
 
@@ -45,6 +51,7 @@ public class ContainerSuperWirelessKit extends AEBaseContainer implements IConfi
     private IConfigManager serverCM;
     private IConfigManagerHost gui;
     private final ArrayList<SuperWirelessToolDataObject> data = new ArrayList<>();
+    private final boolean isAEStaffLoaded = Loader.isModLoaded("ae2stuff");
 
     public ContainerSuperWirelessKit(final InventoryPlayer ip, final SuperWirelessKitObject te) {
         super(ip, null, null);
@@ -563,6 +570,70 @@ public class ContainerSuperWirelessKit extends AEBaseContainer implements IConfi
                     }
                 }
                 updateData();
+            }
+            case "ae2stuff_convert" -> {
+                if (isAEStaffLoaded) {
+                    List<DimensionalCoord> networks = DimensionalCoord
+                            .readAsListFromNBT((NBTTagCompound) stash.getTag("pos"));
+                    for (DimensionalCoord dc : networks) {
+                        if (w.getTileEntity(dc.x, dc.y, dc.z) instanceof IGridHost gh) {
+                            Set<SuperWirelessToolDataObject> dataSet = new HashSet<>();
+
+                            for (IGridNode gn : gh.getGridNode(ForgeDirection.UNKNOWN).getGrid()
+                                    .getMachines(TileWireless.class)) {
+                                TileWireless wc = (TileWireless) gn.getMachine();
+                                DimensionalCoord targetDC = null;
+
+                                if (wc.link().value().isDefined()) {
+                                    BlockRef temp = wc.link().value().get();
+                                    targetDC = new DimensionalCoord(w, temp.x(), temp.y(), temp.z());
+                                }
+
+                                SuperWirelessToolDataObject data = new SuperWirelessToolDataObject(
+                                        -1,
+                                        wc.hasCustomName() ? wc.getCustomName() : null,
+                                        wc.getLocation(),
+                                        targetDC != null,
+                                        targetDC,
+                                        wc.getColor(),
+                                        -1,
+                                        wc.isHub(),
+                                        -1);
+                                dataSet.add(data);
+                            }
+
+                            for (SuperWirelessToolDataObject data : dataSet) {
+                                w.setBlockToAir(data.cord.x, data.cord.y, data.cord.z);
+                            }
+
+                            for (SuperWirelessToolDataObject data : dataSet) {
+                                if (data.isHub) {
+                                    w.setBlock(
+                                            data.cord.x,
+                                            data.cord.y,
+                                            data.cord.z,
+                                            AEApi.instance().definitions().blocks().wirelessHub().maybeBlock().get());
+                                } else {
+                                    w.setBlock(
+                                            data.cord.x,
+                                            data.cord.y,
+                                            data.cord.z,
+                                            AEApi.instance().definitions().blocks().wirelessConnector().maybeBlock()
+                                                    .get());
+                                }
+
+                                TileEntity te = w.getTileEntity(data.cord.x, data.cord.y, data.cord.z);
+                                if (te instanceof TileWirelessConnector newCon) {
+                                    if (data.customName != null) newCon.setCustomName(data.customName);
+                                    if (data.isConnected) {
+                                        newCon.injectTarget(data.targetCord);
+                                    }
+                                    newCon.recolourBlock(ForgeDirection.UNKNOWN, data.color, null);
+                                }
+                            }
+                        }
+                    }
+                }
             }
             default -> {}
         }
