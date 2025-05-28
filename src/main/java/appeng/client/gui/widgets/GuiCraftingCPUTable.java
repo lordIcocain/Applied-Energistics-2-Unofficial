@@ -255,6 +255,11 @@ public class GuiCraftingCPUTable {
                 tooltip.append(NumberFormat.getInstance().format(hoveredCpu.getRemainingItems()));
                 tooltip.append(" / ");
                 tooltip.append(NumberFormat.getInstance().format(hoveredCpu.getTotalItems()));
+
+                double craftingPercentage = 100
+                        - (double) (hoveredCpu.getRemainingItems()) / (double) hoveredCpu.getTotalItems() * 100;
+                tooltip.append(String.format(" %02.2f %%", craftingPercentage));
+
                 tooltip.append('\n');
 
                 tooltip.append(GuiText.TimeUsed.getLocal());
