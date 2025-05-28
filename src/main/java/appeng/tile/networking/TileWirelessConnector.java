@@ -41,6 +41,10 @@ public class TileWirelessConnector extends AENetworkTile implements IColorableTi
         }
     }
 
+    public void injectTarget(DimensionalCoord newTarget) {
+        target = newTarget;
+    }
+
     @Override
     protected AENetworkProxy createProxy() {
         AENetworkProxy ae = super.createProxy();

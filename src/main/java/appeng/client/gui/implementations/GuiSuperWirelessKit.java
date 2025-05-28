@@ -44,6 +44,7 @@ import appeng.core.sync.packets.PacketSuperWirelessToolCommand;
 import appeng.helpers.SuperWirelessToolDataObject;
 import appeng.items.contents.SuperWirelessKitObject;
 import appeng.util.IConfigManagerHost;
+import cpw.mods.fml.common.Loader;
 
 public class GuiSuperWirelessKit extends AEBaseGui implements IConfigManagerHost {
 
@@ -52,6 +53,7 @@ public class GuiSuperWirelessKit extends AEBaseGui implements IConfigManagerHost
 
     private GuiImgButton sortBy;
     private GuiImgButton hideBoundedButton;
+    private GuiCheckBox ae2stuffConvert;
     private GuiAeButton bind;
     private GuiAeButton unbind;
     private final GuiColorButton[] colorButtons = new GuiColorButton[17];
@@ -89,6 +91,8 @@ public class GuiSuperWirelessKit extends AEBaseGui implements IConfigManagerHost
     private baseUnit toAddTarget;
 
     private NBTTagCompound dataCache;
+
+    private final boolean isAEStaffLoaded = Loader.isModLoaded("ae2stuff");
 
     public GuiSuperWirelessKit(final InventoryPlayer inventoryPlayer, final SuperWirelessKitObject te) {
         this(inventoryPlayer, te, new ContainerSuperWirelessKit(inventoryPlayer, te));
@@ -210,6 +214,19 @@ public class GuiSuperWirelessKit extends AEBaseGui implements IConfigManagerHost
                 AEColor.values()[16].name());
 
         this.buttonList.add(this.colorButtons[16]);
+
+        if (isAEStaffLoaded) {
+            this.ae2stuffConvert = new GuiCheckBox(
+                    0.5D,
+                    this.guiLeft + 244,
+                    this.guiTop + 4,
+                    16 * 10,
+                    16 * 10,
+                    StatCollector.translateToLocal("gui.appliedenergistics2.GuiSuperWirelessKit.ae2stuff.name"),
+                    StatCollector.translateToLocal("gui.appliedenergistics2.GuiSuperWirelessKit.ae2stuff.desc"));
+
+            this.buttonList.add(ae2stuffConvert);
+        }
 
         this.madChameleonButton = new GuiCheckBox(
                 0.5D,
@@ -345,6 +362,10 @@ public class GuiSuperWirelessKit extends AEBaseGui implements IConfigManagerHost
             sendCommand("bind", null);
         } else if (btn == this.unbind) {
             sendCommand("unbind", null);
+        }
+
+        if (isAEStaffLoaded && btn == ae2stuffConvert) {
+            sendCommand("ae2stuff_convert", null);
         }
 
         for (GuiColorButton colorButton : colorButtons) {
@@ -1227,6 +1248,12 @@ public class GuiSuperWirelessKit extends AEBaseGui implements IConfigManagerHost
                 }
                 tag.setTag("toBind", tagListToBind);
 
+                try {
+                    NetworkHandler.instance.sendToServer(new PacketSuperWirelessToolCommand(tag));
+                } catch (IOException ignored) {}
+            }
+
+            case "ae2stuff_convert" -> {
                 try {
                     NetworkHandler.instance.sendToServer(new PacketSuperWirelessToolCommand(tag));
                 } catch (IOException ignored) {}
