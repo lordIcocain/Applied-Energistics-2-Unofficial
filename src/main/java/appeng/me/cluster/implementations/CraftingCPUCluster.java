@@ -945,7 +945,7 @@ public final class CraftingCPUCluster implements IAECluster, ICraftingCPU {
                     for (int x = 0; x < craftingInventory.getSizeInventory(); x++) {
                         final ItemStack is = craftingInventory.getStackInSlot(x);
                         if (is != null) {
-                            this.inventory.injectItems(AEItemStack.create(is), Actionable.MODULATE);
+                            this.inventory.injectItems(convertStackPacket(is), Actionable.MODULATE);
                         }
                     }
                 }
@@ -1021,7 +1021,7 @@ public final class CraftingCPUCluster implements IAECluster, ICraftingCPU {
     public ICraftingLink submitJob(final IGrid g, final ICraftingJob job, final BaseActionSource src,
             final ICraftingRequester requestingMachine) {
         if (this.myLastLink != null && this.isBusy()
-                && this.finalOutput.isSameType(job.getOutput())
+                && this.finalOutput.isSameType((Object) job.getOutput())
                 && this.availableStorage >= this.usedStorage + job.getByteTotal()) {
             return mergeJob(g, job, src);
         }
