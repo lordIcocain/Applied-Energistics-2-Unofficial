@@ -127,6 +127,7 @@ public class ToolNetworkVisualiser extends AEBaseItem {
         if (Platform.isServer()) {
             TileEntity te = w.getTileEntity(x, y, z);
             if (te instanceof IGridHost) {
+                if (!is.hasTagCompound()) is.setTagCompound(new NBTTagCompound());
                 DimensionalCoord dc = new DimensionalCoord(te);
                 dc.writeToNBT(is.getTagCompound());
                 p.addChatMessage(
