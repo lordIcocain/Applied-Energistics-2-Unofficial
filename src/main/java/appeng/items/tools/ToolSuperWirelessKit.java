@@ -314,7 +314,7 @@ public class ToolSuperWirelessKit extends AEBaseItem implements IGuiItem {
                                     x,
                                     y,
                                     z,
-                                    dcl.size() + 1).setChatStyle(new ChatStyle().setColor(EnumChatFormatting.GREEN)));
+                                    dcl.size()).setChatStyle(new ChatStyle().setColor(EnumChatFormatting.GREEN)));
                     dcl.add(new DimensionalCoord(te));
                     DimensionalCoord.writeListToNBT(tag, dcl);
                 }
