@@ -24,6 +24,7 @@ import appeng.api.AEApi;
 import appeng.api.config.Settings;
 import appeng.api.config.SuperWirelessToolGroupBy;
 import appeng.api.config.YesNo;
+import appeng.api.networking.IGrid;
 import appeng.api.networking.IGridHost;
 import appeng.api.networking.IGridNode;
 import appeng.api.util.AEColor;
@@ -294,6 +295,7 @@ public class ContainerSuperWirelessKit extends AEBaseContainer implements IConfi
                 NBTTagList pins = stash.getTagList("pins", 10);
                 int network = command.getInteger("network");
 
+                // remove pin
                 for (int i = 0; i < pins.tagCount(); i++) {
                     int nbt_network = pins.getCompoundTagAt(i).getInteger("network");
                     if (nbt_network == network) {
@@ -301,6 +303,7 @@ public class ContainerSuperWirelessKit extends AEBaseContainer implements IConfi
                     }
                 }
 
+                // move pins data according to new subsequence
                 for (int i = 0; i < pins.tagCount(); i++) {
                     int nbt_network = pins.getCompoundTagAt(i).getInteger("network");
                     if (nbt_network > network) {
@@ -308,6 +311,7 @@ public class ContainerSuperWirelessKit extends AEBaseContainer implements IConfi
                     }
                 }
 
+                // move names data according to new subsequence
                 NBTTagList names = stash.getTagList("names", 10);
                 for (int i = 0; i < names.tagCount(); i++) {
                     int nbt_network = names.getCompoundTagAt(i).getInteger("network");
@@ -316,6 +320,7 @@ public class ContainerSuperWirelessKit extends AEBaseContainer implements IConfi
                     }
                 }
 
+                // move network list for keep subsequence
                 for (int i = 0; i < names.tagCount(); i++) {
                     int nbt_network = names.getCompoundTagAt(i).getInteger("network");
                     if (nbt_network > network) {
@@ -506,7 +511,7 @@ public class ContainerSuperWirelessKit extends AEBaseContainer implements IConfi
 
                 int i = 0;
                 int ii = 0;
-                while (twToBind.size() > i) {
+                while (twToBind.size() > i && twToBind.size() > ii) {
                     while (twTarget.get(ii).getFreeSlots() > 0) {
                         if (twToBind.get(i).setupConnection(twTarget.get(ii).getLocation())) {
                             i++;
@@ -519,6 +524,34 @@ public class ContainerSuperWirelessKit extends AEBaseContainer implements IConfi
                     }
                     ii++;
                 }
+
+                // Check if network was absorbed after bind and delete it if
+                ArrayList<IGrid> gList = new ArrayList<>();
+                int deletedCounter = 0;
+                for (int j = 0; j < networks.size(); j++) {
+                    DimensionalCoord dc = networks.get(j);
+                    if (w.getTileEntity(dc.x, dc.y, dc.z) instanceof IGridHost gh) {
+                        IGrid newG = gh.getGridNode(ForgeDirection.UNKNOWN).getGrid();
+                        if (newG != null) {
+                            if (gList.contains(newG)) {
+                                NBTTagCompound tag = new NBTTagCompound();
+                                tag.setString("command", "delete");
+                                tag.setInteger("network", j - deletedCounter);
+                                processCommand(tag);
+                                deletedCounter++;
+                            } else {
+                                gList.add(newG);
+                            }
+                        }
+                    } else {
+                        NBTTagCompound tag = new NBTTagCompound();
+                        tag.setString("command", "delete");
+                        tag.setInteger("network", j - deletedCounter);
+                        processCommand(tag);
+                        deletedCounter++;
+                    }
+                }
+
                 updateData();
             }
             case "unbind" -> {

@@ -1213,7 +1213,9 @@ public class GuiSuperWirelessKit extends AEBaseGui implements IConfigManagerHost
                             tagTarget.setInteger("color", gu.data.color.ordinal());
                         }
                     } else {
-                        but.data.cord.writeToNBT(tagTarget);
+                        NBTTagCompound cord = new NBTTagCompound();
+                        but.data.cord.writeToNBT(cord);
+                        tagTarget.setTag("cord", cord);
                     }
                     tagListTarget.appendTag(tagTarget);
                 }
