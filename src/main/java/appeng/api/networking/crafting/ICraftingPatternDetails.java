@@ -41,7 +41,12 @@ public interface ICraftingPatternDetails {
      */
     boolean isValidItemForSlot(int slotIndex, ItemStack itemStack, World world);
 
-    boolean isValidItemForSlot(int slotIndex, IAEStack<?> aes, World world);
+    default boolean isValidItemForSlot(int slotIndex, IAEStack<?> aes, World world) {
+        if (aes instanceof IAEItemStack ais) {
+            return isValidItemForSlot(slotIndex, ais.getItemStack(), world);
+        }
+        return false;
+    }
 
     /**
      * @return if this pattern is a crafting pattern ( work bench )
@@ -51,7 +56,9 @@ public interface ICraftingPatternDetails {
     /**
      * @return a list of the inputs, will include nulls.
      */
-    IAEStack<?>[] getAEInputs();
+    default IAEStack<?>[] getAEInputs() {
+        return getInputs();
+    }
 
     @Deprecated
     IAEItemStack[] getInputs();
@@ -59,7 +66,9 @@ public interface ICraftingPatternDetails {
     /**
      * @return a list of the inputs, will be clean
      */
-    IAEStack<?>[] getCondensedAEInputs();
+    default IAEStack<?>[] getCondensedAEInputs() {
+        return getCondensedInputs();
+    }
 
     @Deprecated
     IAEItemStack[] getCondensedInputs();
@@ -67,7 +76,9 @@ public interface ICraftingPatternDetails {
     /**
      * @return a list of the outputs, will be clean
      */
-    IAEStack<?>[] getCondensedAEOutputs();
+    default IAEStack<?>[] getCondensedAEOutputs() {
+        return getCondensedOutputs();
+    }
 
     @Deprecated
     IAEItemStack[] getCondensedOutputs();
@@ -75,7 +86,9 @@ public interface ICraftingPatternDetails {
     /**
      * @return a list of the outputs, will include nulls.
      */
-    IAEStack<?>[] getAEOutputs();
+    default IAEStack<?>[] getAEOutputs() {
+        return getOutputs();
+    }
 
     @Deprecated
     IAEItemStack[] getOutputs();
