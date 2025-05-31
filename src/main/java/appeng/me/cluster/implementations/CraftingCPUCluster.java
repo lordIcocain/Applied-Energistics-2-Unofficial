@@ -1578,6 +1578,7 @@ public final class CraftingCPUCluster implements IAECluster, ICraftingCPU {
         this.remainingItemCount = this.getRemainingItemCount() - is.getStackSize();
     }
 
+    @Override
     public long getElapsedTime() {
         return this.elapsedTime;
     }
