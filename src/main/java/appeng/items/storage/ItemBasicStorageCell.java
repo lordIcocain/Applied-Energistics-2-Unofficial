@@ -124,10 +124,9 @@ public class ItemBasicStorageCell extends AEBaseItem implements IStorageCell, II
         final IMEInventoryHandler<?> inventory = AEApi.instance().registries().cell()
                 .getCellInventory(stack, null, StorageChannel.ITEMS);
 
-        final CellInventoryHandler handler;
-        if (inventory instanceof CellInventoryHandler h) {
-            handler = h;
-        } else return;
+        if (!(inventory instanceof CellInventoryHandler handler)) {
+            return;
+        }
 
         final CellInventory cellInventory = (CellInventory) handler.getCellInv();
         if (cellInventory == null) {
