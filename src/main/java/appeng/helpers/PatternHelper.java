@@ -214,18 +214,8 @@ public class PatternHelper implements ICraftingPatternDetails, Comparable<Patter
     }
 
     @Override
-    public IAEStack<?>[] getAEInputs() {
-        return inputs;
-    }
-
-    @Override
     public IAEItemStack[] getCondensedInputs() {
         return this.condensedInputs;
-    }
-
-    @Override
-    public IAEStack<?>[] getCondensedAEInputs() {
-        return condensedInputs;
     }
 
     @Override
@@ -234,18 +224,8 @@ public class PatternHelper implements ICraftingPatternDetails, Comparable<Patter
     }
 
     @Override
-    public IAEStack<?>[] getCondensedAEOutputs() {
-        return condensedOutputs;
-    }
-
-    @Override
     public IAEItemStack[] getOutputs() {
         return this.outputs;
-    }
-
-    @Override
-    public IAEStack<?>[] getAEOutputs() {
-        return outputs;
     }
 
     @Override
