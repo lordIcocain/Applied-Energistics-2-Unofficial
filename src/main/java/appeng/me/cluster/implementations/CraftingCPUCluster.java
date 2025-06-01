@@ -1523,7 +1523,7 @@ public final class CraftingCPUCluster implements IAECluster, ICraftingCPU {
     }
 
     public boolean isMaking(final IAEItemStack what) {
-        return isMaking((IAEStack<?>) what);
+        return isMaking(convertStack(what));
     }
 
     public boolean isMaking(final IAEStack<?> what) {
