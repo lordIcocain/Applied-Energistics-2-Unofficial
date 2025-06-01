@@ -447,7 +447,7 @@ public final class CraftingCPUCluster implements IAECluster, ICraftingCPU {
                     this.finalOutput.decStackSize(insert.getStackSize());
 
                     if (this.myLastLink != null) {
-                        what.add(((CraftingLink) this.myLastLink).injectItems(insert.copy(), type));;
+                        what.add(((CraftingLink) this.myLastLink).injectItems(insert.copy(), type));
                         leftover = what;
                     }
 
@@ -1263,28 +1263,16 @@ public final class CraftingCPUCluster implements IAECluster, ICraftingCPU {
                 }
             }
             case STORAGE -> {
-                for (IAEItemStack ais : (IItemList<IAEItemStack>) inventory
-                        .getAvailableItems(AEApi.instance().storage().createItemList())) {
-                    list.add(ais);
-                }
-                for (IAEFluidStack ifs : (IItemList<IAEFluidStack>) inventory
-                        .getAvailableItems(AEApi.instance().storage().createFluidList())) {
-                    list.add(ifs);
-                }
+                inventory.getAvailableItems(list);
             }
 
             default -> {
-                for (IAEItemStack ais : (IItemList<IAEItemStack>) inventory
-                        .getAvailableItems(AEApi.instance().storage().createItemList())) {
-                    list.add(ais);
-                }
-                for (IAEFluidStack ifs : (IItemList<IAEFluidStack>) inventory
-                        .getAvailableItems(AEApi.instance().storage().createFluidList())) {
-                    list.add(ifs);
-                }
+                inventory.getAvailableItems(list);
+
                 for (final IAEStack<?> ais : this.waitingFor) {
                     list.add(ais);
                 }
+
                 for (final Entry<ICraftingPatternDetails, TaskProgress> t : this.tasks.entrySet()) {
                     for (IAEStack<?> ais : t.getKey().getCondensedAEOutputs()) {
                         ais = ais.copy();
