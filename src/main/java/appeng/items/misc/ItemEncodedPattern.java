@@ -27,6 +27,7 @@ import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.init.Blocks;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumChatFormatting;
@@ -56,6 +57,8 @@ public class ItemEncodedPattern extends AEBaseItem implements ICraftingPatternIt
 
     // rather simple client side caching.
     private static final Map<ItemStack, ItemStack> SIMPLE_CACHE = new WeakHashMap<>();
+    private static Item FLUID_DROP_ITEM;
+    private static boolean checkedCache = false;
     private static final boolean isGTLoaded = IntegrationRegistry.INSTANCE.isEnabled(IntegrationType.GT);
     private static final Locale locale = Locale.getDefault();
 
@@ -244,13 +247,14 @@ public class ItemEncodedPattern extends AEBaseItem implements ICraftingPatternIt
             String itemCountText = NumberFormat.getNumberInstance(locale).format(item.getStackSize());
             String itemText;
             if (isGTLoaded) {
-                itemText = isFluid ? item.getDisplayName()
+                itemText = isFluid ? Platform.getItemDisplayName(item).replace("drop of", "")
                         : ((IAEItemStack) item).getItem() instanceof ItemIntegratedCircuit
                                 ? Platform.getItemDisplayName(item) + " "
                                         + ((IAEItemStack) item).getItemStack().getItemDamage()
                                 : Platform.getItemDisplayName(item);
             } else {
-                itemText = isFluid ? item.getDisplayName() : Platform.getItemDisplayName(item);
+                itemText = isFluid ? Platform.getItemDisplayName(item).replace("drop of", "")
+                        : Platform.getItemDisplayName(item);
             }
             String fullText = "   " + EnumChatFormatting.WHITE
                     + itemCountText

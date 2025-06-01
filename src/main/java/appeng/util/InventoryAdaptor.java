@@ -27,6 +27,7 @@ import appeng.api.config.InsertionMode;
 import appeng.api.parts.IPart;
 import appeng.api.storage.data.IAEItemStack;
 import appeng.api.storage.data.IAEStack;
+import appeng.api.storage.data.IItemList;
 import appeng.helpers.IInterfaceHost;
 import appeng.integration.IntegrationRegistry;
 import appeng.integration.IntegrationType;
@@ -124,6 +125,9 @@ public abstract class InventoryAdaptor implements Iterable<ItemSlot> {
 
     public static InventoryAdaptor getNullAdaptor() {
         return new AdaptorNull();
+
+    public IItemList<IAEItemStack> getAvailableItems(IItemList<IAEItemStack> out, int iteration) {
+        return out;
     }
 
     // return what was extracted.
