@@ -51,28 +51,28 @@ public class AdaptorDualityInterface extends AdaptorIInventory {
 
     @Override
     public IAEStack<?> addStack(IAEStack<?> toBeAdded) {
+        DualityInterface dual = interfaceHost.getInterfaceDuality();
         IMEMonitor monitor;
         if (toBeAdded.isItem()) {
-            monitor = interfaceHost.getInterfaceDuality().getItemInventory();
+            monitor = dual.getItemInventory();
         } else {
-            monitor = interfaceHost.getInterfaceDuality().getFluidInventory();
+            monitor = dual.getFluidInventory();
         }
 
-        return (IAEStack<?>) monitor
-                .injectItems(toBeAdded, Actionable.MODULATE, interfaceHost.getInterfaceDuality().getActionSource());
+        return (IAEStack<?>) monitor.injectItems(toBeAdded, Actionable.MODULATE, dual.getActionSource());
     }
 
     @Override
     public IAEStack<?> simulateAddStack(IAEStack<?> toBeSimulated) {
+        DualityInterface dual = interfaceHost.getInterfaceDuality();
         IMEMonitor monitor;
         if (toBeSimulated.isItem()) {
-            monitor = interfaceHost.getInterfaceDuality().getItemInventory();
+            monitor = dual.getItemInventory();
         } else {
-            monitor = interfaceHost.getInterfaceDuality().getFluidInventory();
+            monitor = dual.getFluidInventory();
         }
 
-        return (IAEStack<?>) monitor
-                .injectItems(toBeSimulated, Actionable.SIMULATE, interfaceHost.getInterfaceDuality().getActionSource());
+        return (IAEStack<?>) monitor.injectItems(toBeSimulated, Actionable.SIMULATE, dual.getActionSource());
     }
 
     @Override

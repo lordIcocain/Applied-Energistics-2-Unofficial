@@ -641,18 +641,18 @@ public class DualityInterface implements IGridTickable, IStorageMonitorable, IIn
                 }
 
                 final InventoryAdaptor ad = InventoryAdaptor.getAdaptor(te, s.getOpposite());
-                IAEStack<?> Result = whatToSend;
+                IAEStack<?> result = whatToSend;
                 if (ad != null) {
-                    Result = ad.addStack(whatToSend, getInsertionMode());
+                    result = ad.addStack(whatToSend, getInsertionMode());
                 }
-                if (Result == null) {
+                if (result == null) {
                     whatToSend = null;
                     sentSomething = true;
                 } else {
-                    sentSomething |= Result.getStackSize() < whatToSend.getStackSize();
-                    whatToSend.setStackSize(Result.getStackSize());
-                    if (Result.hasTagCompound())
-                        whatToSend.setTagCompound(Result.getTagCompound().getNBTTagCompoundCopy());
+                    sentSomething |= result.getStackSize() < whatToSend.getStackSize();
+                    whatToSend.setStackSize(result.getStackSize());
+                    if (result.hasTagCompound())
+                        whatToSend.setTagCompound(result.getTagCompound().getNBTTagCompoundCopy());
                 }
 
                 if (whatToSend == null) {
@@ -966,6 +966,7 @@ public class DualityInterface implements IGridTickable, IStorageMonitorable, IIn
         final EnumSet<ForgeDirection> possibleDirectionsDefault = this.iHost.getTargets();
         EnumSet<ForgeDirection> out = EnumSet.noneOf(ForgeDirection.class);
         HashMap<pushData, IAEStack<?>> pushMap = new LinkedHashMap<>();
+        // Item conduit dont have simulation of inject, so we cant step back when check was success
         boolean conduitFactor = false;
 
         for (int i = 0; i < table.getSizeInventory(); i++) {
@@ -1021,8 +1022,9 @@ public class DualityInterface implements IGridTickable, IStorageMonitorable, IIn
                                 && !inventoryCountsAsEmpty(te, ad, s.getOpposite())) {
                             possibleDirectionsDefault.remove(s);
                         } else {
+                            IAEStack<?> simulate = testStack.copy();
                             if (ad instanceof AdaptorConduitBandle && testStack.isItem()) {
-                                IAEStack<?> leftOver = ad.addStack(testStack.copy(), getInsertionMode());
+                                IAEStack<?> leftOver = ad.addStack(simulate, getInsertionMode());
                                 if (leftOver == null) {
                                     testStack.reset();
                                     conduitFactor = true;
@@ -1033,7 +1035,7 @@ public class DualityInterface implements IGridTickable, IStorageMonitorable, IIn
                                     out.add(s);
                                 }
                             } else {
-                                IAEStack<?> leftOver = ad.simulateAddStack(testStack.copy(), getInsertionMode());
+                                IAEStack<?> leftOver = ad.simulateAddStack(simulate, getInsertionMode());
                                 if (leftOver == null) {
                                     pushMap.put(new pushData(ad, te, s), testStack.copy());
                                     testStack.reset();
@@ -1041,8 +1043,7 @@ public class DualityInterface implements IGridTickable, IStorageMonitorable, IIn
                                 } else if (leftOver.getStackSize() < testStack.getStackSize()) {
                                     pushMap.put(
                                             new pushData(ad, te, s),
-                                            testStack.copy()
-                                                    .setStackSize(testStack.getStackSize() - leftOver.getStackSize()));
+                                            simulate.setStackSize(testStack.getStackSize() - leftOver.getStackSize()));
                                     testStack.setStackSize(leftOver.getStackSize());
                                     out.add(s);
                                 }
@@ -1053,7 +1054,6 @@ public class DualityInterface implements IGridTickable, IStorageMonitorable, IIn
 
                 if (conduitFactor && testStack != null && testStack.getStackSize() > 0) {
                     pushMap.put(new pushData(getNullAdaptor(), null, ForgeDirection.UNKNOWN), testStack.copy());
-                    testStack.reset();
                 } else if (testStack != null && testStack.getStackSize() > 0) {
                     return false;
                 }
