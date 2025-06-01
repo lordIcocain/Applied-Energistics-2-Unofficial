@@ -153,7 +153,7 @@ public class PatternHelper implements ICraftingPatternDetails, Comparable<Patter
 
     @Override
     public synchronized boolean isValidItemForSlot(final int slotIndex, final IAEStack<?> i, final World w) {
-        if (!isCrafting) return isValidItemForSlot(slotIndex, ((IAEItemStack) i).getItemStack(), w);
+        if (isCrafting) return isValidItemForSlot(slotIndex, ((IAEItemStack) i).getItemStack(), w);
         else throw new IllegalStateException("Only crafting recipes supported.");
     }
 
