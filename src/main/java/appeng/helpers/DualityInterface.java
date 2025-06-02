@@ -1073,8 +1073,8 @@ public class DualityInterface implements IGridTickable, IStorageMonitorable, IIn
         final World w = tile.getWorldObj();
 
         final EnumSet<ForgeDirection> possibleDirectionsDefault = this.iHost.getTargets();
-        EnumSet<ForgeDirection> out = EnumSet.noneOf(ForgeDirection.class);
-        HashMap<pushData, IAEStack<?>> pushMap = new LinkedHashMap<>();
+        final EnumSet<ForgeDirection> out = EnumSet.noneOf(ForgeDirection.class);
+        final HashMap<pushData, IAEStack<?>> pushMap = new LinkedHashMap<>();
         // Item conduit dont have simulation of inject, so we cant step back when check was success
         boolean conduitFactor = false;
         boolean foundReason = false;
@@ -1169,9 +1169,9 @@ public class DualityInterface implements IGridTickable, IStorageMonitorable, IIn
                     }
                 }
 
-                if (conduitFactor && testStack != null && testStack.getStackSize() > 0) {
+                if (conduitFactor && (testStack == null || testStack.getStackSize() > 0)) {
                     pushMap.put(new pushData(getNullAdaptor(), null, ForgeDirection.UNKNOWN), testStack.copy());
-                } else if (testStack != null && testStack.getStackSize() > 0) {
+                } else if (testStack == null || testStack.getStackSize() > 0) {
                     if (!foundReason) scheduledReason = ScheduledReason.NO_TARGET;
                     return false;
                 }

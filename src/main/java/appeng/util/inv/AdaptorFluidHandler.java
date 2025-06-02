@@ -4,6 +4,7 @@ import java.util.Collections;
 import java.util.Iterator;
 
 import net.minecraft.inventory.IInventory;
+import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.FluidStack;
@@ -14,6 +15,7 @@ import com.glodblock.github.common.item.ItemFluidPacket;
 import com.glodblock.github.util.Ae2Reflect;
 
 import appeng.api.config.FuzzyMode;
+import appeng.api.config.InsertionMode;
 import appeng.api.storage.data.IAEFluidStack;
 import appeng.api.storage.data.IAEItemStack;
 import appeng.api.storage.data.IAEStack;
@@ -29,7 +31,12 @@ public class AdaptorFluidHandler extends InventoryAdaptor {
     public AdaptorFluidHandler(IFluidHandler tank, ForgeDirection direction) {
         fluidHandler = tank;
         toAdaptor = direction;
-        if (tank instanceof IInventory i) {
+        if (tank instanceof ISidedInventory si) {
+            final int[] slots = si.getAccessibleSlotsFromSide(direction.ordinal());
+            if (si.getSizeInventory() > 0 && slots != null && slots.length > 0) {
+                itemHandler = new AdaptorIInventory(new WrapperMCISidedInventory(si, direction));
+            }
+        } else if (tank instanceof IInventory i) {
             if (i.getSizeInventory() > 0) {
                 itemHandler = new AdaptorIInventory(i);
             }
@@ -60,17 +67,27 @@ public class AdaptorFluidHandler extends InventoryAdaptor {
 
     @Override
     public ItemStack addItems(ItemStack toBeAdded) {
-        return itemHandler != null ? itemHandler.addItems(toBeAdded) : toBeAdded;
+        return addItems(toBeAdded, InsertionMode.DEFAULT);
+    }
+
+    @Override
+    public ItemStack addItems(ItemStack toBeAdded, InsertionMode insertionMode) {
+        return itemHandler != null ? itemHandler.addItems(toBeAdded, insertionMode) : toBeAdded;
     }
 
     @Override
     public ItemStack simulateAdd(ItemStack toBeSimulated) {
-        return itemHandler != null ? itemHandler.addItems(toBeSimulated) : toBeSimulated;
+        return simulateAdd(toBeSimulated, InsertionMode.DEFAULT);
+    }
+
+    @Override
+    public ItemStack simulateAdd(ItemStack toBeSimulated, InsertionMode insertionMode) {
+        return itemHandler != null ? itemHandler.simulateAdd(toBeSimulated, insertionMode) : toBeSimulated;
     }
 
     @Override
     public boolean containsItems() {
-        return itemHandler.containsItems() || containsFluid();
+        return (itemHandler != null && itemHandler.containsItems()) || containsFluid();
     }
 
     private boolean containsFluid() {
@@ -84,10 +101,10 @@ public class AdaptorFluidHandler extends InventoryAdaptor {
     }
 
     @Override
-    public IAEStack<?> addStack(IAEStack<?> toBeAdded) {
+    public IAEStack<?> addStack(IAEStack<?> toBeAdded, InsertionMode insertionMode) {
         if (toBeAdded.getStackSize() < Integer.MAX_VALUE) {
             if (toBeAdded instanceof IAEItemStack ais) {
-                return AEItemStack.create(addItems(ais.getItemStack()));
+                return AEItemStack.create(addItems(ais.getItemStack(), insertionMode));
             } else if (toBeAdded instanceof IAEFluidStack ifs) {
                 int rest = fluidHandler.fill(toAdaptor, ifs.getFluidStack(), true);
                 if (rest == toBeAdded.getStackSize()) return null;
@@ -98,10 +115,10 @@ public class AdaptorFluidHandler extends InventoryAdaptor {
     }
 
     @Override
-    public IAEStack<?> simulateAddStack(IAEStack<?> toBeSimulated) {
+    public IAEStack<?> simulateAddStack(IAEStack<?> toBeSimulated, InsertionMode insertionMode) {
         if (toBeSimulated.getStackSize() < Integer.MAX_VALUE) {
             if (toBeSimulated instanceof IAEItemStack ais) {
-                return AEItemStack.create(simulateAdd(ais.getItemStack()));
+                return AEItemStack.create(simulateAdd(ais.getItemStack(), insertionMode));
             } else if (toBeSimulated instanceof IAEFluidStack ifs) {
                 int rest = fluidHandler.fill(toAdaptor, ifs.getFluidStack(), false);
                 if (rest == toBeSimulated.getStackSize()) return null;

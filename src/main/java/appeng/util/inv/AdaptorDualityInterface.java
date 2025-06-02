@@ -50,7 +50,7 @@ public class AdaptorDualityInterface extends AdaptorIInventory {
     }
 
     @Override
-    public IAEStack<?> addStack(IAEStack<?> toBeAdded) {
+    public IAEStack<?> addStack(IAEStack<?> toBeAdded, InsertionMode insertionMode) {
         DualityInterface dual = interfaceHost.getInterfaceDuality();
         IMEMonitor monitor;
         if (toBeAdded.isItem()) {
@@ -63,7 +63,7 @@ public class AdaptorDualityInterface extends AdaptorIInventory {
     }
 
     @Override
-    public IAEStack<?> simulateAddStack(IAEStack<?> toBeSimulated) {
+    public IAEStack<?> simulateAddStack(IAEStack<?> toBeSimulated, InsertionMode insertionMode) {
         DualityInterface dual = interfaceHost.getInterfaceDuality();
         IMEMonitor monitor;
         if (toBeSimulated.isItem()) {

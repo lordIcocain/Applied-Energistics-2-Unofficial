@@ -8,6 +8,7 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTankInfo;
 
 import appeng.api.config.FuzzyMode;
+import appeng.api.config.InsertionMode;
 import appeng.api.storage.data.IAEFluidStack;
 import appeng.api.storage.data.IAEStack;
 import appeng.util.InventoryAdaptor;
@@ -66,21 +67,21 @@ public class AdaptorConduitBandle extends InventoryAdaptor {
     }
 
     @Override
-    public IAEStack<?> addStack(IAEStack<?> toBeAdded) {
+    public IAEStack<?> addStack(IAEStack<?> toBeAdded, InsertionMode insertionMode) {
         if (toBeAdded.getStackSize() < Integer.MAX_VALUE) {
             if (toBeAdded instanceof IAEFluidStack ifs) {
                 return fill(ifs, true);
-            } else return super.addStack(toBeAdded);
+            } else return super.addStack(toBeAdded, insertionMode);
         }
         return toBeAdded;
     }
 
     @Override
-    public IAEStack<?> simulateAddStack(IAEStack<?> toBeSimulated) {
+    public IAEStack<?> simulateAddStack(IAEStack<?> toBeSimulated, InsertionMode insertionMode) {
         if (toBeSimulated.getStackSize() < Integer.MAX_VALUE) {
             if (toBeSimulated instanceof IAEFluidStack ifs) {
                 return fill(ifs, false);
-            } else return super.simulateAddStack(toBeSimulated);
+            } else return super.simulateAddStack(toBeSimulated, insertionMode);
         }
         return toBeSimulated;
     }

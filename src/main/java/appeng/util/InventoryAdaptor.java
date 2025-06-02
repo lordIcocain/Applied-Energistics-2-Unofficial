@@ -184,30 +184,22 @@ public abstract class InventoryAdaptor implements Iterable<ItemSlot> {
         return null;
     }
 
-    public IAEStack<?> addStack(IAEStack<?> toBeAdded) {
+    public IAEStack<?> addStack(IAEStack<?> toBeAdded, InsertionMode insertionMode) {
         if (toBeAdded.getStackSize() < Integer.MAX_VALUE) {
             if (toBeAdded instanceof IAEItemStack ais) {
-                return AEItemStack.create(addItems(ais.getItemStack()));
+                return AEItemStack.create(addItems(ais.getItemStack(), insertionMode));
             }
         }
         return toBeAdded;
     }
 
-    public IAEStack<?> addStack(IAEStack<?> toBeAdded, InsertionMode insertionMode) {
-        return addStack(toBeAdded);
-    }
-
-    public IAEStack<?> simulateAddStack(IAEStack<?> toBeSimulated) {
+    public IAEStack<?> simulateAddStack(IAEStack<?> toBeSimulated, InsertionMode insertionMode) {
         if (toBeSimulated.getStackSize() < Integer.MAX_VALUE) {
             if (toBeSimulated instanceof IAEItemStack ais) {
-                return AEItemStack.create(simulateAdd(ais.getItemStack()));
+                return AEItemStack.create(simulateAdd(ais.getItemStack(), insertionMode));
             }
         }
         return toBeSimulated;
-    }
-
-    public IAEStack<?> simulateAddStack(IAEStack<?> toBeSimulated, InsertionMode insertionMode) {
-        return simulateAddStack(toBeSimulated);
     }
 
     public abstract boolean containsItems();

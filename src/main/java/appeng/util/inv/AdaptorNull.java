@@ -48,16 +48,8 @@ public class AdaptorNull extends InventoryAdaptor {
         return false;
     }
 
-    public IAEStack<?> addStack(IAEStack<?> toBeAdded) {
-        return toBeAdded;
-    }
-
     public IAEStack<?> addStack(IAEStack<?> toBeAdded, InsertionMode insertionMode) {
         return toBeAdded;
-    }
-
-    public IAEStack<?> simulateAddStack(IAEStack<?> toBeSimulated) {
-        return toBeSimulated;
     }
 
     public IAEStack<?> simulateAddStack(IAEStack<?> toBeSimulated, InsertionMode insertionMode) {

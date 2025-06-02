@@ -62,7 +62,7 @@ public class AdaptorMEChest extends AdaptorIInventory {
     }
 
     @Override
-    public IAEStack<?> addStack(IAEStack<?> toBeAdded) {
+    public IAEStack<?> addStack(IAEStack<?> toBeAdded, InsertionMode insertionMode) {
         IMEMonitor monitor;
         if (toBeAdded.isItem()) {
             monitor = meChest.getItemInventory();
@@ -76,7 +76,7 @@ public class AdaptorMEChest extends AdaptorIInventory {
     }
 
     @Override
-    public IAEStack<?> simulateAddStack(IAEStack<?> toBeSimulated) {
+    public IAEStack<?> simulateAddStack(IAEStack<?> toBeSimulated, InsertionMode insertionMode) {
         IMEMonitor monitor;
         if (toBeSimulated.isItem()) {
             monitor = meChest.getItemInventory();
