@@ -736,7 +736,6 @@ public class DualityInterface implements IGridTickable, IStorageMonitorable, IIn
 
     private boolean usePlan(final int x, final IAEItemStack itemStack) {
         final InventoryAdaptor adaptor = this.getAdaptor(x);
-        final int iteration = IterationCounter.fetchNewId();
         final int fuzzycards = this.getInstalledUpgrades(Upgrades.FUZZY);
         IAEItemStack acquired = null;
         this.isWorking = true;
@@ -786,6 +785,7 @@ public class DualityInterface implements IGridTickable, IStorageMonitorable, IIn
                 }
 
                 if (((fuzzycards == 1) && (x > 5)) || ((fuzzycards == 2) && (x > 2)) || (fuzzycards == 3)) {
+                    int iteration = IterationCounter.fetchNewId();
                     final IAEItemStack[] fpe = fuzzyPoweredExtraction(
                             src,
                             this.destination,
