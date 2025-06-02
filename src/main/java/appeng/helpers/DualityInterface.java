@@ -611,18 +611,14 @@ public class DualityInterface implements IGridTickable, IStorageMonitorable, IIn
         /*
          * This returns a NetworkInventoryHandler object. getSortedFuzzyItems has an Override definition in there.
          */
-        if (destination instanceof NetworkMonitor<?>) {
-            fzlist = ((NetworkMonitor<IAEItemStack>) destination).getHandler().getSortedFuzzyItems(
+        if (cell instanceof NetworkMonitor<?>) {
+            fzlist = ((NetworkMonitor<IAEItemStack>) cell).getHandler().getSortedFuzzyItems(
                     new ArrayList<>(),
                     itemStack,
                     ((FuzzyMode) cm.getSetting(Settings.FUZZY_MODE)),
                     iteration);
 
-        } /*
-           * else if (!(destination instanceof NetworkMonitor<?>)) { throw new IllegalStateException(
-           * "Function definition protection (cannot call correct override for getSortedFuzzyItems)"); } <-- throw error
-           * here...?
-           */
+        } else return new IAEItemStack[] { null, fuzzyItemStack };
 
         if (fzlist.iterator().hasNext()) {
             fuzzyItemStack = fzlist.iterator().next();
@@ -760,7 +756,6 @@ public class DualityInterface implements IGridTickable, IStorageMonitorable, IIn
 
     private boolean usePlan(final int x, final IAEItemStack itemStack) {
         final InventoryAdaptor adaptor = this.getAdaptor(x);
-        final int iteration = IterationCounter.fetchNewId();
         final int fuzzycards = this.getInstalledUpgrades(Upgrades.FUZZY);
         IAEItemStack acquired = null;
         this.isWorking = true;
@@ -810,6 +805,7 @@ public class DualityInterface implements IGridTickable, IStorageMonitorable, IIn
                 }
 
                 if (((fuzzycards == 1) && (x > 5)) || ((fuzzycards == 2) && (x > 2)) || (fuzzycards == 3)) {
+                    int iteration = IterationCounter.fetchNewId();
                     final IAEItemStack[] fpe = fuzzyPoweredExtraction(
                             src,
                             this.destination,
