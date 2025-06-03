@@ -2041,6 +2041,7 @@ public class Platform {
             ais.setCraftable(stack.isCraftable());
             ais.setCountRequestable(stack.getCountRequestable());
             ais.setCountRequestableCrafts(stack.getCountRequestableCrafts());
+            ais.setUsedPercent(stack.getUsedPercent());
             return ais;
         }
         return (IAEItemStack) stack;
