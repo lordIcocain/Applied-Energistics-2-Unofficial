@@ -1146,6 +1146,18 @@ public final class CraftingCPUCluster implements IAECluster, ICraftingCPU {
         final IStorageGrid sg = g.getCache(IStorageGrid.class);
         final MECraftingInventory ci = new MECraftingInventory(sg, true, false, false);
 
+        final MECraftingInventory backupInventory = new MECraftingInventory(inventory);
+        final IItemList<IAEItemStack> backupWaitingForMissing = AEApi.instance().storage().createItemList();
+        for (IAEItemStack ais : waitingForMissing) {
+            backupWaitingForMissing.add(ais);
+        }
+        final Map<ICraftingPatternDetails, TaskProgress> tasksBackup = new TreeMap<>(priorityComparator);
+        for (Entry<ICraftingPatternDetails, TaskProgress> entry : tasks.entrySet()) {
+            TaskProgress newTaskProgress = new TaskProgress();
+            newTaskProgress.value = entry.getValue().value;
+            tasksBackup.put(entry.getKey(), newTaskProgress);
+        }
+
         try {
             job.startCrafting(ci, this, src);
             if (ci.commit(src)) {
@@ -1158,8 +1170,17 @@ public final class CraftingCPUCluster implements IAECluster, ICraftingCPU {
                 this.markDirty();
                 this.updateCPU();
                 return this.myLastLink;
+            } else {
+                inventory = backupInventory;
+                waitingForMissing = backupWaitingForMissing;
+                tasks.clear();
+                tasks.putAll(tasksBackup);
             }
         } catch (final CraftBranchFailure e) {
+            inventory = backupInventory;
+            waitingForMissing = backupWaitingForMissing;
+            tasks.clear();
+            tasks.putAll(tasksBackup);
             handleCraftBranchFailure(e, src);
         }
 
