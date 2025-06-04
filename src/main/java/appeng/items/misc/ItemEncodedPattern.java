@@ -51,7 +51,6 @@ import appeng.integration.IntegrationRegistry;
 import appeng.integration.IntegrationType;
 import appeng.items.AEBaseItem;
 import appeng.util.Platform;
-import cpw.mods.fml.common.registry.GameRegistry;
 import gregtech.common.items.ItemIntegratedCircuit;
 
 public class ItemEncodedPattern extends AEBaseItem implements ICraftingPatternItem {
