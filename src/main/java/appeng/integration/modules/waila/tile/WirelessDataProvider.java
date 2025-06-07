@@ -14,7 +14,7 @@ import appeng.api.util.AEColor;
 import appeng.api.util.DimensionalCoord;
 import appeng.client.render.NetworkVisualiserRender;
 import appeng.integration.modules.waila.BaseWailaDataProvider;
-import appeng.tile.networking.TileWirelessConnector;
+import appeng.tile.networking.TileWirelessBase;
 import appeng.tile.networking.TileWirelessHub;
 import appeng.util.Platform;
 import mcp.mobius.waila.api.IWailaConfigHandler;
@@ -27,7 +27,7 @@ public class WirelessDataProvider extends BaseWailaDataProvider {
             final IWailaDataAccessor accessor, final IWailaConfigHandler config) {
 
         final TileEntity te = accessor.getTileEntity();
-        if (te instanceof TileWirelessConnector wc) {
+        if (te instanceof TileWirelessBase wc) {
             NBTTagCompound tag = accessor.getNBTData();
 
             if (tag.hasKey("connected")) {
@@ -72,17 +72,17 @@ public class WirelessDataProvider extends BaseWailaDataProvider {
     @Override
     public NBTTagCompound getNBTData(final EntityPlayerMP player, final TileEntity te, final NBTTagCompound tag,
             final World world, final int x, final int y, final int z) {
-        if (te instanceof TileWirelessConnector wc) {
-            if (wc.hasConnection()) {
+        if (te instanceof TileWirelessBase wc) {
+            if (wc.isLinked()) {
                 tag.setBoolean("connected", true);
-                tag.setInteger("channels", wc.getChannelUsage());
+                tag.setInteger("channels", wc.getUsedChannels());
                 tag.setDouble("power", PowerMultiplier.CONFIG.multiply(wc.getPowerUsage()));
-                if (wc instanceof TileWirelessHub wh && wh.hasConnection()) {
+                if (wc instanceof TileWirelessHub wh && wh.isLinked()) {
                     NBTTagCompound cordList = new NBTTagCompound();
-                    DimensionalCoord.writeListToNBT(cordList, wh.getConnectionList());
+                    // DimensionalCoord.writeListToNBT(cordList, wh.getConnectionList()); TODO: Fix this method
                     tag.setTag("hubList", cordList);
                 } else {
-                    wc.getTarget().writeToNBT(tag);
+                    // wc.getTarget().writeToNBT(tag);
                 }
             }
             if (wc.hasCustomName()) {

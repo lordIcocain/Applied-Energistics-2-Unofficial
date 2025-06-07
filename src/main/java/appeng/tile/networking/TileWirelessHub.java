@@ -1,85 +1,65 @@
 package appeng.tile.networking;
 
-import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
-import net.minecraft.tileentity.TileEntity;
+import appeng.api.networking.IGridConnection;
 
-import appeng.api.util.DimensionalCoord;
+public class TileWirelessHub extends TileWirelessBase {
 
-public class TileWirelessHub extends TileWirelessConnector {
+    HashMap<TileWirelessBase, IGridConnection> connections = new HashMap<>();
 
-    private final ArrayList<DimensionalCoord> connectionList = new ArrayList<>();
-    private double powerDraw = 0d;
-
-    @Override
-    public DimensionalCoord getTarget() {
-        return null;
+    TileWirelessHub() {
+        super(32);
     }
 
     @Override
-    public boolean hasConnection() {
-        return !connectionList.isEmpty();
-    }
-
-    public void addConnectionList(DimensionalCoord dc) {
-        connectionList.add(dc);
-    }
-
-    public void removeConnectionList(DimensionalCoord dc) {
-        connectionList.remove(dc);
+    protected void setDataConnections(TileWirelessBase other, IGridConnection connection) {
+        connections.put(other, connection);
     }
 
     @Override
-    public boolean setupConnection(DimensionalCoord dc) {
-        TileWirelessConnector te = (TileWirelessConnector) worldObj.getTileEntity(dc.x, dc.y, dc.z);
-        if (te instanceof TileWirelessHub) return false;
-        return te.setupConnection(this.getLocation());
+    protected void removeDataConnections(TileWirelessBase other) {
+        connections.remove(other);
     }
 
     @Override
-    public void breakConnection() {
-        for (DimensionalCoord dc : connectionList) {
-            TileEntity te = worldObj.getTileEntity(dc.x, dc.y, dc.z);
-            if (te instanceof TileWirelessConnector wc) {
-                wc.breakConnectionNoCall();
-            }
-        }
+    public Set<TileWirelessBase> getConnectedTiles() {
+        return connections.keySet();
     }
 
     @Override
-    public void cleanUp() {
-        updateActive();
+    public Set<IGridConnection> getAllConnections() {
+        return new HashSet<>(connections.values());
     }
 
     @Override
-    public void setPowerDraw(double d) {
-        this.powerDraw += d;
-        this.getProxy().setIdlePowerUsage(this.powerDraw);
+    public Map<TileWirelessBase, IGridConnection> getConnectionMap() {
+        return Collections.unmodifiableMap(connections);
     }
 
     @Override
-    public int getChannelUsage() {
-        int channels = 0;
-        for (DimensionalCoord dc : connectionList) {
-            TileEntity te = worldObj.getTileEntity(dc.x, dc.y, dc.z);
-            if (te instanceof TileWirelessConnector wc) {
-                channels += wc.getChannelUsage();
-            }
-        }
-        return channels;
+    public IGridConnection getConnection(TileWirelessBase other) {
+        return connections.get(other);
     }
 
     @Override
-    public boolean isHub() {
-        return true;
+    public boolean doLink(TileWirelessBase other) {
+        if (!other.canAddLink() && !canAddLink()) return false;
+        // this.customName = other.customName;
+        return setupConnection(other);
     }
 
     @Override
-    public int getFreeSlots() {
-        return 32 - connectionList.size();
+    public void doUnlink(TileWirelessBase other) {
+        breakConnection(other);
     }
 
-    public ArrayList<DimensionalCoord> getConnectionList() {
-        return connectionList;
+    @Override
+    public void doUnlink() {
+        breakAllConnections();
     }
 }

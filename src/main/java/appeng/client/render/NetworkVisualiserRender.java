@@ -26,7 +26,7 @@ import appeng.items.tools.ToolNetworkVisualiser.VLinkFlags;
 import appeng.items.tools.ToolNetworkVisualiser.VNode;
 import appeng.items.tools.ToolNetworkVisualiser.VNodeFlags;
 import appeng.items.tools.ToolNetworkVisualiser.VisualisationModes;
-import appeng.tile.networking.TileWirelessConnector;
+import appeng.tile.networking.TileWirelessBase;
 import appeng.tile.networking.TileWirelessHub;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 
@@ -157,7 +157,7 @@ public class NetworkVisualiserRender {
                     tess.draw();
 
                     GL11.glPopAttrib();
-                } else if (te instanceof TileWirelessConnector && otherDc != null) {
+                } else if (te instanceof TileWirelessBase && otherDc != null) {
                     GL11.glPushAttrib(GL11.GL_ENABLE_BIT);
 
                     GL11.glDisable(GL11.GL_LIGHTING);

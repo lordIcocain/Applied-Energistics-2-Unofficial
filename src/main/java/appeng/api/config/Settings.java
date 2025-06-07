@@ -92,9 +92,9 @@ public enum Settings {
 
     CRAFTING_ALLOW(EnumSet.allOf(CraftingAllow.class)),
 
-    SUPER_WIRELESS_TOOL(EnumSet.allOf(SuperWirelessTool.class)),
+    WIRELESS_TOOL_TYPE(EnumSet.allOf(WirelessToolType.class)),
 
-    SUPER_WIRELESS_TOOL_ADVANCED(EnumSet.allOf(SuperWirelessToolAdvanced.class)),
+    ADVANCED_WIRELESS_TOOL_MODE(EnumSet.allOf(AdvancedWirelessToolMode.class)),
 
     SUPER_WIRELESS_TOOL_GROUP_BY(EnumSet.allOf(SuperWirelessToolGroupBy.class)),
 

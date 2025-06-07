@@ -38,7 +38,7 @@ import appeng.core.sync.packets.PacketSuperWirelessToolData;
 import appeng.core.sync.packets.PacketValueConfig;
 import appeng.helpers.SuperWirelessToolDataObject;
 import appeng.items.contents.SuperWirelessKitObject;
-import appeng.tile.networking.TileWirelessConnector;
+import appeng.tile.networking.TileWirelessBase;
 import appeng.tile.networking.TileWirelessHub;
 import appeng.util.ConfigManager;
 import appeng.util.IConfigManagerHost;
@@ -154,8 +154,8 @@ public class ContainerSuperWirelessKit extends AEBaseContainer implements IConfi
             if (w.provider.dimensionId == dcl.get(i).getDimension()
                     && w.getTileEntity(dcl.get(i).x, dcl.get(i).y, dcl.get(i).z) instanceof IGridHost gh) {
                 for (IGridNode gn : gh.getGridNode(ForgeDirection.UNKNOWN).getGrid()
-                        .getMachines(TileWirelessConnector.class)) {
-                    TileWirelessConnector wc = (TileWirelessConnector) gn.getMachine();
+                        .getMachines(TileWirelessBase.class)) { // TODO: Check if getMachines work
+                    TileWirelessBase wc = (TileWirelessBase) gn.getMachine();
                     data.add(wc.getDataForTool(i));
                 }
 
@@ -190,7 +190,7 @@ public class ContainerSuperWirelessKit extends AEBaseContainer implements IConfi
             case "renameSingle" -> {
                 DimensionalCoord cord = DimensionalCoord.readFromNBT(command.getCompoundTag("cord"));
                 TileEntity te = w.getTileEntity(cord.x, cord.y, cord.z);
-                if (te instanceof TileWirelessConnector twc) {
+                if (te instanceof TileWirelessBase twc) {
                     twc.setCustomName(command.getString("name"));
                 }
             }
@@ -350,7 +350,7 @@ public class ContainerSuperWirelessKit extends AEBaseContainer implements IConfi
                             .readAsListFromNBT((NBTTagCompound) command.getTag("cords"));
                     for (DimensionalCoord sdc : dc) {
                         TileEntity te = w.getTileEntity(sdc.x, sdc.y, sdc.z);
-                        if (te instanceof TileWirelessConnector tw) {
+                        if (te instanceof TileWirelessBase tw) {
                             if (color != null) {
                                 tw.recolourBlock(ForgeDirection.UNKNOWN, color, this.getPlayerInv().player);
                             } else {
@@ -378,7 +378,7 @@ public class ContainerSuperWirelessKit extends AEBaseContainer implements IConfi
                                 if (colorsCache[i] != null) {
                                     if (sd.color == colorsCache[i]) {
                                         TileEntity te = w.getTileEntity(sd.cord.x, sd.cord.y, sd.cord.z);
-                                        if (te instanceof TileWirelessConnector tw) {
+                                        if (te instanceof TileWirelessBase tw) {
                                             if (color != null) {
                                                 tw.recolourBlock(
                                                         ForgeDirection.UNKNOWN,
@@ -391,7 +391,7 @@ public class ContainerSuperWirelessKit extends AEBaseContainer implements IConfi
                                     }
                                 } else {
                                     TileEntity te = w.getTileEntity(sd.cord.x, sd.cord.y, sd.cord.z);
-                                    if (te instanceof TileWirelessConnector tw) {
+                                    if (te instanceof TileWirelessBase tw) {
                                         if (color != null) {
                                             tw.recolourBlock(ForgeDirection.UNKNOWN, color, this.getPlayerInv().player);
                                         } else {
@@ -410,12 +410,12 @@ public class ContainerSuperWirelessKit extends AEBaseContainer implements IConfi
                         .readAsListFromNBT((NBTTagCompound) stash.getTag("pos"));
 
                 NBTTagList toBind = command.getTagList("toBind", 10);
-                ArrayList<TileWirelessConnector> twToBind = new ArrayList<>();
+                ArrayList<TileWirelessBase> twToBind = new ArrayList<>();
                 for (int i = 0; i < toBind.tagCount(); i++) {
                     NBTTagCompound tag = toBind.getCompoundTagAt(i);
                     if (tag.hasKey("cord")) {
                         DimensionalCoord dc = DimensionalCoord.readFromNBT(tag.getCompoundTag("cord"));
-                        if (w.getTileEntity(dc.x, dc.y, dc.z) instanceof TileWirelessConnector wc) {
+                        if (w.getTileEntity(dc.x, dc.y, dc.z) instanceof TileWirelessBase wc) {
                             twToBind.add(wc);
                         }
                     } else {
@@ -426,9 +426,9 @@ public class ContainerSuperWirelessKit extends AEBaseContainer implements IConfi
                             if (w.getTileEntity(dc.x, dc.y, dc.z) instanceof IGridHost gh) {
                                 if (!tag.hasKey("incCon")) {
                                     for (IGridNode gn : gh.getGridNode(ForgeDirection.UNKNOWN).getGrid()
-                                            .getMachines(TileWirelessConnector.class)) {
-                                        TileWirelessConnector wc = (TileWirelessConnector) gn.getMachine();
-                                        if (!wc.hasConnection()) {
+                                            .getMachines(TileWirelessBase.class)) {
+                                        TileWirelessBase wc = (TileWirelessBase) gn.getMachine();
+                                        if (!wc.isLinked()) {
                                             if (color != null) {
                                                 if (wc.getColor() == color) {
                                                     twToBind.add(wc);
@@ -460,12 +460,12 @@ public class ContainerSuperWirelessKit extends AEBaseContainer implements IConfi
                 }
 
                 NBTTagList target = command.getTagList("target", 10);
-                ArrayList<TileWirelessConnector> twTarget = new ArrayList<>();
+                ArrayList<TileWirelessBase> twTarget = new ArrayList<>();
                 for (int i = 0; i < target.tagCount(); i++) {
                     NBTTagCompound tag = target.getCompoundTagAt(i);
                     if (tag.hasKey("cord")) {
                         DimensionalCoord dc = DimensionalCoord.readFromNBT(tag.getCompoundTag("cord"));
-                        if (w.getTileEntity(dc.x, dc.y, dc.z) instanceof TileWirelessConnector wc) {
+                        if (w.getTileEntity(dc.x, dc.y, dc.z) instanceof TileWirelessBase wc) {
                             twTarget.add(wc);
                         }
                     } else {
@@ -476,9 +476,9 @@ public class ContainerSuperWirelessKit extends AEBaseContainer implements IConfi
                             if (w.getTileEntity(dc.x, dc.y, dc.z) instanceof IGridHost gh) {
                                 if (!tag.hasKey("incCon")) {
                                     for (IGridNode gn : gh.getGridNode(ForgeDirection.UNKNOWN).getGrid()
-                                            .getMachines(TileWirelessConnector.class)) {
-                                        TileWirelessConnector wc = (TileWirelessConnector) gn.getMachine();
-                                        if (!wc.hasConnection()) {
+                                            .getMachines(TileWirelessBase.class)) {
+                                        TileWirelessBase wc = (TileWirelessBase) gn.getMachine();
+                                        if (!wc.isLinked()) {
                                             if (color != null) {
                                                 if (wc.getColor() == color) {
                                                     twTarget.add(wc);
@@ -513,7 +513,7 @@ public class ContainerSuperWirelessKit extends AEBaseContainer implements IConfi
                 int ii = 0;
                 while (twToBind.size() > i && twToBind.size() > ii) {
                     while (twTarget.get(ii).getFreeSlots() > 0) {
-                        if (twToBind.get(i).setupConnection(twTarget.get(ii).getLocation())) {
+                        if (twToBind.get(i).doLink(twTarget.get(ii))) {
                             i++;
                             if (!(twToBind.size() > i)) {
                                 break;
@@ -563,8 +563,8 @@ public class ContainerSuperWirelessKit extends AEBaseContainer implements IConfi
                     NBTTagCompound tag = toBind.getCompoundTagAt(i);
                     if (tag.hasKey("cord")) {
                         DimensionalCoord dc = DimensionalCoord.readFromNBT(tag.getCompoundTag("cord"));
-                        if (w.getTileEntity(dc.x, dc.y, dc.z) instanceof TileWirelessConnector wc) {
-                            wc.breakConnection();
+                        if (w.getTileEntity(dc.x, dc.y, dc.z) instanceof TileWirelessBase wc) {
+                            wc.doUnlink();
                         }
                     } else {
                         int network = tag.getInteger("network");
@@ -574,14 +574,14 @@ public class ContainerSuperWirelessKit extends AEBaseContainer implements IConfi
                             if (w.getTileEntity(dc.x, dc.y, dc.z) instanceof IGridHost gh) {
                                 if (!tag.hasKey("incCon")) {
                                     for (IGridNode gn : gh.getGridNode(ForgeDirection.UNKNOWN).getGrid()
-                                            .getMachines(TileWirelessConnector.class)) {
-                                        TileWirelessConnector wc = (TileWirelessConnector) gn.getMachine();
+                                            .getMachines(TileWirelessBase.class)) {
+                                        TileWirelessBase wc = (TileWirelessBase) gn.getMachine();
                                         if (color != null) {
                                             if (wc.getColor() == color) {
-                                                wc.breakConnection();
+                                                wc.doUnlink();
                                             }
                                         } else {
-                                            wc.breakConnection();
+                                            wc.doUnlink();
                                         }
                                     }
                                 }
@@ -591,10 +591,10 @@ public class ContainerSuperWirelessKit extends AEBaseContainer implements IConfi
                                         TileWirelessHub wc = (TileWirelessHub) gn.getMachine();
                                         if (color != null) {
                                             if (wc.getColor() == color) {
-                                                wc.breakConnection();
+                                                wc.doUnlink();
                                             }
                                         } else {
-                                            wc.breakConnection();
+                                            wc.doUnlink();
                                         }
                                     }
                                 }
@@ -605,68 +605,70 @@ public class ContainerSuperWirelessKit extends AEBaseContainer implements IConfi
                 updateData();
             }
             case "ae2stuff_convert" -> {
-                if (isAEStaffLoaded) {
-                    List<DimensionalCoord> networks = DimensionalCoord
-                            .readAsListFromNBT((NBTTagCompound) stash.getTag("pos"));
-                    for (DimensionalCoord dc : networks) {
-                        if (w.getTileEntity(dc.x, dc.y, dc.z) instanceof IGridHost gh) {
-                            Set<SuperWirelessToolDataObject> dataSet = new HashSet<>();
+                if (!isAEStaffLoaded) return;
 
-                            for (IGridNode gn : gh.getGridNode(ForgeDirection.UNKNOWN).getGrid()
-                                    .getMachines(TileWireless.class)) {
-                                TileWireless wc = (TileWireless) gn.getMachine();
-                                DimensionalCoord targetDC = null;
+                List<DimensionalCoord> networks = DimensionalCoord
+                        .readAsListFromNBT((NBTTagCompound) stash.getTag("pos"));
+                for (DimensionalCoord dc : networks) {
+                    IGridHost gh = w.getTileEntity(dc.x, dc.y, dc.z) instanceof IGridHost ghInstance ? ghInstance
+                            : null;
+                    if (gh == null) return;
 
-                                if (wc.link().value().isDefined()) {
-                                    BlockRef temp = wc.link().value().get();
-                                    targetDC = new DimensionalCoord(w, temp.x(), temp.y(), temp.z());
-                                }
+                    Set<SuperWirelessToolDataObject> dataSet = new HashSet<>();
 
-                                SuperWirelessToolDataObject data = new SuperWirelessToolDataObject(
-                                        -1,
-                                        wc.hasCustomName() ? wc.getCustomName() : null,
-                                        wc.getLocation(),
-                                        targetDC != null,
-                                        targetDC,
-                                        wc.getColor(),
-                                        -1,
-                                        wc.isHub(),
-                                        -1);
-                                dataSet.add(data);
+                    for (IGridNode gn : gh.getGridNode(ForgeDirection.UNKNOWN).getGrid()
+                            .getMachines(TileWireless.class)) {
+                        TileWireless wc = (TileWireless) gn.getMachine();
+                        DimensionalCoord targetDC = null;
+
+                        if (wc.link().value().isDefined()) {
+                            BlockRef temp = wc.link().value().get();
+                            targetDC = new DimensionalCoord(w, temp.x(), temp.y(), temp.z());
+                        }
+
+                        SuperWirelessToolDataObject data = new SuperWirelessToolDataObject(
+                                -1,
+                                wc.hasCustomName() ? wc.getCustomName() : null,
+                                wc.getLocation(),
+                                targetDC != null,
+                                targetDC,
+                                wc.getColor(),
+                                -1,
+                                wc.isHub(),
+                                -1);
+                        dataSet.add(data);
+                    }
+
+                    for (SuperWirelessToolDataObject data : dataSet) {
+                        w.setBlockToAir(data.cord.x, data.cord.y, data.cord.z);
+                    }
+
+                    for (SuperWirelessToolDataObject data : dataSet) {
+                        if (data.isHub) {
+                            w.setBlock(
+                                    data.cord.x,
+                                    data.cord.y,
+                                    data.cord.z,
+                                    AEApi.instance().definitions().blocks().wirelessHub().maybeBlock().get());
+                        } else {
+                            w.setBlock(
+                                    data.cord.x,
+                                    data.cord.y,
+                                    data.cord.z,
+                                    AEApi.instance().definitions().blocks().wirelessConnector().maybeBlock().get());
+                        }
+
+                        TileEntity te = w.getTileEntity(data.cord.x, data.cord.y, data.cord.z);
+                        if (te instanceof TileWirelessBase newCon) {
+                            if (data.customName != null) newCon.setCustomName(data.customName);
+                            if (data.isConnected) {
+                                // newCon.injectTarget(data.targetCord); TODO
                             }
-
-                            for (SuperWirelessToolDataObject data : dataSet) {
-                                w.setBlockToAir(data.cord.x, data.cord.y, data.cord.z);
-                            }
-
-                            for (SuperWirelessToolDataObject data : dataSet) {
-                                if (data.isHub) {
-                                    w.setBlock(
-                                            data.cord.x,
-                                            data.cord.y,
-                                            data.cord.z,
-                                            AEApi.instance().definitions().blocks().wirelessHub().maybeBlock().get());
-                                } else {
-                                    w.setBlock(
-                                            data.cord.x,
-                                            data.cord.y,
-                                            data.cord.z,
-                                            AEApi.instance().definitions().blocks().wirelessConnector().maybeBlock()
-                                                    .get());
-                                }
-
-                                TileEntity te = w.getTileEntity(data.cord.x, data.cord.y, data.cord.z);
-                                if (te instanceof TileWirelessConnector newCon) {
-                                    if (data.customName != null) newCon.setCustomName(data.customName);
-                                    if (data.isConnected) {
-                                        newCon.injectTarget(data.targetCord);
-                                    }
-                                    newCon.recolourBlock(ForgeDirection.UNKNOWN, data.color, null);
-                                }
-                            }
+                            newCon.recolourBlock(ForgeDirection.UNKNOWN, data.color, null);
                         }
                     }
                 }
+
             }
             default -> {}
         }

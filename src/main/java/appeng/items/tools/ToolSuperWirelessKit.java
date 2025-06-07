@@ -1,5 +1,7 @@
 package appeng.items.tools;
 
+import static appeng.api.config.AdvancedWirelessToolMode.Queueing;
+
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Locale;
@@ -17,11 +19,11 @@ import net.minecraft.util.StatCollector;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 
+import appeng.api.config.AdvancedWirelessToolMode;
 import appeng.api.config.SecurityPermissions;
 import appeng.api.config.Settings;
-import appeng.api.config.SuperWirelessTool;
-import appeng.api.config.SuperWirelessToolAdvanced;
 import appeng.api.config.SuperWirelessToolGroupBy;
+import appeng.api.config.WirelessToolType;
 import appeng.api.config.YesNo;
 import appeng.api.implementations.guiobjects.IGuiItem;
 import appeng.api.implementations.guiobjects.IGuiItemObject;
@@ -30,10 +32,11 @@ import appeng.api.networking.security.ISecurityGrid;
 import appeng.api.util.DimensionalCoord;
 import appeng.api.util.IConfigManager;
 import appeng.core.features.AEFeature;
+import appeng.core.localization.WirelessToolMessages;
 import appeng.core.sync.GuiBridge;
 import appeng.items.AEBaseItem;
 import appeng.items.contents.SuperWirelessKitObject;
-import appeng.tile.networking.TileWirelessConnector;
+import appeng.tile.networking.TileWirelessBase;
 import appeng.util.ConfigManager;
 import appeng.util.Platform;
 
@@ -66,89 +69,73 @@ public class ToolSuperWirelessKit extends AEBaseItem implements IGuiItem {
 
     @Override
     public ItemStack onItemRightClick(ItemStack is, World w, EntityPlayer p) {
-        if (Platform.isServer()) {
-            if (Platform.keyBindTab.isKeyDown(p)) {
-                IConfigManager cm = getConfigManager(is);
-                final Enum<?> newState = Platform.rotateEnum(
-                        cm.getSetting(Settings.SUPER_WIRELESS_TOOL),
-                        false,
-                        Settings.SUPER_WIRELESS_TOOL.getPossibleValues());
-                cm.putSetting(Settings.SUPER_WIRELESS_TOOL, newState);
-                p.addChatMessage(
-                        new ChatComponentTranslation(
-                                "item.appliedenergistics2.ToolSuperWirelessKit.set",
-                                EnumChatFormatting.YELLOW + StatCollector.translateToLocal(
-                                        "item.appliedenergistics2.ToolSuperWirelessKit.mode."
-                                                + newState.toString().toLowerCase(Locale.US))));
-            } else {
-                SuperWirelessTool mode = (SuperWirelessTool) getConfigManager(is)
-                        .getSetting(Settings.SUPER_WIRELESS_TOOL);
-                if (p.isSneaking() && Platform.keyBindLCtrl.isKeyDown(p)) {
-                    switch (mode) {
-                        case Simple -> {
-                            is.getTagCompound().setTag("simple", new NBTTagCompound());
-                        }
-                        case Advanced -> {
-                            is.getTagCompound().setTag("advanced", new NBTTagCompound());
-                        }
-                        case Super -> {
-                            NBTTagCompound newTag = new NBTTagCompound();
-                            newTag.setTag("pins", new NBTTagList());
-                            newTag.setTag("names", new NBTTagList());
-                            newTag.setTag("pos", new NBTTagCompound());
-                            is.getTagCompound().setTag("super", newTag);
-                        }
+        if (Platform.isClient()) {
+            return is;
+        }
+
+        if (Platform.keyBindTab.isKeyDown(p)) {
+            IConfigManager cm = getConfigManager(is);
+            final WirelessToolType newState = (WirelessToolType) Platform.rotateEnum(
+                    cm.getSetting(Settings.WIRELESS_TOOL_TYPE),
+                    false,
+                    Settings.WIRELESS_TOOL_TYPE.getPossibleValues());
+            cm.putSetting(Settings.WIRELESS_TOOL_TYPE, newState);
+
+            p.addChatMessage(WirelessToolMessages.set.toChat(EnumChatFormatting.YELLOW + newState.getLocal()));
+
+        } else {
+            WirelessToolType mode = (WirelessToolType) getConfigManager(is).getSetting(Settings.WIRELESS_TOOL_TYPE);
+            if (p.isSneaking() && Platform.keyBindLCtrl.isKeyDown(p)) {
+                switch (mode) {
+                    case Simple -> is.getTagCompound().setTag("simple", new NBTTagCompound());
+                    case Advanced -> is.getTagCompound().setTag("advanced", new NBTTagCompound());
+                    case Super -> {
+                        NBTTagCompound newTag = new NBTTagCompound();
+                        newTag.setTag("pins", new NBTTagList());
+                        newTag.setTag("names", new NBTTagList());
+                        newTag.setTag("pos", new NBTTagCompound());
+                        is.getTagCompound().setTag("super", newTag);
                     }
-                    p.addChatMessage(
-                            new ChatComponentTranslation(
-                                    "item.appliedenergistics2.ToolSuperWirelessKit.empty",
-                                    EnumChatFormatting.YELLOW + StatCollector.translateToLocal(
-                                            "item.appliedenergistics2.ToolSuperWirelessKit.mode."
-                                                    + mode.toString().toLowerCase(Locale.US))));
-                } else if (p.isSneaking() && mode == SuperWirelessTool.Advanced) {
-                    IConfigManager cm = getConfigManager(is);
-                    final Enum<?> newState = Platform.rotateEnum(
-                            cm.getSetting(Settings.SUPER_WIRELESS_TOOL_ADVANCED),
-                            false,
-                            Settings.SUPER_WIRELESS_TOOL_ADVANCED.getPossibleValues());
-                    cm.putSetting(Settings.SUPER_WIRELESS_TOOL_ADVANCED, newState);
-                    p.addChatMessage(
-                            new ChatComponentTranslation(
-                                    "item.appliedenergistics2.ToolSuperWirelessKit.mode.advanced."
-                                            + newState.toString().toLowerCase(Locale.US)
-                                            + ".activated"));
-                } else if (mode == SuperWirelessTool.Super) {
-                    Platform.openGUI(p, null, ForgeDirection.UNKNOWN, GuiBridge.GUI_SUPER_WIRELESS_KIT);
                 }
+
+                p.addChatMessage(WirelessToolMessages.empty.toChat(EnumChatFormatting.YELLOW + mode.getLocal()));
+
+            } else if (p.isSneaking() && mode == WirelessToolType.Advanced) {
+                IConfigManager cm = getConfigManager(is);
+                final AdvancedWirelessToolMode newState = (AdvancedWirelessToolMode) Platform.rotateEnum(
+                        cm.getSetting(Settings.ADVANCED_WIRELESS_TOOL_MODE),
+                        false,
+                        Settings.ADVANCED_WIRELESS_TOOL_MODE.getPossibleValues());
+                cm.putSetting(Settings.ADVANCED_WIRELESS_TOOL_MODE, newState);
+
+                p.addChatMessage(new ChatComponentTranslation(newState.getLocal()));
+            } else if (mode == WirelessToolType.Super) {
+                Platform.openGUI(p, null, ForgeDirection.UNKNOWN, GuiBridge.GUI_SUPER_WIRELESS_KIT);
             }
+
         }
         return is;
     }
 
-    public boolean performConnection(TileWirelessConnector wc, DimensionalCoord dc, EntityPlayer p) {
+    public boolean performConnection(TileWirelessBase wc, DimensionalCoord dc, EntityPlayer p) {
         if (wc.getLocation().getDimension() == dc.getDimension()) {
             if (wc.isHub() && wc.getFreeSlots() == 0) {
-                p.addChatMessage(
-                        new ChatComponentTranslation(
-                                "item.appliedenergistics2.ToolSuperWirelessKit.mode.simple.bound.targethubfull"));
+                p.addChatMessage(WirelessToolMessages.mode_simple_bound_targethubfull.toChat());
                 return false;
             }
-            if (wc.setupConnection(dc)) {
+            if (wc.doUnlink(dc);) {
                 p.addChatMessage(
-                        new ChatComponentTranslation(
-                                "item.appliedenergistics2.ToolSuperWirelessKit.connected",
-                                dc.x,
-                                dc.y,
-                                dc.z).setChatStyle(new ChatStyle().setColor(EnumChatFormatting.GREEN)));
+                        WirelessToolMessages.connected.toChat(dc.x, dc.y, dc.z)
+                                .setChatStyle(new ChatStyle().setColor(EnumChatFormatting.GREEN)));
                 return true;
             } else {
                 p.addChatMessage(
-                        new ChatComponentTranslation("item.appliedenergistics2.ToolSuperWirelessKit.failed")
+                        WirelessToolMessages.failed.toChat()
                                 .setChatStyle(new ChatStyle().setColor(EnumChatFormatting.RED)));
             }
 
         } else {
-            p.addChatMessage(new ChatComponentTranslation("item.appliedenergistics2.ToolSuperWirelessKit.dimension"));
+            p.addChatMessage(WirelessToolMessages.dimension.toChat());
         }
         return false;
     }
@@ -157,7 +144,7 @@ public class ToolSuperWirelessKit extends AEBaseItem implements IGuiItem {
     public boolean onItemUse(ItemStack is, EntityPlayer p, World w, int x, int y, int z, int side, float xOff,
             float yOff, float zOff) {
         if (Platform.isServer()) {
-            SuperWirelessTool mode = (SuperWirelessTool) getConfigManager(is).getSetting(Settings.SUPER_WIRELESS_TOOL);
+            WirelessToolType mode = (WirelessToolType) getConfigManager(is).getSetting(Settings.WIRELESS_TOOL_TYPE);
             TileEntity te = w.getTileEntity(x, y, z);
 
             if (!(te instanceof IGridHost gh)) {
@@ -172,7 +159,7 @@ public class ToolSuperWirelessKit extends AEBaseItem implements IGuiItem {
 
             switch (mode) {
                 case Simple -> {
-                    if (te instanceof TileWirelessConnector wc) {
+                    if (te instanceof TileWirelessBase wc) {
                         NBTTagCompound tag = is.getTagCompound().getCompoundTag("simple");
                         if (tag.hasNoTags()) {
                             DimensionalCoord dc = wc.getLocation();
@@ -194,13 +181,13 @@ public class ToolSuperWirelessKit extends AEBaseItem implements IGuiItem {
                     }
                 }
                 case Advanced -> {
-                    if (te instanceof TileWirelessConnector wc) {
+                    if (te instanceof TileWirelessBase wc) {
                         DimensionalCoord sdc = wc.getLocation();
                         List<DimensionalCoord> dcl = DimensionalCoord
                                 .readAsListFromNBT(is.getTagCompound().getCompoundTag("advanced"));
-                        SuperWirelessToolAdvanced mod = (SuperWirelessToolAdvanced) getConfigManager(is)
-                                .getSetting(Settings.SUPER_WIRELESS_TOOL_ADVANCED);
-                        if (mod == SuperWirelessToolAdvanced.Queueing) {
+                        AdvancedWirelessToolMode mod = (AdvancedWirelessToolMode) getConfigManager(is)
+                                .getSetting(Settings.ADVANCED_WIRELESS_TOOL_MODE);
+                        if (mod == Queueing) {
                             int j = 0;
                             for (DimensionalCoord sdcl : dcl) {
                                 if (sdc.isEqual(sdcl)) {
@@ -329,10 +316,10 @@ public class ToolSuperWirelessKit extends AEBaseItem implements IGuiItem {
             manager.writeToNBT(data);
         });
 
-        out.registerSetting(Settings.SUPER_WIRELESS_TOOL, SuperWirelessTool.Simple);
+        out.registerSetting(Settings.WIRELESS_TOOL_TYPE, WirelessToolType.Simple);
         out.registerSetting(Settings.SUPER_WIRELESS_TOOL_GROUP_BY, SuperWirelessToolGroupBy.Single);
         out.registerSetting(Settings.SUPER_WIRELESS_TOOL_HIDE_BOUNDED, YesNo.NO);
-        out.registerSetting(Settings.SUPER_WIRELESS_TOOL_ADVANCED, SuperWirelessToolAdvanced.Queueing);
+        out.registerSetting(Settings.ADVANCED_WIRELESS_TOOL_MODE, Queueing);
 
         out.readFromNBT((NBTTagCompound) Platform.openNbtData(target).copy());
         return out;
@@ -341,7 +328,7 @@ public class ToolSuperWirelessKit extends AEBaseItem implements IGuiItem {
     @Override
     protected void addCheckedInformation(ItemStack is, EntityPlayer player, List<String> lines,
             boolean displayMoreInfo) {
-        SuperWirelessTool mode = (SuperWirelessTool) getConfigManager(is).getSetting(Settings.SUPER_WIRELESS_TOOL);
+        WirelessToolType mode = (WirelessToolType) getConfigManager(is).getSetting(Settings.WIRELESS_TOOL_TYPE);
         lines.add(
                 StatCollector.translateToLocal("item.appliedenergistics2.ToolSuperWirelessKit.mode") + " "
                         + EnumChatFormatting.YELLOW
@@ -380,8 +367,7 @@ public class ToolSuperWirelessKit extends AEBaseItem implements IGuiItem {
                                 dcl.get(0).x,
                                 dcl.get(0).y,
                                 dcl.get(0).z));
-                if (getConfigManager(is).getSetting(Settings.SUPER_WIRELESS_TOOL_ADVANCED)
-                        == SuperWirelessToolAdvanced.Queueing) {
+                if (getConfigManager(is).getSetting(Settings.ADVANCED_WIRELESS_TOOL_MODE) == Queueing) {
                     lines.add(
                             StatCollector.translateToLocal(
                                     "item.appliedenergistics2.ToolSuperWirelessKit.mode.advanced.queueing"));
