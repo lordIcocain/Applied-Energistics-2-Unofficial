@@ -20,13 +20,10 @@ import static com.gtnewhorizon.gtnhlib.capability.Capabilities.getCapability;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.EnumSet;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map.Entry;
 
 import net.minecraft.block.Block;
 import net.minecraft.inventory.IInventory;
@@ -1074,7 +1071,7 @@ public class DualityInterface implements IGridTickable, IStorageMonitorable, IIn
 
         final EnumSet<ForgeDirection> possibleDirectionsDefault = this.iHost.getTargets();
         final EnumSet<ForgeDirection> out = EnumSet.noneOf(ForgeDirection.class);
-        final HashMap<pushData, IAEStack<?>> pushMap = new LinkedHashMap<>();
+        final ArrayList<pushData> push = new ArrayList<>();
         // Item conduit dont have simulation of inject, so we cant step back when check was success
         boolean conduitFactor = false;
         boolean foundReason = false;
@@ -1147,20 +1144,24 @@ public class DualityInterface implements IGridTickable, IStorageMonitorable, IIn
                                     conduitFactor = true;
                                     out.add(s);
                                 } else if (leftOver.getStackSize() < testStack.getStackSize()) {
-                                    pushMap.put(new pushData(ad, te, s), leftOver);
+                                    push.add(new pushData(ad, leftOver, te, s));
                                     conduitFactor = true;
                                     out.add(s);
                                 }
                             } else {
                                 IAEStack<?> leftOver = ad.simulateAddStack(simulate, getInsertionMode());
                                 if (leftOver == null) {
-                                    pushMap.put(new pushData(ad, te, s), testStack.copy());
+                                    push.add(new pushData(ad, testStack.copy(), te, s));
                                     testStack.reset();
                                     out.add(s);
                                 } else if (leftOver.getStackSize() < testStack.getStackSize()) {
-                                    pushMap.put(
-                                            new pushData(ad, te, s),
-                                            simulate.setStackSize(testStack.getStackSize() - leftOver.getStackSize()));
+                                    push.add(
+                                            new pushData(
+                                                    ad,
+                                                    simulate.setStackSize(
+                                                            testStack.getStackSize() - leftOver.getStackSize()),
+                                                    te,
+                                                    s));
                                     testStack.setStackSize(leftOver.getStackSize());
                                     out.add(s);
                                 }
@@ -1169,8 +1170,8 @@ public class DualityInterface implements IGridTickable, IStorageMonitorable, IIn
                     }
                 }
 
-                if (conduitFactor && (testStack == null || testStack.getStackSize() > 0)) {
-                    pushMap.put(new pushData(getNullAdaptor(), null, ForgeDirection.UNKNOWN), testStack.copy());
+                if (conduitFactor && testStack != null && testStack.getStackSize() > 0) {
+                    push.add(new pushData(getNullAdaptor(), testStack.copy(), null, ForgeDirection.UNKNOWN));
                 } else if (testStack == null || testStack.getStackSize() > 0) {
                     if (!foundReason) scheduledReason = ScheduledReason.NO_TARGET;
                     return false;
@@ -1178,9 +1179,8 @@ public class DualityInterface implements IGridTickable, IStorageMonitorable, IIn
             }
         }
 
-        for (Entry<pushData, IAEStack<?>> entry : pushMap.entrySet()) {
-            pushData data = entry.getKey();
-            addToSendList(data.ad.addStack(entry.getValue(), getInsertionMode()));
+        for (pushData data : push) {
+            addToSendList(data.ad.addStack(data.st, getInsertionMode()));
             onPushPatternSuccess(data.te, data.d.getOpposite(), patternDetails);
         }
         pushItemsOut(out);
@@ -1190,11 +1190,13 @@ public class DualityInterface implements IGridTickable, IStorageMonitorable, IIn
     private static class pushData {
 
         InventoryAdaptor ad;
+        IAEStack<?> st;
         TileEntity te;
         ForgeDirection d;
 
-        pushData(InventoryAdaptor adaptor, TileEntity tileEntity, ForgeDirection direction) {
+        pushData(InventoryAdaptor adaptor, IAEStack<?> stack, TileEntity tileEntity, ForgeDirection direction) {
             ad = adaptor;
+            st = stack;
             te = tileEntity;
             d = direction;
         }

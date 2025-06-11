@@ -28,7 +28,6 @@ import net.minecraft.nbt.NBTTagCompound;
 import appeng.api.config.FuzzyMode;
 import appeng.api.storage.StorageChannel;
 import appeng.api.storage.data.IAEItemStack;
-import appeng.api.storage.data.IAEStack;
 import appeng.api.storage.data.IAETagCompound;
 import appeng.util.Platform;
 import cpw.mods.fml.common.registry.GameRegistry;
@@ -486,13 +485,6 @@ public final class AEItemStack extends AEStack<IAEItemStack> implements IAEItemS
 
         return (this.getDefinition().getTagCompound() == b.getDefinition().getTagCompound()) ? 0
                 : this.compareNBT(b.getDefinition());
-    }
-
-    @Override
-    public int compareTo(final IAEStack<?> b) {
-        if (b instanceof AEItemStack ais) {
-            return compareTo(ais);
-        } else return -1;
     }
 
     private int compareNBT(final AEItemDef b) {

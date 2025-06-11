@@ -271,13 +271,6 @@ public final class AEFluidStack extends AEStack<IAEFluidStack> implements IAEFlu
     }
 
     @Override
-    public int compareTo(final IAEStack<?> b) {
-        if (b instanceof AEFluidStack ifs) {
-            return compareTo(ifs);
-        } else return 1;
-    }
-
-    @Override
     public int hashCode() {
         return this.myHash;
     }

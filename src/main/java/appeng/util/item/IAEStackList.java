@@ -18,7 +18,8 @@ import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 
 public final class IAEStackList implements IItemList<IAEStack<?>> {
 
-    private final NavigableMap<IAEStack<?>, IAEStack<?>> records = new ConcurrentSkipListMap<>(IAEStack::compareTo);
+    // ToDo found why this map broken as fuck
+    private final NavigableMap<IAEItemStack, IAEItemStack> records = new ConcurrentSkipListMap<>();
     private final ObjectOpenHashSet<IAEStack<?>> setRecords = new ObjectOpenHashSet<>();
 
     @Override
@@ -46,7 +47,10 @@ public final class IAEStackList implements IItemList<IAEStack<?>> {
                 final OreReference or = ais.getDefinition().getIsOre();
                 if (or.getAEEquivalents().size() == 1) {
                     final IAEItemStack is = or.getAEEquivalents().get(0);
-                    return findFuzzyDamage((AEItemStack) is, fuzzy, is.getItemDamage() == OreDictionary.WILDCARD_VALUE);
+                    return (Collection) findFuzzyDamage(
+                            (AEItemStack) is,
+                            fuzzy,
+                            is.getItemDamage() == OreDictionary.WILDCARD_VALUE);
                 } else {
                     final Collection<IAEStack<?>> output = new LinkedList<>();
                     for (final IAEItemStack is : or.getAEEquivalents()) {
@@ -59,7 +63,7 @@ public final class IAEStackList implements IItemList<IAEStack<?>> {
                     return output;
                 }
             }
-            return findFuzzyDamage(ais, fuzzy, false);
+            return (Collection) findFuzzyDamage(ais, fuzzy, false);
         }
         return Collections.emptyList();
     }
@@ -112,27 +116,7 @@ public final class IAEStackList implements IItemList<IAEStack<?>> {
 
     @Override
     public Iterator<IAEStack<?>> iterator() {
-        return new MeaningfulAEStackIterator<>(new Iterator<>() {
-
-            private final Iterator<IAEStack<?>> i = IAEStackList.this.records.values().iterator();
-            private IAEStack<?> next = null;
-
-            @Override
-            public boolean hasNext() {
-                return i.hasNext();
-            }
-
-            @Override
-            public IAEStack<?> next() {
-                return (next = i.next());
-            }
-
-            @Override
-            public void remove() {
-                i.remove();
-                IAEStackList.this.setRecords.remove(next);
-            }
-        });
+        return new MeaningfulAEStackIterator<>(this.setRecords.iterator());
     }
 
     @Override
@@ -144,15 +128,14 @@ public final class IAEStackList implements IItemList<IAEStack<?>> {
 
     public void clear() {
         setRecords.clear();
-        records.clear();
     }
 
     private void putItemRecord(final IAEStack<?> itemStack) {
         setRecords.add(itemStack);
-        records.put(itemStack, itemStack);
+        if (itemStack instanceof IAEItemStack ais) records.put(ais, ais);
     }
 
-    private Collection<IAEStack<?>> findFuzzyDamage(final AEItemStack filter, final FuzzyMode fuzzy,
+    private Collection<IAEItemStack> findFuzzyDamage(final AEItemStack filter, final FuzzyMode fuzzy,
             final boolean ignoreMeta) {
         final IAEItemStack low = filter.getLow(fuzzy, ignoreMeta);
         final IAEItemStack high = filter.getHigh(fuzzy, ignoreMeta);

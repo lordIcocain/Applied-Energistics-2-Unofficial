@@ -823,10 +823,12 @@ public final class CraftingCPUCluster implements IAECluster, ICraftingCPU {
                             if (input[x] != null) {
                                 found = false;
                                 for (IAEStack ias : getExtractItems(input[x], details)) {
-                                    if (details.isCraftable() && !details.isValidItemForSlot(x, ias, this.getWorld()))
+                                    IAEStack tempStack = ias.copy();
+                                    if (details.isCraftable()
+                                            && !details.isValidItemForSlot(x, tempStack, this.getWorld()))
                                         continue;
 
-                                    final IAEStack<?> aes = this.inventory.extractItems(ias, Actionable.MODULATE);
+                                    final IAEStack<?> aes = this.inventory.extractItems(tempStack, Actionable.MODULATE);
                                     if (aes != null) {
                                         found = true;
                                         craftingInventory.setInventorySlotContents(x, aes);
@@ -920,8 +922,7 @@ public final class CraftingCPUCluster implements IAECluster, ICraftingCPU {
                         // Smart blocking is fine sending the same recipe again.
                         if (medium.getBlockingMode() == BlockingMode.BLOCKING) break;
 
-                        if (!this.canCraft(details, details.getCondensedAEInputs())) break;
-                        if (!this.canCraft(details, details.getCondensedInputs())) {
+                        if (!this.canCraft(details, details.getCondensedAEInputs())) {
                             sr = ScheduledReason.NOT_ENOUGH_INGREDIENTS;
                             break;
                         }

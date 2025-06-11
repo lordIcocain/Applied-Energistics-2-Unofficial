@@ -231,8 +231,6 @@ public interface IAEStack<StackType extends IAEStack> {
 
     boolean isSameType(Object stack);
 
-    int compareTo(final IAEStack<?> b);
-
     String getUnlocalizedName();
 
     String getDisplayName();
