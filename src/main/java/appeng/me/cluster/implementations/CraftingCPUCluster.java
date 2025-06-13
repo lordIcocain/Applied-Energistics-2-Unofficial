@@ -583,8 +583,8 @@ public final class CraftingCPUCluster implements IAECluster, ICraftingCPU {
 
     private ArrayList<IAEStack<?>> getExtractItems(IAEStack ingredient, ICraftingPatternDetails patternDetails) {
         ArrayList<IAEStack<?>> list = new ArrayList<>();
-        if (patternDetails.canSubstitute()) {
-            for (IAEItemStack fuzz : this.inventory.findFuzzy((IAEItemStack) ingredient, FuzzyMode.IGNORE_ALL)) {
+        if (patternDetails.canSubstitute() && ingredient instanceof IAEItemStack aiss) {
+            for (IAEItemStack fuzz : this.inventory.findFuzzy(aiss, FuzzyMode.IGNORE_ALL)) {
                 if (!patternDetails.isCraftable() && fuzz.getStackSize() <= 0) continue;
                 if (patternDetails.isCraftable()) {
                     final IAEStack<?>[] inputSlots = patternDetails.getAEInputs();
@@ -804,7 +804,8 @@ public final class CraftingCPUCluster implements IAECluster, ICraftingCPU {
 
                         for (final IAEStack<?> anInput : input) {
                             if (anInput != null) {
-                                sum += anInput.getStackSize();
+                                if (anInput.isItem()) sum += anInput.getStackSize();
+                                else sum += anInput.getStackSize() / 1000D;
                             }
                         }
                         // upgraded interface uses more power
