@@ -1208,11 +1208,6 @@ public class DualityInterface implements IGridTickable, IStorageMonitorable, IIn
     }
 
     @Override
-    public ScheduledReason getScheduledReason() {
-        return scheduledReason;
-    }
-
-    @Override
     public boolean isBusy() {
         if (this.hasItemsToSend()) {
             scheduledReason = ScheduledReason.SOMETHING_STUCK;
