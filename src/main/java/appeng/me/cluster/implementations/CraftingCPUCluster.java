@@ -1679,6 +1679,17 @@ public final class CraftingCPUCluster implements IAECluster, ICraftingCPU {
         return ScheduledReason.UNDEFINED;
     }
 
+    public ScheduledReason getScheduledReason(IAEItemStack is) {
+        for (final Entry<ICraftingPatternDetails, TaskProgress> t : this.tasks.entrySet()) {
+            for (final IAEItemStack ais : t.getKey().getCondensedOutputs()) {
+                if (Objects.equals(ais, is)) {
+                    return reasonProvider.getOrDefault(t.getKey(), ScheduledReason.UNDEFINED);
+                }
+            }
+        }
+        return ScheduledReason.UNDEFINED;
+    }
+
     private TileEntity getTile(ICraftingMedium craftingProvider) {
         if (craftingProvider instanceof DualityInterface) {
             return ((DualityInterface) craftingProvider).getHost().getTile();
