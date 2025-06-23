@@ -99,7 +99,8 @@ public class GuiNetworkStatus extends AEBaseGui implements ISortSource {
                             PlayerMessages.MachineHighlighted.getName(),
                             PlayerMessages.MachineInOtherDim.getName());
                     mc.thePlayer.closeScreen();
-                } else NetworkHandler.instance.sendToServer(new PacketClick(dc.x, dc.y, dc.z, ForgeDirection.UP.ordinal(), 0, 0, 0));
+                } else NetworkHandler.instance
+                        .sendToServer(new PacketClick(dc.x, dc.y, dc.z, ForgeDirection.UP.ordinal(), 0, 0, 0));
             }
 
             @Override

@@ -56,8 +56,6 @@ public interface IStorageHelper {
      */
     IItemList<IAEItemStack> createItemList();
 
-    IItemList<IAEItemStack> createItemFilterList();
-
     /**
      * @return a new INSTANCE of {@link IItemList} for items&fluids
      */
