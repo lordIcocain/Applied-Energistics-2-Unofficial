@@ -13,6 +13,7 @@ package appeng.client.gui.implementations;
 import java.io.IOException;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 
@@ -33,6 +34,7 @@ import appeng.api.config.ViewItems;
 import appeng.api.implementations.guiobjects.INetworkTool;
 import appeng.api.storage.data.IAEItemStack;
 import appeng.api.util.DimensionalCoord;
+import appeng.api.util.NamedDimensionalCoord;
 import appeng.client.gui.AEBaseGui;
 import appeng.client.gui.widgets.GuiContextMenu;
 import appeng.client.gui.widgets.GuiImgButton;
@@ -88,15 +90,23 @@ public class GuiNetworkStatus extends AEBaseGui implements ISortSource {
 
             @Override
             public void action(int i) {
-                DimensionalCoord dc = (DimensionalCoord) this.list.get(i);
-                NetworkHandler.instance
-                        .sendToServer(new PacketClick(dc.x, dc.y, dc.z, ForgeDirection.UP.ordinal(), 0, 0, 0));
+                NamedDimensionalCoord dc = (NamedDimensionalCoord) this.list.get(i);
+                if (isShiftKeyDown()) {
+                    BlockPosHighlighter.highlightBlocks(
+                            mc.thePlayer,
+                            Collections.singletonList(dc),
+                            dc.getCustomName(),
+                            PlayerMessages.MachineHighlighted.getName(),
+                            PlayerMessages.MachineInOtherDim.getName());
+                    mc.thePlayer.closeScreen();
+                } else NetworkHandler.instance.sendToServer(new PacketClick(dc.x, dc.y, dc.z, ForgeDirection.UP.ordinal(), 0, 0, 0));
             }
 
             @Override
             public String getDrawText(int i) {
-                DimensionalCoord dc = (DimensionalCoord) this.list.get(i);
-                return "x:" + dc.x + " y:" + dc.y + " z:" + dc.z;
+                NamedDimensionalCoord dc = (NamedDimensionalCoord) this.list.get(i);
+                if (dc.getCustomName().isEmpty()) return "x:" + dc.x + " y:" + dc.y + " z:" + dc.z;
+                return dc.getCustomName();
             }
         };
     }
@@ -111,26 +121,39 @@ public class GuiNetworkStatus extends AEBaseGui implements ISortSource {
 
     @Override
     protected void mouseClicked(int xCoord, int yCoord, int btn) {
+        // Check if the context menu is active and handle it
         if (menu.mouseClick(xCoord, yCoord, btn)) {
+            return;
+        }
 
-        } else if (btn == 0 && isShiftKeyDown() && tooltip > -1) {
-            final ItemStack is = repo.getReferenceItem(tooltip).getItemStack();
-            if (is.hasTagCompound()) {
-                NBTTagCompound tag = is.getTagCompound();
+        final ItemStack is;
+        if (tooltip > -1) {
+            is = repo.getReferenceItem(tooltip).getItemStack();
+        } else is = null;
+
+        if (is == null || !is.hasTagCompound()) {
+            super.mouseClicked(xCoord, yCoord, btn);
+            return;
+        }
+
+        NBTTagCompound tag = is.getTagCompound();
+        switch (btn) {
+            case 0 -> {
+                if (!isShiftKeyDown()) break;
+                // show all blocks in the world
                 List<DimensionalCoord> dcl = DimensionalCoord.readAsListFromNBT(tag);
                 BlockPosHighlighter.highlightBlocks(
                         mc.thePlayer,
                         dcl,
                         is.getDisplayName(),
                         PlayerMessages.MachineHighlighted.getName(),
-                        PlayerMessages.MachineInInOtherDim.getName());
+                        PlayerMessages.MachineInOtherDim.getName());
                 mc.thePlayer.closeScreen();
             }
-        } else if (btn == 1 && tooltip > -1) {
-            final ItemStack is = repo.getReferenceItem(tooltip).getItemStack();
-            if (is.hasTagCompound()) {
-                NBTTagCompound tag = is.getTagCompound();
-                List<DimensionalCoord> dcl = DimensionalCoord.readAsListFromNBT(tag);
+
+            case 1 -> {
+                // open context menu
+                List<NamedDimensionalCoord> dcl = NamedDimensionalCoord.readAsListFromNBTNamed(tag);
                 menu.init(dcl, xCoord, yCoord);
             }
         }

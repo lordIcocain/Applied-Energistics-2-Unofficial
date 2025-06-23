@@ -14,7 +14,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.ICrafting;
 import net.minecraft.inventory.IInventory;
@@ -56,12 +55,12 @@ public class ContainerStorageBus extends ContainerUpgradeable {
     private static final HashMap<EntityPlayer, IteratorState> PartitionIteratorMap = new HashMap<>();
 
     @GuiSync(8)
-    public ActionItems partitionMode;
+    public ActionItems partitionMode; // use for icon and tooltip
 
     public ContainerStorageBus(final InventoryPlayer ip, final PartStorageBus te) {
         super(ip, te);
         this.storageBus = te;
-        partitionMode = PartitionIteratorMap.containsKey(ip.player) ? ActionItems.CELL_RESTRICTION : ActionItems.WRENCH;
+        partitionMode = PartitionIteratorMap.containsKey(ip.player) ? ActionItems.NEXT_PARTITION : ActionItems.WRENCH;
     }
 
     @Override
@@ -227,13 +226,14 @@ public class ContainerStorageBus extends ContainerUpgradeable {
         }
         IteratorState it;
         if (!PartitionIteratorMap.containsKey(player)) {
+            // clear filter for fetching items
             cellInv.setPartitionList(new PrecisePriorityList<>(AEApi.instance().storage().createItemList()));
             final IItemList<IAEItemStack> list = cellInv.getAvailableItems(
                     AEApi.instance().storage().createItemFilterList(),
                     IterationCounter.fetchNewId());
             it = new IteratorState(list.iterator());
             PartitionIteratorMap.put(player, it);
-            partitionMode = ActionItems.CELL_RESTRICTION;
+            partitionMode = ActionItems.NEXT_PARTITION;
         } else {
             it = PartitionIteratorMap.get(player);
         }
