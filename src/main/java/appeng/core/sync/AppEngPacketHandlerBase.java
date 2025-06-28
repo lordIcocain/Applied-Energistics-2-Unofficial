@@ -47,6 +47,7 @@ import appeng.core.sync.packets.PacketPatternItemRenamer;
 import appeng.core.sync.packets.PacketPatternMultiSet;
 import appeng.core.sync.packets.PacketPatternSlot;
 import appeng.core.sync.packets.PacketPatternValueSet;
+import appeng.core.sync.packets.PacketPinsUpdate;
 import appeng.core.sync.packets.PacketProgressBar;
 import appeng.core.sync.packets.PacketSuperWirelessToolCommand;
 import appeng.core.sync.packets.PacketSuperWirelessToolData;
@@ -126,7 +127,8 @@ public class AppEngPacketHandlerBase {
         PACKET_PATTERN_ITEM_RENAMER(PacketPatternItemRenamer.class),
         PACKET_NETWORK_VISUALISER_DATA(PacketNetworkVisualiserData.class),
         PACKET_SUPER_WIRELESS_TOOL_DATA(PacketSuperWirelessToolData.class),
-        PACKET_SUPER_WIRELESS_TOOL_COMMAND(PacketSuperWirelessToolCommand.class);
+        PACKET_SUPER_WIRELESS_TOOL_COMMAND(PacketSuperWirelessToolCommand.class),
+        PACKET_PINS_UPDATE(PacketPinsUpdate.class);
 
         private final Class<? extends AppEngPacket> packetClass;
         private final Constructor<? extends AppEngPacket> packetConstructor;
