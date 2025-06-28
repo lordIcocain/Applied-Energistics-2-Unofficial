@@ -88,11 +88,11 @@ public enum Settings {
 
     INTERFACE_TERMINAL_SECTION_ORDER(EnumSet.allOf(StringOrder.class)),
 
-    NETWORK_VISUALISER(EnumSet.allOf(VisualisationModes.class)),
-
     CRAFTING_ALLOW(EnumSet.allOf(CraftingAllow.class)),
 
     PINS_STATE(EnumSet.allOf(PinsState.class)),
+
+    NETWORK_VISUALISER(EnumSet.allOf(VisualisationModes.class)),
 
     SUPER_WIRELESS_TOOL(EnumSet.allOf(SuperWirelessTool.class)),
 

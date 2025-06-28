@@ -136,7 +136,7 @@ public class DualityInterface implements IGridTickable, IStorageMonitorable, IIn
     private final AppEngInternalAEInventory config = new AppEngInternalAEInventory(this, NUMBER_OF_CONFIG_SLOTS);
     private AppEngInternalInventory storage = new AppEngInternalInventory(this, NUMBER_OF_STORAGE_SLOTS);
     private final AppEngInternalInventory patterns = new AppEngInternalInventory(this, NUMBER_OF_PATTERN_SLOTS * 4);
-    private final WrapperInvSlot slotInv = new WrapperInvSlot(this.storage);
+    private WrapperInvSlot slotInv = new WrapperInvSlot(this.storage);
     private final MEMonitorPassThrough<IAEItemStack> items = new MEMonitorPassThrough<>(
             new NullInventory<IAEItemStack>(),
             StorageChannel.ITEMS);
@@ -149,6 +149,7 @@ public class DualityInterface implements IGridTickable, IStorageMonitorable, IIn
     private boolean hasConfig = false;
     private int priority;
     public List<ICraftingPatternDetails> craftingList = null;
+    public boolean sharedInventory = false;
     private List<IAEStack<?>> waitingToSend = null;
     private IMEInventory<IAEItemStack> destination;
     private boolean isWorking = false;
@@ -244,7 +245,7 @@ public class DualityInterface implements IGridTickable, IStorageMonitorable, IIn
     public void writeToNBT(final NBTTagCompound data) {
         this.config.writeToNBT(data, "config");
         this.patterns.writeToNBT(data, "patterns");
-        this.storage.writeToNBT(data, "storage");
+        if (!sharedInventory) this.storage.writeToNBT(data, "storage");
         this.upgrades.writeToNBT(data, "upgrades");
         this.cm.writeToNBT(data);
         this.craftingTracker.writeToNBT(data);
@@ -423,7 +424,7 @@ public class DualityInterface implements IGridTickable, IStorageMonitorable, IIn
         }
     }
 
-    private boolean hasWorkToDo() {
+    protected boolean hasWorkToDo() {
         if (this.hasItemsToSend()) {
             return true;
         } else {
@@ -529,7 +530,7 @@ public class DualityInterface implements IGridTickable, IStorageMonitorable, IIn
         }
     }
 
-    private boolean hasItemsToSend() {
+    protected boolean hasItemsToSend() {
         return this.waitingToSend != null && !this.waitingToSend.isEmpty();
     }
 
@@ -571,6 +572,11 @@ public class DualityInterface implements IGridTickable, IStorageMonitorable, IIn
 
     public int getConfigSize() {
         return this.config.getSizeInventory();
+    }
+
+    public WrapperInvSlot setSlotInv(final WrapperInvSlot slotInventory) {
+        this.slotInv = slotInventory;
+        return this.slotInv;
     }
 
     public void gridChanged() {
@@ -753,7 +759,7 @@ public class DualityInterface implements IGridTickable, IStorageMonitorable, IIn
         return sentSomething;
     }
 
-    public boolean updateStorage() {
+    private boolean updateStorage() {
         boolean didSomething = false;
 
         for (int x = 0; x < NUMBER_OF_STORAGE_SLOTS; x++) {

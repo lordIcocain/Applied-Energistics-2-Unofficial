@@ -124,6 +124,10 @@ public interface ICraftingCPU extends IBaseMonitor<IAEItemStack> {
 
     default void resetFinalOutput() {}
 
+    default BaseActionSource getCurrentJobSource() {
+        return new BaseActionSource();
+    }
+
     /**
      * get this crafting elapsed time
      * 
