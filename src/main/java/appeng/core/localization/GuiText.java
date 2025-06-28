@@ -44,6 +44,7 @@ public enum GuiText {
 
     IOPort,
     BytesUsed,
+    TimeUsed,
     Types,
     QuantumLinkChamber,
     PortableCell,
@@ -151,6 +152,7 @@ public enum GuiText {
     Scheduled,
     CraftingStatus,
     RemainingOperations,
+    AddToBookmark,
     Cancel,
     ETA,
     ETAFormat,
