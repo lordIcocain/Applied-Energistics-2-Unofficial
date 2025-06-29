@@ -830,14 +830,12 @@ public class GuiImgButton extends GuiButton implements ITooltip {
                     CraftingAllow.ALLOW_ALL,
                     ButtonToolTips.CPUAllowMode,
                     ButtonToolTips.CPUAllowAllDesc);
-
             this.registerApp(
                     16 * 14 + 4,
                     Settings.CRAFTING_ALLOW,
                     CraftingAllow.ONLY_PLAYER,
                     ButtonToolTips.CPUAllowMode,
                     ButtonToolTips.CPUOnlyAllowPlayerDesc);
-
             this.registerApp(
                     16 * 14 + 5,
                     Settings.CRAFTING_ALLOW,

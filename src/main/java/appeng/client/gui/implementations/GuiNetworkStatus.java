@@ -122,6 +122,7 @@ public class GuiNetworkStatus extends AEBaseGui implements ISortSource {
 
     @Override
     protected void mouseClicked(int xCoord, int yCoord, int btn) {
+
         // Check if the context menu is active and handle it
         if (menu.mouseClick(xCoord, yCoord, btn)) {
             return;
