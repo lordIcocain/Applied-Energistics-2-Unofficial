@@ -67,9 +67,6 @@ tile.appliedenergistics2.BlockMolecularAssembler.name=Molecular Assembler
 tile.appliedenergistics2.BlockPatternOptimizationMatrix.name=Pattern Optimization Matrix
 tile.appliedenergistics2.BlockSingularityCraftingStorage.name=Singularity Crafting Storage
 tile.appliedenergistics2.BlockPaint.name=Paint
-tile.appliedenergistics2.BlockWirelessConnector.name=Wireless Connector
-tile.appliedenergistics2.BlockWirelessHub.name=Wireless Hub
-tile.appliedenergistics2.BlockCrystalGrowthChamber.name=Crystal Growth Chamber
 
 # Stairs
 tile.appliedenergistics2.ChiseledQuartzStairBlock.name=Chiseled Certus Quartz Stairs
