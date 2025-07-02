@@ -123,7 +123,7 @@ public class ToolSuperWirelessKit extends AEBaseItem implements IGuiItem {
                 p.addChatMessage(WirelessToolMessages.mode_simple_bound_targethubfull.toChat());
                 return false;
             }
-            if (wc.doUnlink(dc);) {
+            if (wc.doUnlink(dc)) {
                 p.addChatMessage(
                         WirelessToolMessages.connected.toChat(dc.x, dc.y, dc.z)
                                 .setChatStyle(new ChatStyle().setColor(EnumChatFormatting.GREEN)));
