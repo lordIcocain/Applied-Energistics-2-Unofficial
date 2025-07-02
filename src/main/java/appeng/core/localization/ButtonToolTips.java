@@ -65,6 +65,7 @@ public enum ButtonToolTips {
     ItemName,
     NumberOfItems,
     PartitionStorageHint,
+    NextPartitionStorageHint,
 
     ClearSettings,
     StoredItems,
@@ -245,6 +246,10 @@ public enum ButtonToolTips {
     SuperWirelessToolHideBoundedYesDesc,
     SuperWirelessToolHideBoundedNoName,
     SuperWirelessToolHideBoundedNoDesc,
+
+    PinsSection,
+    PinsSectionActive,
+    PinsSectionDisabled,
 
     ToggleShowOnlySubstitute,
     ToggleShowOnlySubstituteOnDesc,

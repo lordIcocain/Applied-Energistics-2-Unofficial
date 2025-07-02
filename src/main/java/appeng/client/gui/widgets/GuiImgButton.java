@@ -39,6 +39,7 @@ import appeng.api.config.LockCraftingMode;
 import appeng.api.config.OperationMode;
 import appeng.api.config.PatternBeSubstitution;
 import appeng.api.config.PatternSlotConfig;
+import appeng.api.config.PinsState;
 import appeng.api.config.PowerUnits;
 import appeng.api.config.PriorityCardMode;
 import appeng.api.config.RedstoneMode;
@@ -365,6 +366,14 @@ public class GuiImgButton extends GuiButton implements ITooltip {
                     ActionItems.WRENCH,
                     ButtonToolTips.PartitionStorage,
                     ButtonToolTips.PartitionStorageHint);
+
+            this.registerApp(
+                    16 * 6 + 8,
+                    Settings.ACTIONS,
+                    ActionItems.NEXT_PARTITION,
+                    ButtonToolTips.PartitionStorage,
+                    ButtonToolTips.NextPartitionStorageHint);
+
             this.registerApp(
                     6,
                     Settings.ACTIONS,
@@ -871,6 +880,41 @@ public class GuiImgButton extends GuiButton implements ITooltip {
                     YesNo.NO,
                     ButtonToolTips.SuperWirelessToolHideBoundedNoName,
                     ButtonToolTips.SuperWirelessToolHideBoundedNoDesc);
+
+ this.registerApp(
+                    16 * 15 + 15,
+                    Settings.PINS_STATE,
+                    PinsState.DISABLED,
+                    ButtonToolTips.PinsSection,
+                    ButtonToolTips.PinsSectionDisabled);
+
+            this.registerApp(
+                    16 * 15 + 14,
+                    Settings.PINS_STATE,
+                    PinsState.ONE,
+                    ButtonToolTips.PinsSection,
+                    ButtonToolTips.PinsSectionActive);
+
+            this.registerApp(
+                    16 * 15 + 14,
+                    Settings.PINS_STATE,
+                    PinsState.TWO,
+                    ButtonToolTips.PinsSection,
+                    ButtonToolTips.PinsSectionActive);
+
+            this.registerApp(
+                    16 * 15 + 14,
+                    Settings.PINS_STATE,
+                    PinsState.THREE,
+                    ButtonToolTips.PinsSection,
+                    ButtonToolTips.PinsSectionActive);
+
+            this.registerApp(
+                    16 * 15 + 14,
+                    Settings.PINS_STATE,
+                    PinsState.FOUR,
+                    ButtonToolTips.PinsSection,
+                    ButtonToolTips.PinsSectionActive);
 
             this.registerApp(
                     16 * 3 + 7,
